@@ -1,35 +1,71 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from 'react';
+import reactLogo from './assets/react.svg';
+import viteLogo from '/vite.svg';
+import './App.css';
 
-function App() {
-  const [count, setCount] = useState(0)
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      count: 0
+    };
+  }
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+  render() {
+    const { count } = this.state;
+
+    return (
+      <>
+      
+      <Form/>
+      </>
+
+    );
+  }
 }
 
-export default App
+class Form extends React.Component {
+  render() {
+    return (
+        
+        <form class = "form">
+        <Header header = "Create Account"/>
+        <FlexColumn label = "Username" placeholder = "Enter your username"/>
+        <FlexColumn label = "Email" placeholder = "Enter your email"/>
+        <FlexColumn label = "Password" placeholder = "Enter your password"/>
+        <FlexColumn label = "Confirmed Password" placeholder = "Enter your password again"/>
+        <div class="flex-row">
+        <span class="span">Sign In</span>
+        <button class="button-submit">Next</button>
+        </div>
+        <div class="flex-row">
+        <span class="span">Admin Sign In</span>
+        </div>
+      </form>
+    );
+  }
+}
+
+class FlexColumn extends React.Component {
+  render() {
+    return (
+      <>
+      <div class="flex-column">
+      <label>{this.props.label} </label></div>
+      <div class="inputForm">
+        <input type="text" class="input" placeholder={this.props.placeholder}></input>
+      </div>
+      </>
+      
+    );
+  }
+}
+
+class Header extends React.Component {
+  render() {
+    return (
+      <h1 class="header">{this.props.header}</h1>
+    );
+  }
+}
+export default App;

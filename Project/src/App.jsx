@@ -89,7 +89,7 @@ class AdminSignIn extends React.Component {
     return(
       <form class = "form">
         <Header header = "Admin Sign In"/>
-        <FlexColumn label = "Email" placeholder = "Enter your email"/>
+        <FlexColumn label = "Username" placeholder = "Enter your username"/>
         <br></br>
         <FlexColumn label = "Password" placeholder = "Enter your password"/>
         <div class="flex-row">

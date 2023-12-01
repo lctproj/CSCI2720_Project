@@ -13,6 +13,7 @@ const client = new MongoClient(uri, {
         deprecationErrors: true,
     }
 });
+
 function convertXmlFileToJson(filePath) {
     return new Promise((resolve, reject) => {
         fs.readFile(filePath, 'utf8', (err, xmlData) => {
@@ -85,6 +86,14 @@ const convertAllXMLtoJSON = () => {
     });
 };
 
+const dataCleansing = (data) => {
+    data.forEach(element => {
+        element._id = element.$.id
+        delete element.$
+    });
+    return data;
+};
+
 const storeAllJSONtoMongo = () => {
     fs.readdir(directoryPath, (err, files) => {
         if (err) {
@@ -111,17 +120,19 @@ const storeAllJSONtoMongo = () => {
                         switch (Object.keys(jsonData)[0]) {
                             case 'event_dates':
                                 data = jsonData.event_dates.event;
+                                console.log(data);
                                 break;
                             case 'events':
                                 data = jsonData.events.event;
+                                console.log(data);
                                 break;
                             case 'venues':
                                 data = jsonData.venues.venue;
-                                break;
+                                console.log(data);
                             default:
                                 break;
                         }
-
+                        data = dataCleansing(data)
                         const collectionName = path.parse(file).name;
                         importJsonListToMongoDB(data, collectionName);
                     }

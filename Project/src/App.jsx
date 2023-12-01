@@ -1,30 +1,29 @@
 import React, { useState } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from '/vite.svg';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import './App.css';
 
 class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      count: 0
-    };
-  }
-
   render() {
-    const { count } = this.state;
-
     return (
-      <>
-      
-      <Form/>
-      </>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home/>} />
+          <Route path="/create-account" element={<CreateAccount/>} />
+        </Routes>
+      </Router>
+    );
+  }
+}
+class Home extends React.Component {
+  render() {
+    return (
 
+      <p>Hello world</p>
     );
   }
 }
 
-class Form extends React.Component {
+class CreateAccount extends React.Component {
   render() {
     return (
         
@@ -41,7 +40,7 @@ class Form extends React.Component {
         <div class="flex-row">
         <span class="span">Admin Sign In</span>
         </div>
-      </form>
+        </form>
     );
   }
 }

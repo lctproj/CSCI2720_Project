@@ -197,7 +197,7 @@ class UserHome extends React.Component {
             />
             </button>
             </div>
-          <div class="top-bar">65
+          <div class="top-bar">
             <div class="user-details">
               <span id="username">&lt;username&gt;</span>
               <button class="button-user">

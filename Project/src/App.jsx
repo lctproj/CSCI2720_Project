@@ -167,11 +167,7 @@ class UserHome extends React.Component {
   };
 
   handleHomeClick = () => {
-    // Implement the logic for handling the home button click
-  };
-
-  handleUserClick = () => {
-    // Implement the logic for handling the user button click
+    window.location.href = '/';
   };
   handleLogout = () => {
     window.location.href = '/signin';
@@ -200,21 +196,20 @@ class UserHome extends React.Component {
           <div class="top-bar">
             <div class="user-details">
               <span id="username">&lt;username&gt;</span>
-              <button class="button-user">
                 <img
                   src="/src/assets/user-icon.svg"
                   alt="User Icon"
                   id="usericon"
                 />
-                </button>
             </div>
           </div>
-    
+      <div class="backgruond">
         <div class="content">
         <h1 className="profile-heading">My Profile</h1>
+          <br></br>
           <FlexColumn1 label="Email" placeholder="abc@example.com" />
-
-          <h2>My Favorites</h2>
+          <br></br>
+          <h2 className="profile-subheading">My Favorites</h2>
           <div className={locationBoxClass}>
   <div onClick={this.toggleLocation}>
     <FlexColumn1 label="Location" placeholder="Your favourite locations" />
@@ -249,14 +244,11 @@ class UserHome extends React.Component {
     alt="Down Arrow"
     className={`arrow-icon ${expandedEvent ? 'expanded' : ''}`}
   />
-</div>
-          <div class="form1">
-          </div>
-
-      </div>
+</div> 
           <button class="button-submit1"onClick={this.handleChangepw}>Change Password</button>
           <button class="button-submit2"onClick={this.handleLogout}>Log Out</button>
-   
+      </div>
+      </div>
       </div>
       
     );
@@ -269,7 +261,7 @@ class FlexColumn1 extends React.Component {
         <div className="flex-column1">
           <label>{this.props.label}</label>
         </div>
-        <div className="inputForm">
+        <div className="inputForm1">
           <output
             className={`input ${this.props.placeholder ? 'placeholder' : ''}`}
           >
@@ -286,7 +278,7 @@ class FlexColumn2 extends React.Component {
     return (
       <>
         <div className="flex-column"></div>
-        <div className="inputForm">
+        <div className="inputForm1">
           <output
             className={`input ${this.props.placeholder ? 'placeholder' : ''}`}
           >

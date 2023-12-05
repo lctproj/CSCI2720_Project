@@ -1,0 +1,44 @@
+.event-main{
+    margin: 5px;
+    background-color:blue
+}
+
+.event-name{
+    background-color: white;
+    border:3px black solid;
+    display:flex;
+    flex-direction:column;
+}
+
+.price-slider{
+    display:flex;
+    flex-direction:column;
+    background-color:white;
+    border-radius:5%;
+    padding:5px;
+    margin:20px;
+    height: 75%;
+}
+
+.go-to-location{
+    background-color:white;
+    padding:5px;
+    border-radius:5%;
+    margin:20px;
+    height: 75%;
+}
+.search{
+    background-color: white;
+    border-radius: 50%;
+    padding:5px;
+    margin:20px;
+    height: 75%;
+}
+
+.header-bar{
+    background-color:lightgray;
+    display:flex;
+    flex-direction:row;
+    justify-content: space-around;
+    padding:3px;
+}

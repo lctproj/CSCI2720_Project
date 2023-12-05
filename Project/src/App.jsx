@@ -1,21 +1,23 @@
-import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import "./App.css";
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import './App.css';
+import EventMain from './assets/EventMain';
 class App extends React.Component {
-    render() {
-        return (
-            <Router>
-                <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/create-account" element={<CreateAccount />} />
-                    <Route path="/signin" element={<SignIn />} />
-                    <Route path="/adminsignin" element={<AdminSignIn />} />
-                    <Route path="/userhome" element={<UserHome />} />
-                    <Route path="/changepw" element={<ChangePassword />} />
-                </Routes>
-            </Router>
-        );
-    }
+  render() {
+    return (
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home/>} />
+          <Route path="/create-account" element={<CreateAccount/>} />
+          <Route path="/signin" element={<SignIn/>} />
+          <Route path="/adminsignin" element={<AdminSignIn/>} />
+          <Route path="/userhome" element={<UserHome/>} />
+          <Route path="/changepw" element={<ChangePassword/>}/>
+          <Route path="/eventmain" element={<EventMain/>} />
+        </Routes>
+      </Router>
+    );
+  }
 }
 class Home extends React.Component {
     render() {
@@ -91,28 +93,23 @@ class SignIn extends React.Component {
     }
 }
 class AdminSignIn extends React.Component {
-    render() {
-        return (
-            <form class="form">
-                <Header header="Admin Sign In" />
-                <FlexColumn
-                    label="Username"
-                    placeholder="Enter your username"
-                />
-                <br></br>
-                <FlexColumn
-                    label="Password"
-                    placeholder="Enter your password"
-                />
-                <div class="flex-row">
-                    <Link to="/signin" class="span">
-                        User Sign In
-                    </Link>
-                    <button class="button-submit">Next</button>
-                </div>
-            </form>
-        );
-    }
+  render() {
+    return(
+      <form className = "form">
+        <Header header = "Admin Sign In"/>
+        <FlexColumn label = "Username" placeholder = "Enter your username"/>
+        <br></br>
+        <FlexColumn label = "Password" placeholder = "Enter your password"/>
+        <div class="flex-row">
+        
+        <Link to="/signin" class = "span">
+        User Sign In
+        </Link>
+        <button class="button-submit">Next</button>
+        </div>
+      </form>
+    );
+  }
 }
 class FlexColumn extends React.Component {
     render() {

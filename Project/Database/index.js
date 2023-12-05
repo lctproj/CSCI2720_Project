@@ -51,7 +51,6 @@ async function importJsonListToMongoDB(jsonList, collectionName) {
 
 const directoryPath = './Data';
 
-
 const convertAllXMLtoJSON = () => {
     fs.readdir(directoryPath, (err, files) => {
         if (err) {

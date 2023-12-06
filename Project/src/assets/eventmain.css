@@ -42,3 +42,21 @@
     justify-content: space-around;
     padding:3px;
 }
+
+.event-card{
+    background-color: lightgray;
+    border-radius:1%;
+    border:3px black solid;
+    display:flex;
+    flex-direction:row;
+    justify-content:space-around;
+    padding:2px 0;
+    margin:2px 0;
+}
+
+.event-filter-bar{
+    display:flex;
+    flex-direction:row;
+    justify-content:space-between;
+    align-items: center;
+}

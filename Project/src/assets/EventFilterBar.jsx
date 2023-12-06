@@ -7,7 +7,7 @@ const EventNameFilter = () => {
     return(
             <div className="event-name-filter">
                 <label htmlFor="eventname"  >Event name</label>
-                <input type="text" id="eventname" placeholder="Enter event name" className="event-name"/>
+                <input type="text" id="event-name-search" placeholder="Enter event name" className="event-name"/>
             </div>
     );
 }
@@ -37,7 +37,7 @@ const Search  = () =>{
 
 export default function EventFilterBar(){
     return(
-        <div className= "flex flex-row justify-center bg-blue-700">
+        <div className= "event-filter-bar">
             <EventNameFilter />
             <PriceSlider />
             <GoToLocation />

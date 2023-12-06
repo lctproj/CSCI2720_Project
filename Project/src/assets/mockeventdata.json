@@ -1,0 +1,29 @@
+[
+    {
+    "index": 1,
+    "eventname": "Swimming",
+    "price":[250,100,350],
+    "date":[20230812,20230831]
+    }
+    ,
+    {
+    "index":2,
+    "eventname": "Fencing",
+    "price":[220,140,50],
+    "date":[20230712,20230913]
+    }
+    ,
+    {
+    "index":3,
+    "eventname": "Jogging",
+    "price":[90,70,50],
+    "date":[20230308,20230609]
+    }
+    ,
+    {
+    "index":4,
+    "eventname": "Basketball",
+    "price":[160,140,120],
+    "date":[20230911,20230221]
+    }
+]

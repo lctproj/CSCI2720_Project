@@ -84,7 +84,7 @@ export default function EventMain (){
             return ascending ? a[category].localeCompare(b[category]) : b[category].localeCompare(a[category]);
         }
         return ascending ? a[category] - b[category] : b[category] - a[category];
-    });}
+    })}
         </div>
     );
 }

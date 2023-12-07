@@ -1,22 +1,49 @@
 import React from 'react';
-import { HiOutlineMagnifyingGlass } from "react-icons/hi2";
 import "./eventmain.css";
 import "../App.css";
 
-const EventNameFilter = () => {
-    return(
+const NameFilter = ({onInputChange}) => {
+        const handleInputChange = (e) => {
+            const value = e.target.value;
+            onInputChange(value);
+        };
+        
+        return(
             <div className="event-name-filter">
                 <label htmlFor="eventname"  >Event name</label>
-                <input type="text" id="event-name-search" placeholder="Enter event name" className="event-name"/>
+                <input type="text" id="event-name-search" 
+                placeholder="Enter event name" className="event-name" onChange={handleInputChange}
+                />
             </div>
     );
+
 }
 
-const PriceSlider = () =>{
+const DateFilter = ()=>{
+    return(
+        <div>
+            <div className="date-filter">
+                <label htmlFor="earliest-date-filter" >Earliest date</label>
+                    <input type="date" id="earliest-date-filter" />
+            </div>
+            <div className="date-filter">
+                <label htmlFor="earliest-date-filter" >Earliest date</label>
+                    <input type="date" id="latest-date-filter" />
+            </div>    
+        </div>
+    )
+
+}
+const PriceSlider = ({onPriceChange}) =>{
+    const handlePriceChange = (e) => {
+        const value = e.target.value;
+        onPriceChange(value);
+    };
+
     return(
         <div className='price-slider'>
-            <label htmlFor="pricerange" className="flex flex-col">Price Range</label>
-            <input type="range" min="0" max="500" id="pricerange" />
+            <label htmlFor="pricerange" className="flex flex-col">Price Range </label>
+            <input type="range" min="0" max="500" id="pricerange"  onInput={handlePriceChange}/>
         </div>
     )
 }
@@ -27,21 +54,13 @@ const GoToLocation = () =>{
     );
 }
 
-const Search  = () =>{
-    return(
-        <div className = "search"> 
-            <HiOutlineMagnifyingGlass />
-        </div>
-    );
-}
-
-export default function EventFilterBar(){
+export default function EventFilterBar({onInputChange,onPriceChange}){
     return(
         <div className= "event-filter-bar">
-            <EventNameFilter />
+            <NameFilter />
             <PriceSlider />
+            <DateFilter />
             <GoToLocation />
-            <Search />
             <div>
                 <p id="username">Username</p>
             </div>

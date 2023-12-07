@@ -25,11 +25,6 @@
     height: 75%;
 }
 
-.date-filter{
-    background-color: white;
-    display:flex;
-    flex-direction:column;
-}
 .go-to-location{
     background-color:white;
     padding:5px;

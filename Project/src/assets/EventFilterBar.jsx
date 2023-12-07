@@ -57,8 +57,8 @@ const GoToLocation = () =>{
 export default function EventFilterBar({onInputChange,onPriceChange}){
     return(
         <div className= "event-filter-bar">
-            <NameFilter />
-            <PriceSlider />
+            <NameFilter onInputChange={onInputChange}/>
+            <PriceSlider onPriceChange={onPriceChange} />
             <DateFilter />
             <GoToLocation />
             <div>

@@ -25,7 +25,7 @@ node index
 ```
 
 ### Backend
-please do this to run the Express.js server. If the server is not running, the frontend cannot call API to do the jobs.
+please do this to run the Express.js server. If the server is not running, the frontend cannot call API to do the jobs. Only the POST method is used so please use Postman or your code to call the API and Browser will not work.
 ```
 cd Project/Server
 npm i

@@ -35,13 +35,23 @@ function convertXmlFileToJson(filePath) {
     });
 }
 
-async function importJsonListToMongoDB(jsonList, collectionName) {
+const importJsonListToMongoDB = async (jsonList, collectionName) => {
     try {
         await client.connect(); // Connect to MongoDB server
         const database = client.db('CSCI2720Project'); // Specify the database name
         const collection = database.collection(collectionName); // Specify the collection name
 
-        const result = await collection.insertMany(jsonList); // Insert the JSON list into the collection
+        // Check if the collection exists
+        const collectionExists = await collection.findOne({});
+
+        if (collectionExists) {
+            // Delete the collection if it exists
+            await collection.drop();
+            console.log('Collection deleted:', collectionName);
+        }
+
+        // Recreate the collection and import the data
+        const result = await collection.insertMany(jsonList);
         console.log('JSON list imported to MongoDB:', result.insertedIds);
     } catch (error) {
         console.error('Error importing JSON list to MongoDB:', error);
@@ -127,6 +137,16 @@ const eventDatesIndateCleansing = (data) => {
     return data;
 };
 
+const priceToArray = (data) => {
+    data.forEach((element) => {
+        let inputString = element.pricee;
+        const regex = /\d+/g;
+        const prices = inputString.match(regex)?.map(Number) || "";
+        element.prices = prices;
+    });
+    return data;
+}
+
 const storeAllJSONtoMongo = async () => {
     fs.readdir(directoryPath, (err, files) => {
         if (err) {
@@ -153,20 +173,21 @@ const storeAllJSONtoMongo = async () => {
                             case 'event_dates':
                                 data = jsonData.event_dates.event;
                                 data = eventDatesIndateCleansing(data);
-                                console.log(data);
                                 break;
                             case 'events':
                                 data = jsonData.events.event;
-                                console.log(data);
+                                data = priceToArray(data);
                                 break;
                             case 'venues':
                                 data = jsonData.venues.venue;
-                                console.log(data);
+                                break;
                             default:
                                 break;
                         }
-                        data = idCleansing(data)
                         const collectionName = path.parse(file).name;
+                        console.log(`${collectionName} is type of ${typeof collectionName}`);
+                        data = idCleansing(data)
+                        
                         importJsonListToMongoDB(data, collectionName);
                     }
                 });
@@ -178,7 +199,7 @@ const storeAllJSONtoMongo = async () => {
 convertAllXMLtoJSON()
     .then(() => {
         // Add a waiting time of 1 second (1000 milliseconds)
-        return new Promise((resolve) => setTimeout(resolve, 1000));
+        return new Promise((resolve) => setTimeout(resolve, 500));
     })
     .then(() => storeAllJSONtoMongo())
     .then(() => console.log('Tasks completed successfully.'))

@@ -7,10 +7,14 @@ Make sure to `git pull` all the time.
 git pull
 ```
 
-##Every time you pull
+## Every time you pull
 please do this to make sure you install all modules.
 ```
-cd Project // Get into the project
+cd Project // Get into the frontend
+npm i
+cd Database // Get into the db init
+npm i
+cd Server // Get into the backend
 npm i
 ```
 Do not modify `Project/.gitignore`.

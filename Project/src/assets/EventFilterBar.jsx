@@ -19,15 +19,25 @@ const NameFilter = ({onInputChange}) => {
 
 }
 
-const DateFilter = ()=>{
+const DateFilter = ({onEarliestDateChange,onLatestDateChange})=>{
+    const handleEarliestDateChange = (e)=>{
+        const value = e.target.value;
+        onEarliestDateChange(value);
+    }
+  
+    const handleLatestDateChange = (e)=>{
+        const value = e.target.value;
+        onLatestDateChange(value);
+    }
+
     return(
-        <div>
+        <div className='date'>
             <div className="date-filter">
                 <label htmlFor="earliest-date-filter" >Earliest date</label>
                     <input type="date" id="earliest-date-filter" />
             </div>
             <div className="date-filter">
-                <label htmlFor="earliest-date-filter" >Earliest date</label>
+                <label htmlFor="earliest-date-filter" >Latest date</label>
                     <input type="date" id="latest-date-filter" />
             </div>    
         </div>
@@ -54,12 +64,12 @@ const GoToLocation = () =>{
     );
 }
 
-export default function EventFilterBar({onInputChange,onPriceChange}){
+export default function EventFilterBar({onInputChange,onPriceChange,onEarliestDateChange,onLatestDateChange}){
     return(
         <div className= "event-filter-bar">
             <NameFilter onInputChange={onInputChange}/>
             <PriceSlider onPriceChange={onPriceChange} />
-            <DateFilter />
+            <DateFilter onEarliestDateChange={onEarliestDateChange} onLatestDateChange={onLatestDateChange}/>
             <GoToLocation />
             <div>
                 <p id="username">Username</p>

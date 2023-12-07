@@ -12,7 +12,8 @@
 
 .event-name-filter{
     background-color: white;
-    border-radius:2px;
+    border-radius:2px;    
+    min-height: 3rem;
 }
 
 .price-slider{
@@ -23,19 +24,30 @@
     padding:5px;
     margin:20px;
     height: 75%;
+    min-height: 3rem;
+
+}
+
+.date{
+    display:flex;
+    flex-direction:row;
+    justify-content: space-between;
 }
 
 .date-filter{
     background-color: white;
     display:flex;
     flex-direction:column;
+    padding:0 2px;
+    min-height: 3rem;
 }
 .go-to-location{
     background-color:white;
     padding:5px;
     border-radius:5%;
     margin:20px;
-    height: 75%;
+    min-height: 3rem;
+    align-items: center;
 }
 .search{
     background-color: white;

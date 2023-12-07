@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import './App.css';
 import EventMain from './assets/EventMain';
+import LocationMain from './assets/LocationMain';
+
 class App extends React.Component {
   render() {
     return (
@@ -14,6 +16,7 @@ class App extends React.Component {
           <Route path="/userhome" element={<UserHome/>} />
           <Route path="/changepw" element={<ChangePassword/>}/>
           <Route path="/eventmain" element={<EventMain/>} />
+          <Route path="/locationmain" element={<LocationMain/>} />
         </Routes>
       </Router>
     );

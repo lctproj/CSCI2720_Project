@@ -2,7 +2,9 @@
 const fs = require('fs');
 const path = require('path');
 const xml2js = require('xml2js');
+const moment = require('moment');
 const { MongoClient, ServerApiVersion } = require('mongodb');
+const { time } = require('console');
 
 const uri = "mongodb+srv://CSCi2720:CSCI2720@csci2720project.nrracpp.mongodb.net/?retryWrites=true&w=majority";
 
@@ -51,41 +53,46 @@ async function importJsonListToMongoDB(jsonList, collectionName) {
 
 const directoryPath = './Data';
 
-const convertAllXMLtoJSON = () => {
+const convertAllXMLtoJSON = async () => {
     fs.readdir(directoryPath, (err, files) => {
         if (err) {
             console.error('Error reading directory:', err);
             return;
         }
 
-        files.forEach(file => {
+        files.forEach((file) => {
             const filePath = path.join(directoryPath, file);
             const fileExt = path.extname(file);
 
             if (fileExt === '.xml') {
-                convertXmlFileToJson(filePath)
-                    .then(json => {
-                        const jsonFileName = `${path.parse(file).name}.json`;
-                        const jsonFilePath = path.join(directoryPath, jsonFileName);
-                        const jsonString = JSON.stringify(json, null, 2);
+                const jsonFileName = `${path.parse(file).name}.json`;
+                const jsonFilePath = path.join(directoryPath, jsonFileName);
 
-                        fs.writeFile(jsonFilePath, jsonString, 'utf8', err => {
-                            if (err) {
-                                console.error('Error writing JSON file:', jsonFileName, err);
-                            } else {
-                                console.log('JSON file saved:', jsonFileName);
-                            }
+                if (!fs.existsSync(jsonFilePath)) {
+                    convertXmlFileToJson(filePath)
+                        .then((json) => {
+                            const jsonString = JSON.stringify(json, null, 2);
+
+                            fs.writeFile(jsonFilePath, jsonString, 'utf8', (err) => {
+                                if (err) {
+                                    console.error('Error writing JSON file:', jsonFileName, err);
+                                } else {
+                                    console.log('JSON file saved:', jsonFileName);
+                                }
+                            });
+                        })
+                        .catch((err) => {
+                            console.error('Error converting file:', file, err);
                         });
-                    })
-                    .catch(err => {
-                        console.error('Error converting file:', file, err);
-                    });
+                } else {
+                    console.log('JSON file already exists:', jsonFileName);
+                }
             }
         });
     });
 };
 
-const dataCleansing = (data) => {
+const idCleansing = (data) => {
     data.forEach(element => {
         element._id = element.$.id
         delete element.$
@@ -93,7 +100,34 @@ const dataCleansing = (data) => {
     return data;
 };
 
-const storeAllJSONtoMongo = () => {
+const stringToDate = (str) => {
+    const dateString = str.toString();
+    const year = dateString.slice(0, 4);
+    const month = dateString.slice(4, 6);
+    const day = dateString.slice(6, 8);
+    const date = new Date(year, month, day);
+    return date;
+};
+
+const eventDatesIndateCleansing = (data) => {
+    data.forEach((element) => {
+        if (typeof element.indate === 'string') {
+            let date = stringToDate(element.indate);
+            element.indate = date;
+        }
+        if (Array.isArray(element.indate)) {
+            let dates = [];
+            element.indate.forEach((subElement) => {
+                let date = stringToDate(subElement);
+                dates.push(date);
+            });
+            element.indate = dates;
+        }
+    });
+    return data;
+};
+
+const storeAllJSONtoMongo = async () => {
     fs.readdir(directoryPath, (err, files) => {
         if (err) {
             console.error('Error reading directory:', err);
@@ -101,7 +135,6 @@ const storeAllJSONtoMongo = () => {
         }
 
         files.forEach(file => {
-            const filePath = path.join(directoryPath, file);
             const fileExt = path.extname(file);
 
             if (fileExt === '.json') {
@@ -119,6 +152,7 @@ const storeAllJSONtoMongo = () => {
                         switch (Object.keys(jsonData)[0]) {
                             case 'event_dates':
                                 data = jsonData.event_dates.event;
+                                data = eventDatesIndateCleansing(data);
                                 console.log(data);
                                 break;
                             case 'events':
@@ -131,7 +165,7 @@ const storeAllJSONtoMongo = () => {
                             default:
                                 break;
                         }
-                        data = dataCleansing(data)
+                        data = idCleansing(data)
                         const collectionName = path.parse(file).name;
                         importJsonListToMongoDB(data, collectionName);
                     }
@@ -141,6 +175,11 @@ const storeAllJSONtoMongo = () => {
     });
 };
 
-
-convertAllXMLtoJSON();
-storeAllJSONtoMongo();
+convertAllXMLtoJSON()
+    .then(() => {
+        // Add a waiting time of 1 second (1000 milliseconds)
+        return new Promise((resolve) => setTimeout(resolve, 1000));
+    })
+    .then(() => storeAllJSONtoMongo())
+    .then(() => console.log('Tasks completed successfully.'))
+    .catch((error) => console.error('Error:', error));

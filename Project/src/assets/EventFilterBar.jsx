@@ -1,6 +1,7 @@
 import React from 'react';
 import "./eventmain.css";
 import "../App.css";
+import { Link } from 'react-router-dom';
 
 const NameFilter = ({onInputChange}) => {
         const handleInputChange = (e) => {
@@ -60,12 +61,17 @@ const PriceSlider = ({onPriceChange}) =>{
 
 const GoToLocation = () =>{
     return(
-        <div className = "go-to-location"> Find by location</div>
+        <div className = "go-to-location"> 
+            <Link to = "/locationmain"> 
+                Find by location
+            </Link>
+        </div>
     );
 }
 
 export default function EventFilterBar({onInputChange,onPriceChange,onEarliestDateChange,onLatestDateChange}){
     return(
+        
         <div className= "event-filter-bar">
             <NameFilter onInputChange={onInputChange}/>
             <PriceSlider onPriceChange={onPriceChange} />

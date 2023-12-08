@@ -8,18 +8,39 @@ import { HiArrowsUpDown, HiOutlineArrowSmallUp , HiOutlineArrowSmallDown  } from
 
 
 
-const HeaderBar = ({handleCategory}) =>{
+const HeaderBar = ({handleCategory,category, ascending}) =>{
     return(
         <div className="header-bar">
-            <div className="header-element" onClick={()=>handleCategory('name')}><p id="event-name">Event Name</p></div>
-            <div className="header-element" onClick={()=>handleCategory('earliestdate')}><p id="earliest-date">Earliest Date</p></div>
-            <div className="header-element" onClick={()=>handleCategory('latestdate')} ><p id="latest-date">Latest Date</p></div>
-            <div className="header-element" onClick={()=>handleCategory('price')}><p id="price">Price</p></div>
-            <div className="header-element"><p id="favorite">Favorite</p></div>
+            <div className="header-element" onClick={() => handleCategory('eventname')}>
+                <p id="event-name">Event Name</p>
+                <ArrowSign value="eventname" category={category} ascending={ascending} />
+            </div>
+            <div className="header-element" onClick={() => handleCategory('earliestdate')}>
+                <p id="earliest-date">Earliest Date</p>
+                <ArrowSign value="earliestdate" category={category} ascending={ascending} />
+            </div>
+            <div className="header-element" onClick={() => handleCategory('latestdate')}>
+                <p id="latest-date">Latest Date</p>
+                <ArrowSign value="latestdate" category={category} ascending={ascending} />
+            </div>
+            <div className="header-element" onClick={() => handleCategory('price')}>
+                <p id="price">Price</p>
+                <ArrowSign value="price" category={category} ascending={ascending} />
+            </div>
+            <div className="header-element">
+                <p id="favorite">Favorite</p>
+            </div>
         </div>
     );
 }
 
+
+const ArrowSign = ({ category, value, ascending }) => {
+    if (category === value) {
+        return ascending ? <HiOutlineArrowSmallUp /> : <HiOutlineArrowSmallDown />;
+    }
+    return <HiArrowsUpDown />;
+};
 
 
 export default function EventMain (){
@@ -29,6 +50,7 @@ export default function EventMain (){
     const [latestDate,setLatestDate] = useState('');
     const [category ,setCategory] = useState('');
     const [ascending,setAscending] = useState(true);
+    const [arrowPoint,setArrowPoint] = useState(-1);
 
     const handleSearchInput = (value) => {
         setInput(value);
@@ -55,22 +77,46 @@ export default function EventMain (){
     }
 
     const handleCategory = (value) => {
-        console.log(value);
-        setCategory(value);
-        setAscending(!ascending);
+        if (value === category) {
+            setAscending(!ascending);
+        } else {
+            setCategory(value);
+            setAscending(true);
+        }
     }
 
    const filteredEvents = mockEventData.filter((event) =>
         event.eventname.toLowerCase().includes(searchInput.toLowerCase())
          ).filter((event) =>Math.max(...event.price)<maxPrice
-        );
+        ).sort((a, b) => {
+            let aValue, bValue;
+
+            if (category === 'earliestdate') {
+                aValue = getEarliestDate(a.date);
+                bValue = getEarliestDate(b.date);
+            } else if (category === 'latestdate') {
+                aValue = getLatestDate(a.date);
+                bValue = getLatestDate(b.date);
+            } else if (category === 'price') {
+                aValue = Math.min(...a.price); 
+                bValue = Math.min(...b.price);  
+            } else {
+                aValue = a.eventname;
+                bValue = b.eventname;
+            }
+
+            if (typeof aValue === 'string') {
+                return ascending ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+            }
+            return ascending ? aValue - bValue : bValue - aValue;
+        });
 
     
 
     return(
         <div className="event-main">
             <EventFilterBar onInputChange={handleSearchInput} onPriceChange={handlePriceChange} onEarliestDateChange={handleEarliestDateChange} onLatestDateChange={handleLatestDateChange}/>
-            <HeaderBar handleCategory={handleCategory}/>
+            <HeaderBar handleCategory={handleCategory} category={category} ascending={ascending} />
             {filteredEvents.map((event, index) => (
                 <EventCard
                 key={index}
@@ -79,12 +125,7 @@ export default function EventMain (){
                 latestdate={getLatestDate(event.date)}
                 price={event.price.toSorted((a, b) => a - b).toString()}
                 />
-            )).sort((a, b) => {
-        if (typeof a[category] === 'string') {
-            return ascending ? a[category].localeCompare(b[category]) : b[category].localeCompare(a[category]);
-        }
-        return ascending ? a[category] - b[category] : b[category] - a[category];
-    })}
+            ))}
         </div>
     );
 }

@@ -1,0 +1,18 @@
+[
+    {
+        "locationname": "Chicago",
+        "events":["cycling","basketball","running","boxing"]
+    },
+    {
+        "locationname": "Denver",
+        "events":["squash","rock climbing","hockey"]
+    },
+    {
+        "locationname": "Washington",
+        "events":["public speaking"]
+    },
+    {
+        "locationname": "Miami",
+        "events":["waterskiing","volleyball","baseball","rugby","esports"]
+    }
+]

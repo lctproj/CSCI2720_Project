@@ -1,21 +1,21 @@
-.event-main{
+.location-main{
     margin: 5px;
     background-color:blue
 }
 
-.event-name{
+.location-name{
     background-color: white;
     border:0.25px black solid;
     display:flex;
     flex-direction:column;
 }
 
-.event-name-filter{
+.location-name-filter{
     background-color: white;
     border-radius:2px;
 }
 
-.price-slider{
+.number-slider{
     display:flex;
     flex-direction:column;
     background-color:white;
@@ -25,7 +25,7 @@
     height: 75%;
 }
 
-.go-to-location{
+.go-to-events{
     background-color:white;
     padding:5px;
     border-radius:5%;
@@ -48,7 +48,7 @@
     padding:3px;
 }
 
-.event-card{
+.location-card{
     background-color: lightgray;
     border-radius:1%;
     border:3px black solid;
@@ -59,7 +59,7 @@
     margin:2px 0;
 }
 
-.event-filter-bar{
+.location-filter-bar{
     display:flex;
     flex-direction:row;
     justify-content:space-between;

@@ -17,6 +17,7 @@ const client = new MongoClient(uri, {
     version: ServerApiVersion.v1,
     strict: true,
     deprecationErrors: true,
+    
   }
 });
 
@@ -260,3 +261,4 @@ app.get('/', (req, res) => {
   res.send('Hello World!')
   console.log(`Server is running on port ${port}`);
 });
+

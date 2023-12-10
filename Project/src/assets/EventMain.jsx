@@ -1,8 +1,7 @@
 import "./eventmain.css";
 import EventFilterBar from "./EventFilterBar.jsx";
-import mockEventData from "./mockeventdata.json"
 import EventCard from "./EventCard.jsx";
-import React, {useState} from "react";
+import React, {useState,useEffect} from "react";
 import { HiArrowsUpDown, HiOutlineArrowSmallUp , HiOutlineArrowSmallDown  } from "react-icons/hi2";
 
 
@@ -50,7 +49,7 @@ export default function EventMain (){
     const [latestDate,setLatestDate] = useState('');
     const [category ,setCategory] = useState('');
     const [ascending,setAscending] = useState(true);
-    const [arrowPoint,setArrowPoint] = useState(-1);
+    const [events, setEvents] = useState([]);
 
     const handleSearchInput = (value) => {
         setInput(value);
@@ -85,9 +84,36 @@ export default function EventMain (){
         }
     }
 
-   const filteredEvents = mockEventData.filter((event) =>
-        event.eventname.toLowerCase().includes(searchInput.toLowerCase())
-         ).filter((event) =>Math.max(...event.price)<maxPrice
+    const processedPrice=(string)=>{
+        return string.replace(/$/g,'').split(',').map(price => Number(price));
+    }
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch("http:/localhost:8964/all-events", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const data = await response.json();
+                setEvents(data);
+            } catch (err) {
+                return(
+                    <p>Error fetching events from database</p>
+                )
+            }
+        };
+
+        fetchData();
+    }, []);
+
+
+        
+        const filteredEvents = events.filter((event) =>
+        event.titlee.toLowerCase().includes(searchInput.toLowerCase())
+        ).filter((event) =>Math.max(...processedPrice(event.pricee))<maxPrice
         ).sort((a, b) => {
             let aValue, bValue;
 
@@ -128,4 +154,6 @@ export default function EventMain (){
             ))}
         </div>
     );
+
+   
 }

@@ -35,11 +35,11 @@ const DateFilter = ({onEarliestDateChange,onLatestDateChange})=>{
         <div className='date'>
             <div className="date-filter">
                 <label htmlFor="earliest-date-filter" >Earliest date</label>
-                    <input type="date" id="earliest-date-filter" />
+                    <input type="date" id="earliest-date-filter" onInput={handleEarliestDateChange}/>
             </div>
             <div className="date-filter">
                 <label htmlFor="earliest-date-filter" >Latest date</label>
-                    <input type="date" id="latest-date-filter" />
+                    <input type="date" id="latest-date-filter" onInput={handleLatestDateChange}/>
             </div>    
         </div>
     )

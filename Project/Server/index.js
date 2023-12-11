@@ -13,11 +13,8 @@ app.use(bodyParser.json());
 const uri = "mongodb+srv://CSCi2720:CSCI2720@csci2720project.nrracpp.mongodb.net/?retryWrites=true&w=majority";
 
 const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  }
+  useNewUrlParser: true,
+  useUnifiedTopology: true
 });
 
 async function connectToDatabase() {
@@ -62,30 +59,30 @@ app.post('/create-account', async (req, res) => {
     //   verificationToken: verificationToken
     // });
 
-  //   // Send an email with the verification link
-  //   const transporter = nodemailer.createTransport({
-  //     // Configure your email transport options here
-  //   });
+    //   // Send an email with the verification link
+    //   const transporter = nodemailer.createTransport({
+    //     // Configure your email transport options here
+    //   });
 
-  //   const mailOptions = {
-  //     from: '1155157783@link.cuhk.edu.hk',
-  //     to: email,
-  //     subject: 'Account Verification',
-  //     text: `Please click on the following link to verify your accoun on events.com :)\n Code: ${verificationToken}`
-  //   };
+    //   const mailOptions = {
+    //     from: '1155157783@link.cuhk.edu.hk',
+    //     to: email,
+    //     subject: 'Account Verification',
+    //     text: `Please click on the following link to verify your accoun on events.com :)\n Code: ${verificationToken}`
+    //   };
 
-  //   transporter.sendMail(mailOptions, (error, info) => {
-  //     if (error) {
-  //       console.error('Error sending verification email:', error);
-  //       res.status(500).json({ error: 'An error occurred while sending the verification email' });
-  //     } else {
-  //       console.log('Verification email sent:', info.response);
-  //       res.json({ message: 'Account created successfully. Please check your email for verification.' });
-  //     }
-  //   });
-  // } catch (error) {
-  //   console.error('Error creating account:', error);
-  //   res.status(500).json({ error: 'An error occurred while creating the account' });
+    //   transporter.sendMail(mailOptions, (error, info) => {
+    //     if (error) {
+    //       console.error('Error sending verification email:', error);
+    //       res.status(500).json({ error: 'An error occurred while sending the verification email' });
+    //     } else {
+    //       console.log('Verification email sent:', info.response);
+    //       res.json({ message: 'Account created successfully. Please check your email for verification.' });
+    //     }
+    //   });
+    // } catch (error) {
+    //   console.error('Error creating account:', error);
+    //   res.status(500).json({ error: 'An error occurred while creating the account' });
   } catch (error) {
     console.error('Error retrieving items:', error);
     res.status(500).json({ error: 'An error occurred while retrieving items' });

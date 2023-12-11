@@ -197,9 +197,10 @@ export default function EventMain (){
             {filteredEvents.map((event, index) => (
                 <EventCard
                 key={index}
+                id={event._id}
                 eventname={event.eventname}
-                earliestdate={getEarliestDate(event.date)}
-                latestdate={getLatestDate(event.date)}
+                earliestdate={getEarliestDate(event)}
+                latestdate={getLatestDate(event)}
                 price={event.price.toSorted((a, b) => a - b).toString()}
                 />
             ))}

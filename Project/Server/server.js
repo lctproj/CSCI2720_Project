@@ -38,18 +38,6 @@ db.once('open', () => {
 
   const Venue = mongoose.model("Venue", VenueSchema);
 
-  const DateSchema = new mongoose.Schema({
-    indate: {
-      type: [String],
-    },
-    eventId: {
-      type: String,
-      required: true,
-    },
-  });
-  
-  const eventDate = mongoose.model('eventDate', DateSchema);
-
   const EventSchema = new mongoose.Schema({
     cat1: {
       type: String,
@@ -60,8 +48,8 @@ db.once('open', () => {
       required: true,
     },
     venueId: {
-      type: String,
-      required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Venue',
     },
     enquiry: {
       type: String,
@@ -103,6 +91,10 @@ db.once('open', () => {
       type: String,
       required: true,
     },
+    progtime: {
+      type: String,
+      required: true,
+    },
     agelimit: {
       type: String,
       required: true,
@@ -133,8 +125,98 @@ db.once('open', () => {
     },
   });
 
-  const Event = mongoose.model("event", EventSchema);
+  const Event = mongoose.model("Event", EventSchema);
+
+  const DateSchema = new mongoose.Schema({
+    indate: {
+      type: [String],
+    },
+    eventId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Event',
+    },
+  });
   
+  const EventDate = mongoose.model('EventDate', DateSchema);
+
+  const UserSchema = new mongoose.Schema({
+    username: {
+      type: String,
+      required: [true, "Username is required"],
+      unique: true,
+    },
+    password: {
+      type: String,
+      required: [true, "Password is required"],
+    },
+    email: {
+      type: String,
+      required: [true, "Password is required"],
+    },
+    favVenue: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: 'Venue',
+    },
+    favEvent: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: 'Event',
+    }
+  });
+
+  const User = mongoose.model("User", UserSchema);
+
+  const EventCommentSchema = new mongoose.Schema({
+    eventId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Event',
+    },
+    username: {
+      type: String,
+      required: [true, "Username is required"],
+    },
+    comment: {
+      type: String,
+      required: [true, "Comment is required"],
+    },
+  });
+
+  const EventComment = mongoose.model("EventComment", EventCommentSchema);
+
+  const VenueCommentSchema = new mongoose.Schema({
+    venueId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Venue',
+    },
+    username: {
+      type: String,
+      required: [true, "Username is required"],
+    },
+    comment: {
+      type: String,
+      required: [true, "Comment is required"],
+    },
+  });
+
+  const VenueComment = mongoose.model("VenueComment", VenueCommentSchema);
+  
+  const readJsonFromFile = (filePath) => {
+    try {
+      const jsonData = fs.readFileSync(filePath, 'utf8');
+      return JSON.parse(jsonData);
+    } catch (error) {
+      console.error('Error reading JSON file:', error);
+      return null;
+    }
+  };
+
+  const eventsDataPath = './Data/events.json';
+  const eventsData = readJsonFromFile(eventsDataPath);
+  const VenueDataPath = './Data/venues.json';
+  const VenueData = readJsonFromFile(VenueDataPath);
+  const eventDateDataPath = './Data/eventDate.json';
+  const eventDateData = readJsonFromFile(eventDateDataPath);
+
+
 });
 
 const server = app.listen(3000);

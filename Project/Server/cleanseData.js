@@ -44,9 +44,10 @@ const stringToDate = (str) => {
     const year = dateString.slice(0, 4);
     const month = dateString.slice(4, 6);
     const day = dateString.slice(6, 8);
-    const date = new Date(year, month, day);
+    let date = new Date(`${year}-${month}-${day}`);
+    date = new Date(date.toLocaleString('en-US', { timeZone: 'Asia/Shanghai' }));
     return date;
-};
+  };
 
 const eventDatesIndateCleansing = (data) => {
     data.forEach((element) => {

@@ -1,7 +1,7 @@
 import "./eventmain.css";
 import EventFilterBar from "./EventFilterBar.jsx";
 import EventCard from "./EventCard.jsx";
-import React, {useState} from "react";
+import React, {useState,useEffect } from "react";
 import { HiArrowsUpDown, HiOutlineArrowSmallUp , HiOutlineArrowSmallDown  } from "react-icons/hi2";
 
 
@@ -51,7 +51,8 @@ export default function EventMain (){
     const [latestDate,setLatestDate] = useState('');
 
     //search results
-    const [results,setResults] = useState(null);
+    const [fetched, setFetched] = useState([]);
+    const [display, setDisplay] = useState([]);
 
     //sorting
     const [category ,setCategory] = useState('');
@@ -83,7 +84,7 @@ export default function EventMain (){
 
 //change search results
 const handleResults = (results) => {
-    setResults(results);
+    setDisplay(results);
   };
 
 //changes the sorting category
@@ -96,30 +97,58 @@ const handleResults = (results) => {
         }
     }
 
+    useEffect(() => {
+        const fetchInitial = async () => {
+          try {
+            const response = await fetch('http://localhost:8964/all-events',{
+                method:'GET'
+            }); 
+            const data = await response.json();
+            setFetched(data); 
+          } catch (error) {
+            console.error('Failed to fetch events:', error);
+          }
+        };
+    
+        fetchInitial();
+      }, []);
+
         
-    const finalResult = results.sort((a, b) => { //sorts the array
-        let aValue, bValue;
-
-        if (category === 'earliestdate') {
-            aValue = a.earliestDate;
-            bValue = b.earliestDate;
-        } else if (category === 'latestdate') {
-            aValue = a.latestDate;
-            bValue = b.latestDate;
-        } else if (category === 'price') {
-            aValue = Math.min(...a.price); 
-            bValue = Math.min(...b.price);  
-        } else {
-            aValue = a.name;
-            bValue = b.name;
+    useEffect(() => {
+        if (fetched.length>0) {
+          const sortedResults = [...fetched].sort((a, b) => {
+            let aValue, bValue;
+    
+            switch (category) {
+              case 'earliestdate':
+                aValue = new Date(a.earliestDate);
+                bValue = new Date(b.earliestDate);
+                break;
+              case 'latestdate':
+                aValue = new Date(a.latestDate);
+                bValue = new Date(b.latestDate);
+                break;
+              case 'price':
+                aValue = a.price; 
+                bValue = b.price;
+                break;
+              case 'eventname':
+              default:
+                aValue = a.name
+                bValue = b.name
+                break;
+            }
+    
+            if (ascending) {
+              return aValue < bValue ? -1 : (aValue > bValue ? 1 : 0);
+            } else {
+              return aValue > bValue ? -1 : (aValue < bValue ? 1 : 0);
+            }
+          });
+    
+          setDisplay(sortedResults);
         }
-
-        if (typeof aValue === 'string') {
-            return ascending ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
-        }
-        return ascending ? aValue - bValue : bValue - aValue;
-    });
-
+      }, [category, ascending, fetched]);
     
 
     return(
@@ -128,7 +157,10 @@ const handleResults = (results) => {
                 onEarliestDateChange={handleEarliestDateChange} onLatestDateChange={handleLatestDateChange} 
                 searchParams={searchParams} onResult={handleResults}/>
             <HeaderBar handleCategory={handleCategory} category={category} ascending={ascending} />
-            {finalResult.map((event, index) => (
+            {display.length === 0 ? (
+            <div>Loading or no results...</div>
+            ) : (
+            display.map((event, index) => (
                 <EventCard
                 key={index}
                 id={event._id}
@@ -137,7 +169,8 @@ const handleResults = (results) => {
                 latestdate={event.latestDate}
                 price={event.price}
                 />
-            ))}
+            ))
+        )}
         </div>
     );
 

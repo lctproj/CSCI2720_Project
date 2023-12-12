@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const cleanseData = require('./cleanseData.js')
+const fs = require('fs')
 const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
@@ -38,14 +39,30 @@ db.once('open', () => {
 
   const Venue = mongoose.model("Venue", VenueSchema);
 
+  const DateSchema = new mongoose.Schema({
+    indate: {
+      type: [String],
+    },
+    eventId: {
+      type: String,
+      required: [true, "eventId is required"],
+    },
+  });
+
+  const EventDate = mongoose.model('EventDate', DateSchema);
+
   const EventSchema = new mongoose.Schema({
     cat1: {
       type: String,
-      required: true,
+      required: '',
     },
     cat2: {
       type: String,
-      required: true,
+      required: '',
+    },
+    eventDate: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'EventDate',
     },
     venueId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -53,7 +70,7 @@ db.once('open', () => {
     },
     enquiry: {
       type: String,
-      required: true,
+      default: '',
     },
     fax: {
       type: String,
@@ -63,13 +80,13 @@ db.once('open', () => {
       type: String,
       default: '',
     },
-    saleDate: {
-      type: Date,
-      required: true,
+    saledate: {
+      type: String,
+      default: '',
     },
     interbook: {
       type: String,
-      required: true,
+      default: '',
     },
     eventId: {
       type: String,
@@ -77,67 +94,55 @@ db.once('open', () => {
     },
     prices: {
       type: [Number],
-      required: true,
+      default: '',
     },
     title: {
       type: String,
-      required: true,
+      default: '',
     },
     predate: {
       type: String,
-      required: true,
+      default: '',
     },
     progtime: {
       type: String,
-      required: true,
+      default: '',
     },
     progtime: {
       type: String,
-      required: true,
+      default: '',
     },
     agelimit: {
       type: String,
-      required: true,
+      default: '',
     },
     price: {
       type: String,
-      required: true,
+      default: '',
     },
     desc: {
       type: String,
-      required: true,
+      default: '',
     },
     url: {
       type: String,
-      required: true,
+      default: '',
     },
     tagenturl: {
       type: String,
-      required: true,
+      default: '',
     },
     remark: {
       type: String,
-      required: true,
+      default: '',
     },
     presenterorg: {
       type: String,
-      required: true,
+      default: '',
     },
   });
 
   const Event = mongoose.model("Event", EventSchema);
-
-  const DateSchema = new mongoose.Schema({
-    indate: {
-      type: [String],
-    },
-    eventId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Event',
-    },
-  });
-  
-  const EventDate = mongoose.model('EventDate', DateSchema);
 
   const UserSchema = new mongoose.Schema({
     username: {
@@ -198,7 +203,7 @@ db.once('open', () => {
   });
 
   const VenueComment = mongoose.model("VenueComment", VenueCommentSchema);
-  
+
   const readJsonFromFile = (filePath) => {
     try {
       const jsonData = fs.readFileSync(filePath, 'utf8');
@@ -211,11 +216,66 @@ db.once('open', () => {
 
   const eventsDataPath = './Data/events.json';
   const eventsData = readJsonFromFile(eventsDataPath);
+  console.log(eventsData);
   const VenueDataPath = './Data/venues.json';
   const VenueData = readJsonFromFile(VenueDataPath);
-  const eventDateDataPath = './Data/eventDate.json';
+  console.log(VenueData);
+  const eventDateDataPath = './Data/eventDates.json';
   const eventDateData = readJsonFromFile(eventDateDataPath);
+  console.log(eventDateData);
 
+  const saveVenueData = async (Venue, VenueData) => {
+    try {
+      for (const element of VenueData) {
+        const venue = new Venue(element);
+        await venue.save();
+      }
+    } catch (error) {
+      console.log("Failed to save new venue", error);
+    }
+  };
+  
+  const saveEventDateData = async (EventDate, eventDateData) => {
+    try {
+      for (const element of eventDateData) {
+        const eventDate = new EventDate(element);
+        await eventDate.save();
+      }
+    } catch (error) {
+      console.log("Failed to save new event date", error);
+    }
+  };
+  
+  const saveEventData = async (Event, EventDate, Venue, eventsData) => {
+    try {
+      for (const element of eventsData) {
+        const event = new Event(element);
+  
+        const venue = await Venue.findOne({ venueId: event.venueId });
+        if (venue) {
+          event.venueId = venue._id;
+        }
+  
+        const dates = await EventDate.find({ eventId: event.eventId });
+        if (dates.length > 0) {
+          event.eventDate = dates[0]._id;
+        }
+  
+        await event.save();
+      }
+    } catch (error) {
+      console.log("Failed to save new event", error);
+    }
+  };
+  
+  // Usage example
+  saveVenueData(Venue, VenueData);
+  saveEventDateData(EventDate, eventDateData);
+  saveEventData(Event, EventDate, Venue, eventsData);
+
+  app.get('/', (req, res) => {
+    res.send('Hello World!');
+  });
 
 });
 

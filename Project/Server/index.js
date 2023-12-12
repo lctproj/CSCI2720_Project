@@ -10,12 +10,27 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
+
 const uri = "mongodb+srv://CSCi2720:CSCI2720@csci2720project.nrracpp.mongodb.net/?retryWrites=true&w=majority";
 
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
+
+/*
+const mongoose = require('mongoose');
+mongoose.connect(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+}).then(() => {
+  console.log('Connected to MongoDB with Mongoose');
+}).catch((err) => {
+  console.error('Error connecting to MongoDB', err);
+});
+
+//can delete client and connectToDatabase and  require(mongodb) line
+*/
 
 async function connectToDatabase() {
   try {
@@ -32,6 +47,64 @@ const port = 8964;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
+/*
+//Defining schemas
+
+const dateSchema =new MongooseSchema({
+  _id:{
+    type:String,
+    required:true
+  },
+  indate:{
+    type:String,
+    required:true
+  }
+});
+
+}
+
+const eventDate = mongoose.model('eventDates',dateSchema);
+
+const eventSchema = new MongooseSchema({
+  _id:{
+    type:String;
+    required:true
+  },
+  titlee:{
+    type:String;
+    required:true
+  },
+  prices:{
+    type:Array[Number],
+    required:true
+  }
+});
+
+const event = mongoose.model('events',eventSchema);
+
+//define UserSchema lah
+
+const locationSchema = new MongooseSchema({
+  _id:{
+    type:String;
+    required:true
+  },
+  venuee:{
+    type:String;
+    required:true
+  },
+  latitude:{
+    type:String,
+    required:true
+  },
+  longtitude:{
+    type:String,
+    required:true
+  }
+});
+
+*/
 
 // Handling user
 app.post('/create-account', async (req, res) => {
@@ -252,7 +325,12 @@ app.post('/navbar-venue', async (req, res) => {
   }
 });
 
+/*
+app.post('/favorite-events', (req,res)=>{
+  const {id, name, earliestdate, latestdate} = req.body;
+})
 
+*/
 app.get('/', (req, res) => {
   res.send('Hello World!')
   console.log(`Server is running on port ${port}`);

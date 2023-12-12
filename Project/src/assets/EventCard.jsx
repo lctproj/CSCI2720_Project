@@ -18,7 +18,7 @@ export default function EventCard({ id, eventname, earliestdate, latestdate, pri
 
         if(starred) {
             try{
-                const response = await fetch('http://localhost:8964/favorites',{ //url TBD
+                const response = await fetch('http://localhost:8964/favorite-events',{ //url TBD
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(favoriteEvent)
@@ -34,7 +34,7 @@ export default function EventCard({ id, eventname, earliestdate, latestdate, pri
             }
         }else{
             try{
-                const response = await fetch('http://localhost:8964/favorites',{ //url TBD
+                const response = await fetch('http://localhost:8964/favorite-events',{ //url TBD
                     method: 'DELETE',
                     headers: {'Content-Type': 'application/json'},
                 });

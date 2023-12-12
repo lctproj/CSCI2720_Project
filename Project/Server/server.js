@@ -297,6 +297,7 @@ app.get('/all-events', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 app.get('/event/:eventId', async (req, res) => {
   const eventId = req.params.eventId;
 
@@ -312,6 +313,58 @@ app.get('/event/:eventId', async (req, res) => {
     console.log('Error retrieving event:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
+});
+
+app.post('/navbar-events', async (req,res)=>{
+  const {name,price,earliestDate,latestDate} = req.body;
+
+  let query={}
+
+  if(name){
+    query.title = { $regex: name, $options: 'i' }
+  }
+
+  try{
+    const events = await Event.find (query);
+    let filteredEvents = [];
+
+    for (let event of events) {
+      const eventDates = await EventDate.findOne({ eventId: event.eventId });
+
+      const earliestEventDate = eventDates.indate[0].split('T')[0];
+      const latestEventDate = eventDates.indate[eventDates.indate.length - 1].split('T')[0];
+
+      if (earliestDate && earliestDate > earliestEventDate) {
+        continue;
+      }
+
+      if (latestDate && latestDate < latestEventDate) {
+        continue;
+      }
+
+      const maxPrice = Math.max(...event.prices);
+      if (price && maxPrice >= price) {
+        continue;
+      }
+
+      let eventObj ={
+        "eventId":event.eventId,
+        "name": event.title,
+        "price":event.prices.sort((a, b) => a - b).toString(),
+        "earliestDate":earliestEventDate,
+        "latestDate":latestEventDate
+      };
+
+      filteredEvents.push(eventObj);
+    }
+      res.json(filteredEvents);
+      return;
+    
+  }catch(err){
+    console.error("Error fetching relevant events", err);
+    res.status(500).json({ message: "Error fetching relevant events" });
+  }
+
 });
 
 app.get('/all-venues', async (req, res) => {

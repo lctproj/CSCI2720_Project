@@ -2,6 +2,7 @@ import React from 'react';
 import "./eventmain.css";
 import "../App.css";
 import { Link } from 'react-router-dom';
+import { IoSearch } from "react-icons/io5";
 
 const NameFilter = ({onInputChange}) => {
         const handleInputChange = (e) => {
@@ -38,7 +39,7 @@ const DateFilter = ({onEarliestDateChange,onLatestDateChange})=>{
                     <input type="date" id="earliest-date-filter" onInput={handleEarliestDateChange}/>
             </div>
             <div className="date-filter">
-                <label htmlFor="earliest-date-filter" >Latest date</label>
+                <label htmlFor="latest-date-filter" >Latest date</label>
                     <input type="date" id="latest-date-filter" onInput={handleLatestDateChange}/>
             </div>    
         </div>
@@ -59,6 +60,14 @@ const PriceSlider = ({onPriceChange}) =>{
     )
 }
 
+const SearchEvents = ({ onClick })=>{
+    return(
+        <div className="search" onClick={ onClick }>
+            <IoSearch aria-label="Search Events"/>
+        </div>
+    );
+}
+
 const GoToLocation = () =>{
     return(
         <div className = "go-to-location"> 
@@ -69,21 +78,44 @@ const GoToLocation = () =>{
     );
 }
 
-export default function EventFilterBar({onInputChange,onPriceChange,onEarliestDateChange,onLatestDateChange}){
+const sendSearchParams = async (params, onResult) => {
+    try {
+      const response = await fetch('http://localhost:8964/navbar-events', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(params)
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      } else {
+        const data = await response.json();
+        onResult(data);
+      }
+    } catch (error) {
+      console.error('Error sending search inputs', error.message);
+    }
+  };
+
+
+
+export default function EventFilterBar({onInputChange,onPriceChange,onEarliestDateChange,onLatestDateChange, searchParams, onResult}){
+    const handleSearchClick = () => {
+        sendSearchParams(searchParams, onResult);
+    };
+
     return(
-        
-        <div className= "event-filter-bar">
-            <NameFilter onInputChange={onInputChange}/>
-            <PriceSlider onPriceChange={onPriceChange} />
-            <DateFilter onEarliestDateChange={onEarliestDateChange} onLatestDateChange={onLatestDateChange}/>
-            <GoToLocation />
-            <div>
-                <p id="username">Username</p>
-            </div>
-            <div>
-                <img id="usericon" src="./free-user-icon-3296-thumb.png" alt="user icon" />
-            </div>
+    
+    <div className= "event-filter-bar">
+        <NameFilter onInputChange={onInputChange}/>
+        <PriceSlider onPriceChange={onPriceChange} />
+        <DateFilter onEarliestDateChange={onEarliestDateChange} onLatestDateChange={onLatestDateChange}/>
+        <SearchEvents  onClick = {handleSearchClick} onResult={onResult}/>
+        <GoToLocation />
+        <div>
+            <p id="username">Username</p>
         </div>
-    )
+    </div>
+)
 }
 

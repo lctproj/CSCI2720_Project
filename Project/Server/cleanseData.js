@@ -102,7 +102,6 @@ const removeRedundantE = (data) => {
 };
 
 const cleanseData = (jsonData) => {
-    console.log(jsonData);
     let data;
     switch (Object.keys(jsonData)[0]) {
         case 'event_dates':
@@ -173,6 +172,4 @@ const initDatabase = () => {
     .catch((error) => console.error('Error:', error));
 };
 
-module.exports = {
-    initDatabase
-};
+initDatabase();

@@ -2,7 +2,6 @@ const express = require('express');
 const cors = require('cors');
 const cleanseData = require('./cleanseData.js')
 const fs = require('fs')
-const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
 
 const mongoose = require('mongoose');
@@ -16,7 +15,6 @@ app.use(cors());
 app.use(bodyParser.json());
 
 console.log("Connection is open...");
-cleanseData.initDatabase();
 
 // DB Schema
 const VenueSchema = new mongoose.Schema({
@@ -27,7 +25,7 @@ const VenueSchema = new mongoose.Schema({
     type: String,
   },
   venueId: {
-    type: Number,
+    type: String,
     required: [true, "Venue ID is required"],
     unique: true,
   },
@@ -37,7 +35,7 @@ const VenueSchema = new mongoose.Schema({
   },
 });
 
-const Venue = mongoose.model("Venue", VenueSchema);
+const Venue = mongoose.model("Venues", VenueSchema);
 
 const DateSchema = new mongoose.Schema({
   indate: {
@@ -46,27 +44,24 @@ const DateSchema = new mongoose.Schema({
   eventId: {
     type: String,
     required: [true, "eventId is required"],
+    unique: true
   },
 });
 
-const EventDate = mongoose.model('EventDate', DateSchema);
+const EventDate = mongoose.model('EventDates', DateSchema);
 
 const EventSchema = new mongoose.Schema({
   cat1: {
     type: String,
-    required: '',
+    default: '',
   },
   cat2: {
     type: String,
-    required: '',
+    default: '',
   },
-  eventDate: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'EventDate',
-  },
-  venueId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Venue',
+  venueid: {
+    type: String,
+    default: '',
   },
   enquiry: {
     type: String,
@@ -90,7 +85,8 @@ const EventSchema = new mongoose.Schema({
   },
   eventId: {
     type: String,
-    required: true,
+    required: [true, "eventId is required"],
+    unique: true
   },
   prices: {
     type: [Number],
@@ -142,7 +138,7 @@ const EventSchema = new mongoose.Schema({
   },
 });
 
-const Event = mongoose.model("Event", EventSchema);
+const Event = mongoose.model("Events", EventSchema);
 
 const UserSchema = new mongoose.Schema({
   username: {
@@ -168,12 +164,12 @@ const UserSchema = new mongoose.Schema({
   }
 });
 
-const User = mongoose.model("User", UserSchema);
+const User = mongoose.model("Users", UserSchema);
 
 const EventCommentSchema = new mongoose.Schema({
   eventId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Event',
+    ref: 'Events',
   },
   username: {
     type: String,
@@ -185,12 +181,12 @@ const EventCommentSchema = new mongoose.Schema({
   },
 });
 
-const EventComment = mongoose.model("EventComment", EventCommentSchema);
+const EventComment = mongoose.model("EventComments", EventCommentSchema);
 
 const VenueCommentSchema = new mongoose.Schema({
   venueId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Venue',
+    ref: 'Venues',
   },
   username: {
     type: String,
@@ -202,7 +198,7 @@ const VenueCommentSchema = new mongoose.Schema({
   },
 });
 
-const VenueComment = mongoose.model("VenueComment", VenueCommentSchema);
+const VenueComment = mongoose.model("VenueComments", VenueCommentSchema);
 
 const readJsonFromFile = (filePath) => {
   try {
@@ -224,69 +220,46 @@ const eventDateDataPath = './Data/eventDates.json';
 const eventDateData = readJsonFromFile(eventDateDataPath);
 console.log(eventDateData);
 
-const saveVenueData = async (Venue, VenueData) => {
+const saveVenueData = (Venue, VenueData) => {
   try {
     for (const element of VenueData) {
       const venue = new Venue(element);
-      await venue.save();
+      venue.save();
     }
   } catch (error) {
     console.log("Failed to save new venue", error);
   }
 };
 
-const saveEventDateData = async (EventDate, eventDateData) => {
+const saveEventDateData = (EventDate, eventDateData) => {
   try {
     for (const element of eventDateData) {
       const eventDate = new EventDate(element);
-      await eventDate.save();
+      eventDate.save();
     }
   } catch (error) {
     console.log("Failed to save new event date", error);
   }
 };
 
-const saveEventData = async (Event, EventDate, Venue, eventsData) => {
+const saveEventData = async (Event, Venue, eventsData) => {
   try {
     for (const element of eventsData) {
       const event = new Event(element);
-
-      const venue = await Venue.findOne({ venueId: event.venueId });
-      if (venue) {
-        event.venueId = venue._id;
-      }
-
-      const dates = await EventDate.find({ eventId: event.eventId });
-      if (dates.length > 0) {
-        event.eventDate = dates[0]._id;
-      }
-
-      await event.save();
+      event.save();
     }
   } catch (error) {
-    console.log("Failed to save new event", error);
+    console.log("Failed to save new event data", error);
   }
 };
 
-// saveVenueData(Venue, VenueData);
-// saveEventDateData(EventDate, eventDateData);
-// saveEventData(Event, EventDate, Venue, eventsData);
+saveVenueData(Venue, VenueData);
+saveEventDateData(EventDate, eventDateData);
+saveEventData(Event, Venue, eventsData);
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
-
-// Connect to MongoDB
-mongoose.connect('mongodb://localhost:27017/eventDB', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-  .then(() => {
-    console.log('Connected to MongoDB');
-  })
-  .catch((error) => {
-    console.log('Error connecting to MongoDB:', error);
-  });
 
 app.get('/all-events', async (req, res) => {
   try {
@@ -302,8 +275,8 @@ app.get('/event/:eventId', async (req, res) => {
   const eventId = req.params.eventId;
 
   try {
-    const event = await Event.find({eventId : eventId});
-    
+    const event = await Event.find({ eventId: eventId });
+
     if (event) {
       res.json(event);
     } else {
@@ -381,8 +354,8 @@ app.get('/venue/:venueId', async (req, res) => {
   const venueId = req.params.venueId;
 
   try {
-    const venue = await Venue.find({venueId : venueId});
-    
+    const venue = await Venue.find({ venueId: venueId });
+
     if (venue) {
       res.json(venue);
     } else {
@@ -394,7 +367,75 @@ app.get('/venue/:venueId', async (req, res) => {
   }
 });
 
+app.post('/login', async (req, res) => {
+  try {
+    const { username, password } = req.body;
 
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ error: 'Invalid username or password' });
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
+      return res.status(401).json({ error: 'Invalid username or password' });
+    }
+
+    const token = jwt.sign({ userId: user._id }, 'secretKey');
+
+    res.json({ token });
+  } catch (error) {
+    console.error('Error during login:', error);
+    res.status(500).json({ error: 'An error occurred during login' });
+  }
+});
+
+app.put('/change-password', async (req, res) => {
+  try {
+    const { userId, currentPassword, newPassword } = req.body;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const passwordMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!passwordMatch) {
+      return res.status(401).json({ error: 'Invalid current password' });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    user.password = hashedPassword;
+    await user.save();
+
+    res.json({ message: 'Password changed successfully' });
+  } catch (error) {
+    console.error('Error changing password:', error);
+    res.status(500).json({ error: 'An error occurred while changing the password' });
+  }
+});
+
+app.post('/create-user', async (req, res) => {
+  try {
+    const { username, password, email } = req.body;
+
+    const existingUser = await User.findOne({ username });
+    if (existingUser) {
+      return res.status(409).json({ error: 'Username already exists' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = new User({ username, password: hashedPassword, email });
+    await newUser.save();
+
+    res.json({ message: 'User created successfully' });
+  } catch (error) {
+    console.error('Error creating user:', error);
+    res.status(500).json({ error: 'An error occurred while creating the user' });
+  }
+});
 
 const port = 8964;
 app.listen(port, () => {

@@ -148,12 +148,12 @@ type: String,
 required: [true, "Email is required"],
 },
 favVenue: {
-type: [mongoose.Schema.Types.ObjectId],
-ref: 'Venue',
+type: [String],
+required: true
 },
 favEvent: {
-type: [mongoose.Schema.Types.ObjectId],
-ref: 'Event',
+type: [String],
+required: true
 }
 });
 

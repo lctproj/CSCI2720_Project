@@ -478,16 +478,16 @@ app.post('/favourite-venue', async (req, res) => {
     }
 
     if (IsAdd) {
-      const isFavorite = user.favVenue.includes(venue._id);
+      const isFavorite = user.favVenue.includes(venue.venueId);
 
       if (isFavorite) {
         return res.status(400).json({ error: 'Venue already in favorites' });
       }
 
-      user.favVenue.push(venue._id);
+      user.favVenue.push(venue.venueId);
     } else {
       // Remove the venue from the user's favorites
-      user.favVenue.pull(venue._id);
+      user.favVenue.pull(venue.venueId);
     }
 
     // Save the updated user
@@ -513,15 +513,15 @@ app.post('/favourite-event', async (req, res) => {
     }
 
     if (IsAdd) {
-      const isFavorite = user.favEvent.includes(event._id);
+      const isFavorite = user.favEvent.includes(event.eventId);
 
       if (isFavorite) {
         return res.status(400).json({ error: 'Venue already in favorites' });
       }
 
-      user.favEvent.push(event._id);
+      user.favEvent.push(event.eventId);
     } else {
-      user.favEvent.pull(event._id);
+      user.favEvent.pull(event.eventId);
     }
 
     await user.save();
@@ -621,25 +621,23 @@ app.post('/admin/create-event', async (req, res) => {
 
 app.post('/admin/change-event', async (req, res) => {
   try {
-    const { username, password, email } = req.body;
+    const { username, eventId, updatedEvent } = req.body;
 
-    const existingUser = await User.findOne({ username });
-    if (existingUser) {
-      return res.status(409).json({ error: 'Username already exists' });
+    if (username !== 'admin') {
+      return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const event = await Event.findOneAndUpdate({ eventId: eventId }, updatedEvent, { new: true });
+    if (!event) {
+      return res.status(404).json({ error: 'Event not found' });
+    }
 
-    const newUser = new User({ username, password: hashedPassword, email });
-    await newUser.save();
-
-    res.status(200).json({ message: 'User created successfully' });
+    res.status(200).json({ message: 'Event updated successfully', event });
   } catch (error) {
-    console.error('Error creating user:', error);
-    res.status(500).json({ error: 'An error occurred while creating the user' });
+    console.error('Error changing event:', error);
+    res.status(500).json({ error: 'An error occurred while changing the event' });
   }
 });
-
 app.post('/admin/delete-event', async (req, res) => {
   try {
     const { username, eventId } = req.body;

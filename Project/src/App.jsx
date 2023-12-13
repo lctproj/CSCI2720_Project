@@ -3,7 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import "./App.css";
 import EventMain from "./assets/EventMain";
 import LocationMain from "./assets/LocationMain";
-import AdminMain from "./assets/AdminMain";
+import AdminEventMain from "./assets/AdminEventMain";
+import AdminVenueMain from "./assets/AdminVenueMain";
 
 class App extends React.Component {
     render() {
@@ -14,7 +15,8 @@ class App extends React.Component {
                     <Route path="/create-account" element={<CreateAccount />} />
                     <Route path="/signin" element={<SignIn />} />
                     <Route path="/adminsignin" element={<AdminSignIn />} />
-                    <Route path="/adminmain" element={<AdminMain />} />
+                    <Route path="/admineventmain" element={<AdminEventMain />} />
+                    <Route path="/adminvenuemain" element={<AdminVenueMain />} />
                     <Route path="/userhome" element={<UserHome />} />
                     <Route path="/changepw" element={<ChangePassword />} />
                     <Route path="/eventmain" element={<EventMain />} />
@@ -313,7 +315,6 @@ class AdminSignIn extends React.Component {
             })
             .catch((error) => {
                 console.error("Error login in:", error);
-                // Handle the error
             });
     };
     render() {

@@ -1,6 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-const cleanseData = require('./cleanseData.js')
 const fs = require('fs')
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
@@ -275,11 +274,81 @@ const saveUserData = (User, UserData) => {
   }
 };
 
-saveVenueData(Venue, VenueData);
-saveEventDateData(EventDate, eventDateData);
-saveEventData(Event, Venue, eventsData);
-saveUserData(User, userData);
+const selectTop10Location = async () => {
+  const results = await Venue.aggregate([
+    {
+      $lookup: {
+        from: "Events",
+        localField: "venueId",
+        foreignField: "venueId",
+        as: "events"
+      }
+    },
+    {
+      $addFields: {
+        eventCount: { $size: "$events" }
+      }
+    },
+    {
+      $sort: { eventCount: -1 }
+    },
+    {
+      $limit: 10
+    },
+    {
+      $project: {
+        _id: 1,
+        latitude: 0,
+        longitude: 0,
+        venueId: 0,
+        venue: 0,
+        events: 0
+      }
+    }
+  ]);
 
+  
+  console.log(results);
+  const Top10LocationId = results.map((venue) => venue._id);
+  await Venue.deleteMany({ _id: { $nin: Top10LocationId } });
+  await Event.deleteMany({ venueId: { $nin: Top10LocationId } });
+
+  const results2 = await Event.aggregate([
+    {
+      $lookup: {
+        from: "EventDates",
+        localField: "eventId",
+        foreignField: "eventId",
+        as: "events"
+      }
+    },
+    {
+      $addFields: {
+        eventCount: { $size: "$events" }
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        eventDates: 1
+      }
+    }
+  ]);
+  
+  console.log(results2);
+  const selectedEvent = results2.map((event) => event.eventId);
+  await EventDate.deleteMany({ _id: { $nin: selectedEvent } });
+};
+
+const preprocessing = async () => {
+  await saveVenueData(Venue, VenueData);
+  await saveEventDateData(EventDate, eventDateData);
+  await saveEventData(Event, Venue, eventsData);
+  await saveUserData(User, userData);
+  await selectTop10Location();
+};
+
+preprocessing();
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
@@ -467,8 +536,7 @@ app.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
     const user = await User.findOne({ username: username });
-    console.log(user);
-    if (Array.isArray(user) && array.length) {
+    if (!user) {
       return res.status(404).json({ error: 'Invalid username or password' });
     }
 
@@ -477,9 +545,6 @@ app.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid username or password' });
     }
 
-    const token = jwt.sign({ userId: user._id }, 'secretKey');
-
-    res.json({ token });
   } catch (error) {
     console.error('Error during login:', error);
     res.status(500).json({ error: 'An error occurred during login' });

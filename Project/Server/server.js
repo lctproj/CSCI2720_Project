@@ -3,7 +3,7 @@ const cors = require('cors');
 const cleanseData = require('./cleanseData.js')
 const fs = require('fs')
 const bodyParser = require('body-parser');
-
+const bcrypt = require(bcrypt);
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://0.0.0.0:27017/CSCI2720Project');
 
@@ -145,6 +145,11 @@ const EventSchema = new mongoose.Schema({
 const Event = mongoose.model("Events", EventSchema);
 
 const UserSchema = new mongoose.Schema({
+  userId: {
+    type: String,
+    required: [true, "user ID is required"],
+    unqiue: true
+  },
   username: {
     type: String,
     required: [true, "Username is required"],
@@ -156,7 +161,7 @@ const UserSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    required: [true, "Password is required"],
+    required: [true, "Email is required"],
   },
   favVenue: {
     type: [mongoose.Schema.Types.ObjectId],
@@ -287,63 +292,10 @@ app.get('/', (req, res) => {
 app.get('/all-events', async (req, res) => {
   try {
     const events = await Event.find();
-    const allEvents =[];
-    for(let event of events){
-      const eventDates = await EventDate.findOne({ eventId: event.eventId });
-
-      const earliestEventDate = eventDates.indate[0].split('T')[0];
-      const latestEventDate = eventDates.indate[eventDates.indate.length - 1].split('T')[0];
-
-      const oneEvent ={
-        "id":event.eventId,
-        "name":event.title,
-        "earliestDate":earliestEventDate,
-        "latestDate":latestEventDate,
-        "price":(event.prices[0]===null) ? "0" : event.prices.sort((a, b) => a - b).toString() 
-      }
-
-      allEvents.push(oneEvent);
-    }
-    res.json(allEvents);
+    res.json(events);
   } catch (error) {
     console.log('Error retrieving events:', error);
     res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
-app.post('favorite-events',  async(req, res)=> {
-  const {id,username} = req.body;
-
-  try{
-    //Find user given username
-    const user = await User.findOne({username: username}).populate('favEvents');
-
-    //Find event given ID
-    const newFavEvent = await Event.find({eventId:id});
-
-    //Add event to list of favorite ID of that particular user
-    user.favEvents.push(newFavEvent._id);
-  }catch(e){
-    console.log('Error adding to favorites:', e);
-    res.sendStatus(500);
-  }
-});
-
-app.delete('favorite-events',  async(req, res)=> {
-  const {id,username} = req.body;
-
-  try{
-    //Find user given username
-    const user = await User.findOne({username: username}).populate('favEvents');
-
-    //Find event given ID
-    const deletingEvent = await Event.find({eventId:id});
-
-    //filter out event with the same _id as the deletingEvent
-    user.favEvents = user.favEvents.filter(favEvent => !favEvent._id.equals(deletingEvent._id));  
-  }catch(e){
-    console.log('Error deleting from favorites:', e);
-    res.sendStatus(500);
   }
 });
 
@@ -513,7 +465,29 @@ app.post('/create-user', async (req, res) => {
   }
 });
 
+app.post('/add-favourite-venue', async (req, res) => {
+  try {
+    const { userId, venueId } = req.body;
 
+    // Find the user by userId
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Add the venueId to the user's favorite venues
+    user.favVenue.push(venueId);
+
+    // Save the updated user
+    await user.save();
+
+    res.status(200).json({ message: 'Favorite venue added successfully' });
+  } catch (error) {
+    console.error('Error adding favorite venue:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 const port = 8964;
 app.listen(port, () => {

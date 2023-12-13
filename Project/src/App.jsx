@@ -565,7 +565,6 @@ class ChangePassword extends React.Component {
     render() {
         return (
             <>
-            <pre>{JSON.stringify(this.state, null, 2)}</pre>
             <form class="form" onSubmit = {this.handleSubmit}>
                 <Header header="Change Password" />
                 <FlexColumn

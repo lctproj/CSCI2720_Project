@@ -39,13 +39,24 @@ class CreateAccount extends React.Component {
           email: '',
           password: '',
           confirmPassword: '',
+          message: '',
         };
       }
     
 
     handleChange = (event) => {
-    this.setState({ [event.target.name]: event.target.value });
-    };
+        const { name, value } = event.target;
+        this.setState({ [name]: value }, () => {
+          if (!this.validatePassword(this.state.password)) {
+            this.setState({
+              message:
+                "Password must have a minimum length of 8 characters, contain at least one uppercase letter, one lowercase letter, one numeric character, and one special character.",
+            });
+          } else {
+            this.setState({ message: "" });
+          }
+        });
+      };
     
     handleSubmit = (event) => {
         event.preventDefault();
@@ -62,6 +73,10 @@ class CreateAccount extends React.Component {
             return;
         }
 
+        if(!this.validatePassword(this.state.password)) {
+            alert("Password format invalid");
+            return;
+        }
         const userData = { username, email, password };
     
         fetch('http://localhost:8964/create-user', {
@@ -98,6 +113,22 @@ class CreateAccount extends React.Component {
     return emailRegex.test(email);
     };
 
+    validatePassword = (password) => {
+        // Password constraints
+        const lengthRegex = /.{8,}/; // At least 8 characters
+        const uppercaseRegex = /[A-Z]/; // At least one uppercase letter
+        const lowercaseRegex = /[a-z]/; // At least one lowercase letter
+        const numericRegex = /\d/; // At least one numeric character
+        const specialCharRegex = /[^A-Za-z0-9]/; // At least one special character
+    
+        return (
+          lengthRegex.test(password) &&
+          uppercaseRegex.test(password) &&
+          lowercaseRegex.test(password) &&
+          numericRegex.test(password) &&
+          specialCharRegex.test(password)
+        );
+      };
       
     render() {
         return (
@@ -132,6 +163,7 @@ class CreateAccount extends React.Component {
                     handleChange={this.handleChange}
                     type = "password"
                 />
+                <p style={{ color: 'red' }}>{this.state.message}</p>
                 <div class="flex-row">
                     <Link to="/signin" class="span">
                         Sign In
@@ -512,13 +544,24 @@ class ChangePassword extends React.Component {
           password: '',
           newPassword: '',
           confirmPassword: '',
+          message:'',
         };
       }
     
 
-    handleChange = (event) => {
-    this.setState({ [event.target.name]: event.target.value });
-    };
+      handleChange = (event) => {
+        const { name, value } = event.target;
+        this.setState({ [name]: value }, () => {
+          if (!this.validatePassword(this.state.newPassword)) {
+            this.setState({
+              message:
+                "Password must have a minimum length of 8 characters, contain at least one uppercase letter, one lowercase letter, one numeric character, and one special character.",
+            });
+          } else {
+            this.setState({ message: "" });
+          }
+        });
+      };
     
     handleSubmit = (event) => {
         event.preventDefault();
@@ -531,6 +574,11 @@ class ChangePassword extends React.Component {
             alert("Passwords do not match");
             return;
           }
+        
+        if(!this.validatePassword(this.state.newPassword)) {
+            alert("Password format invalid");
+            return;
+        }
 
         fetch('http://localhost:8964/change-password', {
           method: 'PUT',
@@ -562,6 +610,24 @@ class ChangePassword extends React.Component {
 
           
       };
+
+      validatePassword = (password) => {
+        // Password constraints
+        const lengthRegex = /.{8,}/; // At least 8 characters
+        const uppercaseRegex = /[A-Z]/; // At least one uppercase letter
+        const lowercaseRegex = /[a-z]/; // At least one lowercase letter
+        const numericRegex = /\d/; // At least one numeric character
+        const specialCharRegex = /[^A-Za-z0-9]/; // At least one special character
+    
+        return (
+          lengthRegex.test(password) &&
+          uppercaseRegex.test(password) &&
+          lowercaseRegex.test(password) &&
+          numericRegex.test(password) &&
+          specialCharRegex.test(password)
+        );
+      };
+
     render() {
         return (
             <>
@@ -588,6 +654,7 @@ class ChangePassword extends React.Component {
                     name = "confirmPassword"
                     type = "password"
                 />
+                <p style={{ color: 'red' }}>{this.state.message}</p>
                 <div class="flex-row">
                     <Link to="/userhome" class="span">
                         back

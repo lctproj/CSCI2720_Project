@@ -507,11 +507,98 @@ app.post('/navbar-events', async (req,res)=>{
 app.get('/all-venues', async (req, res) => {
   try {
     const venues = await Venue.find();
-    res.json(venues);
+    const allVenues =[];
+    for(let venue of venues){
+      const events= await Event.find({venue:venue._id});
+
+      const oneVenue ={
+        "id":venue.venueId,
+        "name":venue.venue,
+        "eventnum":events.length
+      }
+
+      allVenues.push(oneVenue);
+    }
+    res.json(allVenues);
   } catch (error) {
     console.log('Error retrieving venues:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
+});
+
+app.post('favorite-venues',  async(req, res)=> {
+  const {id,username} = req.body;
+
+  try{
+    //Find user given username
+    const user = await User.findOne({username: username}).populate('favVenues');
+
+    //Find event given ID
+    const newFavVenue = await Venue.find({venueId:id});
+
+    //Add event to list of favorite ID of that particular user
+    user.favVenue.push(newFavVenue._id);
+  }catch(e){
+    console.log('Error adding to favorites:', e);
+    res.sendStatus(500);
+  }
+});
+
+app.delete('favorite-events',  async(req, res)=> {
+  const {id,username} = req.body;
+
+  try{
+    //Find user given username
+    const user = await User.findOne({username: username}).populate('favVenues');
+
+    //Find event given ID
+    const deletingVenue = await Venue.find({venueId:id});
+
+    //filter out event with the same _id as the deletingEvent
+    user.favVenue = user.favVenue.filter(favVenue => !favVenue._id.equals(deletingVenue._id));  
+  }catch(e){
+    console.log('Error deleting from favorites:', e);
+    res.sendStatus(500);
+  }
+});
+
+app.post('/navbar-venues', async (req,res)=>{
+  const {name,maxnum} = req.body;
+
+  let query={}
+
+  if(name){
+    query.title = { $regex: name, $options: 'i' }
+  }
+
+  try{
+    const venues = await Venue.find (query);
+    let filteredVenues = [];
+
+    for (let venue of venues) {
+      const events= await Event.find({venue:venue._id});
+
+      const eventnum =events.length;
+      if (maxnum && eventnum < maxnum) {
+        continue;
+      }
+
+      let venueObj ={
+        "venueId":venue.venueId,
+        "name": venue.venue,
+        "eventnum":eventnum
+      };
+
+      filteredVenues.push(venueObj);
+    }
+      res.json(filteredVenues);
+      return;
+    
+  }catch(err){
+    console.error("Error fetching relevant venues", err);
+    res.status(500).json({ message: "Error fetching relevant venues" });
+  }
+
 });
 
 app.get('/venue/:venueId', async (req, res) => {

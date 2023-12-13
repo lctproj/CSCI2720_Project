@@ -80,7 +80,7 @@ export default function EventCard({ id, eventname, earliestdate, latestdate, pri
     return (
         <div className="event-card">
             <div className="event-element">
-                <Link to = {`/eventmain/eventId=${id}`}><p>{eventname}</p></Link>
+                <Link to = {`/event/${id}`}><p>{eventname}</p></Link>
             </div>
             <div className="event-element"><p>{earliestdate}</p></div>
             <div className="event-element"><p>{latestdate}</p></div>

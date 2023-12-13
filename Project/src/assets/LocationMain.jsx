@@ -97,25 +97,25 @@ export default function LocationMain (){
           let aValue, bValue;
   
           switch (category) {
-            case 'price':
+            case 'eventnum':
               aValue = a.eventnum; 
               bValue = b.eventnum; 
               break;
             case 'name':
             default:
-              aValue = a.name;
-              bValue = b.name;
+              aValue = a.name || '';
+              bValue = b.name || '';
               break;
           }
   
           if (ascending) {
             if(typeof aValue !== 'number'){
-              return a.name.localeCompare(b.name);
+              return aValue.localeCompare(bValue);
             }
             return aValue - bValue;
           } else {
             if(typeof aValue !== 'number'){
-              return b.name.localeCompare(a.name);
+              return bValue.localeCompare(aValue);
             }
             return bValue - aValue;
           }
@@ -133,13 +133,13 @@ export default function LocationMain (){
              searchParams={searchParams} onResult={handleResults}/>
             <HeaderBar handleCategory={handleCategory} category={category} ascending={ascending} />
             {display.length === 0 ? (
-            <div className="event-element">No results...</div>
+            <div className="location-element">No results...</div>
             ) : (
-            display.map((event) => {
-              console.log('LocationCard props:', Math.max(...event.price));
+            display.map((location) => {
+              console.log('LocationCard props:', location.eventnum);
             return (
                 <LocationCard
-                key={location.locId}
+                key={location.venueId}
                 locationname={location.name}
                 number={location.eventnum}
                 />);

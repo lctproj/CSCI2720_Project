@@ -5,7 +5,7 @@ import {Link} from 'react-router-dom';
 
 export default function EventCard({ id, eventname, earliestdate, latestdate, price, username }) {
     const [starred, setStarred] = useState(false);
-    const [isFetched, setIsFetched] = useState(false);
+   /* const [isFetched, setIsFetched] = useState(false);
 
     useEffect(() => {
         const fetchFavorites = async () => {
@@ -32,7 +32,7 @@ export default function EventCard({ id, eventname, earliestdate, latestdate, pri
 
         fetchFavorites();
     }, [id, username]);
-
+*/
     const handleStar = async () => {     
         //extract event details and format into JSON
         const favoriteEvent ={

@@ -3,6 +3,7 @@ import "./locationmain.css";
 import "../App.css";
 import { Link } from 'react-router-dom';
 import { IoSearch } from "react-icons/io5";
+import { FaRegUserCircle } from "react-icons/fa";
 
 
 const NameFilter = ({onInputChange}) => {
@@ -33,7 +34,7 @@ const NumberSlider = ({onNumberChange}) =>{
     return(
         <div className='number-slider'>
             <label htmlFor="numberrange" className="flex flex-col">Number of events (less than {upperBound}) </label>
-            <input type="range" min="0" max="40" id="numberrange"  onInput={handleNumberChange}/>
+            <input type="range" min="0" max="20" id="numberrange"  onInput={handleNumberChange}/>
         </div>
     )
 }
@@ -68,6 +69,7 @@ const sendSearchParams = async (params, onResult) => {
         throw new Error(`HTTP error! status: ${response.status}`);
       } else {
         const data = await response.json();
+        console.log(data);
         onResult(data);
       }
     } catch (error) {
@@ -82,15 +84,18 @@ export default function LocationFilterBar({onInputChange,onNumberChange, searchP
         };
     
     return(
-        
-
         <div className= "location-filter-bar">
             <NameFilter onInputChange={onInputChange}/>
             <NumberSlider onNumberChange={onNumberChange} />
             <SearchEvents  onClick = {handleSearchClick} onResult={onResult}/>
             <GoToEvents />
-            <div>
-                <p id="username">Username</p>
+            <div className="go-to-userhome">
+            <Link to="/userhome" style={{ display: "flex", alignItems: "center" }}>
+            <div style={{ fontSize: "1.5rem", marginRight: "0.5rem" }}>
+            <FaRegUserCircle />
+            </div>
+            <span>{localStorage.getItem("user")}</span>
+            </Link>
             </div>
         </div>
     )

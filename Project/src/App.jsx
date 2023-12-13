@@ -37,17 +37,28 @@ class CreateAccount extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            username: "",
-            email: "",
-            password: "",
-            confirmPassword: "",
+          username: '',
+          email: '',
+          password: '',
+          confirmPassword: '',
+          message: '',
         };
     }
 
     handleChange = (event) => {
-        this.setState({ [event.target.name]: event.target.value });
-    };
-
+        const { name, value } = event.target;
+        this.setState({ [name]: value }, () => {
+          if (!this.validatePassword(this.state.password)) {
+            this.setState({
+              message:
+                "Password must have a minimum length of 8 characters, contain at least one uppercase letter, one lowercase letter, one numeric character, and one special character.",
+            });
+          } else {
+            this.setState({ message: "" });
+          }
+        });
+      };
+    
     handleSubmit = (event) => {
         event.preventDefault();
 
@@ -63,6 +74,10 @@ class CreateAccount extends React.Component {
             return;
         }
 
+        if(!this.validatePassword(this.state.password)) {
+            alert("Password format invalid");
+            return;
+        }
         const userData = { username, email, password };
 
         fetch("http://localhost:8964/create-user", {
@@ -72,24 +87,26 @@ class CreateAccount extends React.Component {
             },
             body: JSON.stringify(userData),
         })
-            .then((response) => {
-                if (response.status == 409) {
-                    alert("Username already used");
-                } else if (response.status == 200) {
-                    alert("User created successfully");
-                    window.location.href = "/signin";
-                } else {
-                    alert("An error occurred while creating the user");
-                }
-            })
-            .then((data) => {
-                console.log(data);
-            })
-            .catch((error) => {
-                console.log("Error creating user:", error);
-                // Handle the error
-            });
-    };
+          .then((response) => {
+            if (response.status == 409) {
+                alert("Username has been used");
+            } else if (response.status == 200) {
+                alert("User created successfully");
+                window.location.href = "/signin";
+            } else {
+                alert("An error occurred while creating the user");
+            }
+          })
+          .then(data => {
+            console.log(data);
+          })
+          .catch(error => {
+            console.log('Error creating user:', error);
+            // Handle the error
+          });
+
+
+      };
 
     validateEmail = (email) => {
         // Regular expression for email validation
@@ -97,54 +114,71 @@ class CreateAccount extends React.Component {
         return emailRegex.test(email);
     };
 
+
+    validatePassword = (password) => {
+        // Password constraints
+        const lengthRegex = /.{8,}/; // At least 8 characters
+        const uppercaseRegex = /[A-Z]/; // At least one uppercase letter
+        const lowercaseRegex = /[a-z]/; // At least one lowercase letter
+        const numericRegex = /\d/; // At least one numeric character
+        const specialCharRegex = /[^A-Za-z0-9]/; // At least one special character
+    
+        return (
+          lengthRegex.test(password) &&
+          uppercaseRegex.test(password) &&
+          lowercaseRegex.test(password) &&
+          numericRegex.test(password) &&
+          specialCharRegex.test(password)
+        );
+      };
+      
     render() {
         return (
             <>
-                <form class="form" onSubmit={this.handleSubmit}>
-                    <Header header="Create Account" />
-                    <FlexColumn
-                        label="Username"
-                        placeholder="Enter your username"
-                        name="username"
-                        handleChange={this.handleChange}
-                        type="text"
-                    />
-                    <FlexColumn
-                        label="Email"
-                        placeholder="Enter your email"
-                        name="email"
-                        handleChange={this.handleChange}
-                        type="text"
-                    />
-                    <FlexColumn
-                        label="Password"
-                        placeholder="Enter your password"
-                        name="password"
-                        handleChange={this.handleChange}
-                        type="password"
-                    />
-                    <FlexColumn
-                        label="Confirmed Password"
-                        placeholder="Enter your password again"
-                        name="confirmPassword"
-                        handleChange={this.handleChange}
-                        type="password"
-                    />
-                    <div class="flex-row">
-                        <Link to="/signin" class="span">
-                            Sign In
-                        </Link>
+            <form class="form" onSubmit={this.handleSubmit}>
+                <Header header="Create Account" />
+                <FlexColumn
+                    label="Username"
+                    placeholder="Enter your username"
+                    name = "username"
+                    handleChange={this.handleChange}
+                    type = "text"
+                />
+                <FlexColumn
+                    label="Email"
+                    placeholder="Enter your email"
+                    name = "email"
+                    handleChange={this.handleChange}
+                    type = "text"
+                />
+                <FlexColumn
+                    label="Password"
+                    placeholder="Enter your password"
+                    name = "password"
+                    handleChange={this.handleChange}
+                    type = "password"
+                />
+                <FlexColumn
+                    label="Confirmed Password"
+                    placeholder="Enter your password again"
+                    name = "confirmPassword"
+                    handleChange={this.handleChange}
+                    type = "password"
+                />
+                <p style={{ color: 'red' }}>{this.state.message}</p>
+                <div class="flex-row">
+                    <Link to="/signin" class="span">
+                        Sign In
+                    </Link>
 
-                        <button class="button-submit" type="submit">
-                            Next
-                        </button>
-                    </div>
-                    <div class="flex-row">
-                        <Link to="/adminsignin" class="span">
-                            Admin Sign In
-                        </Link>
-                    </div>
-                </form>
+                    <button class="button-submit" type = "submit">Next</button>
+                </div>
+                <div class="flex-row">
+                    <Link to="/adminsignin" class="span">
+                        Admin Sign In
+                    </Link>
+                </div>
+            </form>
             </>
         );
     }
@@ -570,17 +604,28 @@ class ChangePassword extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            username: localStorage.getItem("user"),
-            password: "",
-            newPassword: "",
-            confirmPassword: "",
+          username: localStorage.getItem('user'),
+          password: '',
+          newPassword: '',
+          confirmPassword: '',
+          message:'',
         };
     }
 
-    handleChange = (event) => {
-        this.setState({ [event.target.name]: event.target.value });
-    };
-
+      handleChange = (event) => {
+        const { name, value } = event.target;
+        this.setState({ [name]: value }, () => {
+          if (!this.validatePassword(this.state.newPassword)) {
+            this.setState({
+              message:
+                "Password must have a minimum length of 8 characters, contain at least one uppercase letter, one lowercase letter, one numeric character, and one special character.",
+            });
+          } else {
+            this.setState({ message: "" });
+          }
+        });
+      };
+    
     handleSubmit = (event) => {
         event.preventDefault();
 
@@ -591,69 +636,96 @@ class ChangePassword extends React.Component {
         if (newPassword !== confirmPassword) {
             alert("Passwords do not match");
             return;
+          }
+        
+        if(!this.validatePassword(this.state.newPassword)) {
+            alert("Password format invalid");
+            return;
         }
 
-        fetch("http://localhost:8964/change-password", {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(userData),
+        fetch('http://localhost:8964/change-password', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(userData),
         })
-            .then((response) => {
-                if (response.status == 404) {
-                    alert("User not found");
-                } else if (response.status == 200) {
-                    alert("Password changed successfully");
-                    window.location.href = "/eventmain";
-                } else if (response.status == 401) {
-                    alert("Invalid current password");
-                } else {
-                    alert("Unknown error");
-                }
-            })
-            .then((data) => {})
-            .catch((error) => {
-                console.error("Error in changing password:", error);
-                // Handle the error
-            });
-    };
+          .then((response)=> {
+
+            if (response.status == 404) {
+                alert("User not found");
+            } else if (response.status == 200) {
+                alert("Password changed successfully");
+                window.location.href = "/eventmain";
+            } else if (response.status == 401) {
+                alert("Invalid current password");
+            } else {
+                alert("Unknown error");
+            }
+          })
+          .then(data => {
+     
+          })
+          .catch(error => {
+            console.error('Error in changing password:', error);
+            // Handle the error
+          });
+
+          
+      };
+
+      validatePassword = (password) => {
+        // Password constraints
+        const lengthRegex = /.{8,}/; // At least 8 characters
+        const uppercaseRegex = /[A-Z]/; // At least one uppercase letter
+        const lowercaseRegex = /[a-z]/; // At least one lowercase letter
+        const numericRegex = /\d/; // At least one numeric character
+        const specialCharRegex = /[^A-Za-z0-9]/; // At least one special character
+    
+        return (
+          lengthRegex.test(password) &&
+          uppercaseRegex.test(password) &&
+          lowercaseRegex.test(password) &&
+          numericRegex.test(password) &&
+          specialCharRegex.test(password)
+        );
+      };
+
     render() {
         return (
             <>
-                <form class="form" onSubmit={this.handleSubmit}>
-                    <Header header="Change Password" />
-                    <FlexColumn
-                        label="Old Password"
-                        placeholder="Enter your old password"
-                        handleChange={this.handleChange}
-                        name="password"
-                        type="password"
-                    />
-                    <FlexColumn
-                        label="New Password"
-                        placeholder="Enter your new password"
-                        handleChange={this.handleChange}
-                        name="newPassword"
-                        type="password"
-                    />
-                    <FlexColumn
-                        label="Confirm New Password"
-                        placeholder="Enter your new password again"
-                        handleChange={this.handleChange}
-                        name="confirmPassword"
-                        type="password"
-                    />
-                    <div class="flex-row">
-                        <Link to="/userhome" class="span">
-                            back
-                        </Link>
-                        <button class="button-submit" type="submit">
-                            Confirm
-                        </button>
-                    </div>
-                    <div class="flex-row"></div>
-                </form>
+            <form class="form" onSubmit = {this.handleSubmit}>
+                <Header header="Change Password" />
+                <FlexColumn
+                    label="Old Password"
+                    placeholder="Enter your old password"
+                    handleChange={this.handleChange}
+                    name = "password"
+                    type = "password"
+                />
+                <FlexColumn
+                    label="New Password"
+                    placeholder="Enter your new password"
+                    handleChange={this.handleChange}
+                    name = "newPassword"
+                    type = "password"
+                />
+                <FlexColumn
+                    label="Confirm New Password"
+                    placeholder="Enter your new password again"
+                    handleChange={this.handleChange}
+                    name = "confirmPassword"
+                    type = "password"
+                />
+                <p style={{ color: 'red' }}>{this.state.message}</p>
+                <div class="flex-row">
+                    <Link to="/userhome" class="span">
+                        Back
+                    </Link>
+                    <button class="button-submit" type="submit">Confirm</button>
+                </div>
+                <div class="flex-row"></div>
+            </form>
             </>
         );
     }

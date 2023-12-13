@@ -145,11 +145,6 @@ const EventSchema = new mongoose.Schema({
 const Event = mongoose.model("Events", EventSchema);
 
 const UserSchema = new mongoose.Schema({
-  userId: {
-    type: String,
-    required: [true, "user ID is required"],
-    unqiue: true
-  },
   username: {
     type: String,
     required: [true, "Username is required"],

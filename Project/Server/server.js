@@ -625,9 +625,9 @@ app.put('/change-password', async (req, res) => {
   try {
     const { username, password, newPassword } = req.body;
 
-    const user = await User.find({ username: username });
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+    const existingUser = await User.find({ username: username });
+    if (existingUser) {
+      return res.status(409).json({ error: 'Username already exists' });
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);

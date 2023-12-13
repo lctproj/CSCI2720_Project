@@ -223,6 +223,9 @@ console.log(VenueData);
 const eventDateDataPath = './Data/eventDates.json';
 const eventDateData = readJsonFromFile(eventDateDataPath);
 console.log(eventDateData);
+const userDataPath = './Data/users.json';
+const userData = readJsonFromFile(userDataPath);
+console.log(userData);
 
 const saveVenueData = (Venue, VenueData) => {
   try {
@@ -261,9 +264,21 @@ const saveEventData = async (Event, Venue, eventsData) => {
   }
 };
 
+const saveUserData = (User, UserData) => {
+  try {
+    for (const element of UserData) {
+      const user = new User(element);
+      user.save();
+    }
+  } catch (error) {
+    console.log("Failed to save new user", error);
+  }
+};
+
 saveVenueData(Venue, VenueData);
 saveEventDateData(EventDate, eventDateData);
 saveEventData(Event, Venue, eventsData);
+saveUserData(User, userData);
 
 app.get('/', (req, res) => {
   res.send('Hello World!');

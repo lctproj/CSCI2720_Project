@@ -466,8 +466,9 @@ app.post('/login', async (req, res) => {
   try {
     const { username, password } = req.body;
 
-    const user = await User.find({ username: username });
-    if (!user) {
+    const user = await User.findOne({ username: username });
+    console.log(user);
+    if (Array.isArray(user) && array.length) {
       return res.status(404).json({ error: 'Invalid username or password' });
     }
 
@@ -487,7 +488,7 @@ app.post('/login', async (req, res) => {
 
 app.put('/change-password', async (req, res) => {
   try {
-    const { password, newPassword } = req.body;
+    const { username, password, newPassword } = req.body;
 
     const user = await User.find({username: username});
     if (!user) {

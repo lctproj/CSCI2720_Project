@@ -101,6 +101,16 @@ const removeRedundantE = (data) => {
     return data;
 };
 
+const readJsonFromFile = (filePath) => {
+    try {
+      const jsonData = fs.readFileSync(filePath, 'utf8');
+      return JSON.parse(jsonData);
+    } catch (error) {
+      console.error('Error reading JSON file:', error);
+      return null;
+    }
+};
+
 const cleanseData = (jsonData) => {
     let data;
     switch (Object.keys(jsonData)[0]) {
@@ -120,7 +130,7 @@ const cleanseData = (jsonData) => {
             data = jsonData.venues.venue;
             data = venueIdCleansing(data);
             data = removeChineseData(data);
-            data = removeRedundantE(data)
+            data = removeRedundantE(data);
             break;
         default:
             break;
@@ -166,10 +176,8 @@ const writeAllJSON = async () => {
     });
 };
 
-const initDatabase = () => {
+export const initDatabase = async () => {
     writeAllJSON()
-    .then(() => console.log('Tasks completed successfully.'))
     .catch((error) => console.error('Error:', error));
 };
 
-initDatabase();

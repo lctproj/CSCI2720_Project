@@ -189,7 +189,7 @@ class SignIn extends React.Component {
             }
           })
           .then(data => {
-            const user = JSON.stringify(data.username);
+            const user = data.username;
             localStorage.setItem('user', user);
             window.location.href = "/eventmain";
           })
@@ -508,7 +508,7 @@ class ChangePassword extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-          username: '',
+          username: localStorage.getItem('user'),
           password: '',
           newPassword: '',
           confirmPassword: '',
@@ -518,7 +518,6 @@ class ChangePassword extends React.Component {
 
     handleChange = (event) => {
     this.setState({ [event.target.name]: event.target.value });
-    this.setState({username: localStorage.getItem('user')});
     };
     
     handleSubmit = (event) => {
@@ -527,7 +526,7 @@ class ChangePassword extends React.Component {
         const { username, password, newPassword, confirmPassword} = this.state;
     
         const userData = { username, password, newPassword};
-        
+        console.log(userData);
         if (newPassword !== confirmPassword) {
             alert("Passwords do not match");
             return;
@@ -565,26 +564,28 @@ class ChangePassword extends React.Component {
       };
     render() {
         return (
+            <>
+            <pre>{JSON.stringify(this.state, null, 2)}</pre>
             <form class="form" onSubmit = {this.handleSubmit}>
                 <Header header="Change Password" />
                 <FlexColumn
                     label="Old Password"
                     placeholder="Enter your old password"
-                    onChange = {this.handleChange}
+                    handleChange={this.handleChange}
                     name = "password"
                     type = "password"
                 />
                 <FlexColumn
                     label="New Password"
                     placeholder="Enter your new password"
-                    onChange = {this.handleChange}
+                    handleChange={this.handleChange}
                     name = "newPassword"
                     type = "password"
                 />
                 <FlexColumn
                     label="Confirm New Password"
                     placeholder="Enter your new password again"
-                    onChange = {this.handleChange}
+                    handleChange={this.handleChange}
                     name = "confirmPassword"
                     type = "password"
                 />
@@ -596,6 +597,7 @@ class ChangePassword extends React.Component {
                 </div>
                 <div class="flex-row"></div>
             </form>
+            </>
         );
     }
 }

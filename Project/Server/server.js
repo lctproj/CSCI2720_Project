@@ -624,21 +624,17 @@ app.post('/login', async (req, res) => {
 app.put('/change-password', async (req, res) => {
   try {
     const { username, password, newPassword } = req.body;
-
+    console.log(req.body);
     const existingUser = await User.findOne({ username: username });
-    if (existingUser) {
-      return res.status(409).json({ error: 'Username already exists' });
-    }
-
-    const passwordMatch = await bcrypt.compare(password, user.password);
+    const passwordMatch = await bcrypt.compare(password, existingUser.password);
     if (!passwordMatch) {
       return res.status(401).json({ error: 'Invalid current password' });
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    user.password = hashedPassword;
-    await user.save();
+    existingUser.password = hashedPassword;
+    await existingUser.save();
 
     res.json({ message: 'Password changed successfully' });
   } catch (error) {

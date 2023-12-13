@@ -290,7 +290,7 @@ const selectTop10Location = async () => {
       }
     },
     {
-      $sort: { eventCount: -1 }
+      $sort: { eventCount: -1, venue: 1 }
     },
     {
       $limit: 10
@@ -307,14 +307,11 @@ const selectTop10Location = async () => {
     }
   ]);
 
-
-  console.log(venueResults);
   const Top10LocationId = venueResults.map((venue) => venue._id);
   await Venue.deleteMany({ _id: { $nin: Top10LocationId } });
   await Event.deleteMany({ venueId: { $nin: Top10LocationId } });
 
   const eventResults = await Event.find({});
-  console.log(eventResults);
   const selectedEvent = eventResults.map((event) => event.eventId);
   await EventDate.deleteMany({ eventId: { $nin: selectedEvent } });
 };

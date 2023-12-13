@@ -71,9 +71,16 @@ class CreateAccount extends React.Component {
           },
           body: JSON.stringify(userData),
         })
-          .then(response => response.json())
+          .then((response) => {
+            if (response.status == 409) {
+                alert("Username already used");
+            } else if (response.status == 200) {
+                alert("User created successfully");
+            } else {
+                alert("An error occurred while creating the user");
+            }
+          })
           .then(data => {
-            // Handle the response from the server
             console.log(data);
           })
           .catch(error => {
@@ -194,6 +201,7 @@ class SignIn extends React.Component {
       };
     render() {
         return (
+            <>
             <form class="form" onSubmit = {this.handleSubmit}>
                 <Header header="Sign In" />
                 <FlexColumn
@@ -201,6 +209,7 @@ class SignIn extends React.Component {
                     placeholder="Enter your username"
                     handleChange={this.handleChange}
                     type = "text"
+                    name = "username"
                 />
                 <br></br>
                 <FlexColumn
@@ -208,6 +217,7 @@ class SignIn extends React.Component {
                     placeholder="Enter your password"
                     handleChange={this.handleChange}
                     type = "password"
+                    name = "password"
                 />
                 <div class="flex-row">
                     <Link to="/create-account" class="span">
@@ -222,6 +232,7 @@ class SignIn extends React.Component {
                     </Link>
                 </div>
             </form>
+            </>
         );
     }
 }

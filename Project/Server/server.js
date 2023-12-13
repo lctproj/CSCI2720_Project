@@ -469,6 +469,8 @@ app.post('/login', async (req, res) => {
 
     const user = await User.findOne({ username: username });
     console.log(user);
+    username_to_front = user.username;
+    console.log(username_to_front);
     if (Array.isArray(user) && array.length) {
       return res.status(404).json({ error: 'Invalid username or password' });
     }
@@ -479,7 +481,7 @@ app.post('/login', async (req, res) => {
     }
 
 
-    res.json({ user: user });
+    res.status(200).json({username: username_to_front});
 
   } catch (error) {
     console.error('Error during login:', error);

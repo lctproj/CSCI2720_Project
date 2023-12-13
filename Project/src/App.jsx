@@ -76,6 +76,7 @@ class CreateAccount extends React.Component {
                 alert("Username already used");
             } else if (response.status == 200) {
                 alert("User created successfully");
+                window.location.href = "/signin";
             } else {
                 alert("An error occurred while creating the user");
             }
@@ -88,7 +89,7 @@ class CreateAccount extends React.Component {
             // Handle the error
           });
 
-          window.location.href = "/signin";
+
       };
 
     validateEmail = (email) => {
@@ -177,20 +178,20 @@ class SignIn extends React.Component {
           body: JSON.stringify(userData),
         })
           .then((response)=> {
-                if (response) {
-                    return response.json();
-                } else if (response.status == 401) {
-                    alert("Invalid username or password");
-                } else {
-                    alert ("Unknown error");
-                }
+
+            if (response.status == 401 || response.status == 404) {
+                alert("Invalid username or password");
+            } else if (response.status == 200) {
+                alert("Login successfully");
+                return response.json();
+            } else {
+                alert("Unknown error");
+            }
           })
           .then(data => {
-            // Handle the response from the server
-            const user = JSON.stringify(data.user.username);
-            console.log(user);
+            const user = JSON.stringify(data.username);
             localStorage.setItem('user', user);
-            // window.location.href = "/eventmain";
+            window.location.href = "/eventmain";
           })
           .catch(error => {
             console.error('Error login in:', error);

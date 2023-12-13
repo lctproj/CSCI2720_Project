@@ -98,24 +98,26 @@ export default function EventMain (){
     }
 
     
-        const fetchInitial = async () => {
-          try {
-            const response = await fetch('http://localhost:8964/all-events',{
-                method:'GET'
-            }); 
-            const data = await response.json();
-           // console.log('Fetched data:', data); 
-            setFetched(true); 
-            setDisplay(data);
-          } catch (error) {
-            console.error('Failed to fetch events:', error);
-          }
-        };
-    
-        if(!fetched){
-          fetchInitial();
+    useEffect(() => {
+      const fetchInitial = async () => {
+        try {
+          const response = await fetch('http://localhost:8964/all-events', {
+            method: 'GET'
+          });
+          const data = await response.json();
+          // console.log('Fetched data:', data);
+          setFetched(true);
+          setDisplay(data);
+        } catch (error) {
+          console.error('Failed to fetch events:', error);
         }
-
+      };
+    
+      if (!fetched) {
+        fetchInitial();
+      }
+    }, [fetched]); 
+ 
         
     useEffect(() => {
         if (fetched) {
@@ -157,7 +159,7 @@ export default function EventMain (){
     
           setDisplay(sortedResults);
         }
-      }, [category, ascending,fetched,display]);
+      }, [category, ascending]);
     
 
     return(
@@ -169,18 +171,18 @@ export default function EventMain (){
             {display.length === 0 ? (
             <div className="event-element">No results...</div>
             ) : (
-              
-            display.map((event) => {
-              console.log('EventCard props:', Math.max(...event.price));  
-              return(
-                <EventCard
-                key={event.eventId}
-                eventname={event.name}
-                earliestdate={event.earliestDate}
-                latestdate={event.latestDate}
-                price={event.price}
-                />);
-            })
+             
+              display.map((event) => {
+                return(
+                  <EventCard
+                  key={event.id}
+                  eventname={event.name}
+                  earliestdate={event.earliestDate}
+                  latestdate={event.latestDate}
+                  price={event.price}
+                  />);
+              })
+            
         )}
         </div>
     );

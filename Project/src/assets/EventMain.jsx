@@ -24,7 +24,7 @@ const HeaderBar = ({handleCategory,category, ascending}) =>{
                 <ArrowSign value="latestdate" category={category} ascending={ascending} />
             </div>
             <div className="header-element" onClick={() => handleCategory('price')}>
-                <p id="price">Price</p>
+                <p id="price">Price(s) (in HKD)</p>
                 <ArrowSign value="price" category={category} ascending={ascending} />
             </div>
             <div className="header-element">
@@ -55,7 +55,7 @@ export default function EventMain (){
     const [display, setDisplay] = useState([]);
 
     //sorting
-    const [category ,setCategory] = useState('');
+    const [category ,setCategory] = useState('eventname');
     const [ascending,setAscending] = useState(true);
 
     //input-related event handlers
@@ -82,20 +82,20 @@ export default function EventMain (){
         "latestDate" : latestDate
     }
 
-//change search results
-const handleResults = (results) => {
-    setDisplay(results);
-  };
+    //change search results
+    const handleResults = (results) => {
+        setDisplay(results);
+      };
 
-//changes the sorting category
-    const handleCategory = (value) => {
-        if (value === category) {
-            setAscending(!ascending);
-        } else {
-            setCategory(value);
-            setAscending(true);
+    //changes the sorting category
+        const handleCategory = (value) => {
+            if (value === category) {
+                setAscending(!ascending);
+            } else {
+                setCategory(value);
+                setAscending(true);
+            }
         }
-    }
 
     useEffect(() => {
         const fetchInitial = async () => {
@@ -104,7 +104,9 @@ const handleResults = (results) => {
                 method:'GET'
             }); 
             const data = await response.json();
+           // console.log('Fetched data:', data); 
             setFetched(data); 
+            setDisplay(data);
           } catch (error) {
             console.error('Failed to fetch events:', error);
           }
@@ -116,7 +118,7 @@ const handleResults = (results) => {
         
     useEffect(() => {
         if (fetched.length>0) {
-          const sortedResults = [...fetched].sort((a, b) => {
+          const sortedResults = [...display].sort((a, b) => {
             let aValue, bValue;
     
             switch (category) {
@@ -140,15 +142,15 @@ const handleResults = (results) => {
             }
     
             if (ascending) {
-              return aValue < bValue ? -1 : (aValue > bValue ? 1 : 0);
+              return aValue - bValue;
             } else {
-              return aValue > bValue ? -1 : (aValue < bValue ? 1 : 0);
+              return bValue - aValue;
             }
           });
     
           setDisplay(sortedResults);
         }
-      }, [category, ascending, fetched]);
+      }, [category, ascending]);
     
 
     return(
@@ -158,21 +160,28 @@ const handleResults = (results) => {
                 searchParams={searchParams} onResult={handleResults}/>
             <HeaderBar handleCategory={handleCategory} category={category} ascending={ascending} />
             {display.length === 0 ? (
-            <div>Loading or no results...</div>
+            <div className="event-element">Loading or no results...</div>
             ) : (
-            display.map((event, index) => (
+              
+            display.map((event) => {
+              console.log('EventCard props:', event); 
+              return(
                 <EventCard
-                key={index}
-                id={event._id}
-                eventname={event.eventname}
+                key={event.eventId}
+                eventname={event.name}
                 earliestdate={event.earliestDate}
                 latestdate={event.latestDate}
                 price={event.price}
-                />
-            ))
+                />);
+            })
         )}
         </div>
     );
 
    
 }
+/** 
+ 2. tweak favoriting algorithm
+ 3. post favorited events to db
+ 4. save starred state for each user
+ */

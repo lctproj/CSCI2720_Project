@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useState} from 'react';
 import "./eventmain.css";
 import "../App.css";
 import { Link } from 'react-router-dom';
@@ -47,15 +47,17 @@ const DateFilter = ({onEarliestDateChange,onLatestDateChange})=>{
 
 }
 const PriceSlider = ({onPriceChange}) =>{
+    const [upperBound,setUpperBound] = useState(3000);
     const handlePriceChange = (e) => {
         const value = e.target.value;
-        onPriceChange(value);
+        onPriceChange(value); 
+        setTimeout(()=>setUpperBound(value),  300);
     };
 
     return(
         <div className='price-slider'>
-            <label htmlFor="pricerange" className="flex flex-col">Price Range </label>
-            <input type="range" min="0" max="500" id="pricerange"  onInput={handlePriceChange}/>
+            <label htmlFor="pricerange" className="flex flex-col">Price Range (less than ${upperBound}) </label>
+            <input type="range" min="0" max="3000" id="pricerange"  onInput={handlePriceChange}/>
         </div>
     )
 }
@@ -108,7 +110,7 @@ export default function EventFilterBar({onInputChange,onPriceChange,onEarliestDa
     
     <div className= "event-filter-bar">
         <NameFilter onInputChange={onInputChange}/>
-        <PriceSlider onPriceChange={onPriceChange} />
+        <PriceSlider onPriceChange={onPriceChange}  />
         <DateFilter onEarliestDateChange={onEarliestDateChange} onLatestDateChange={onLatestDateChange}/>
         <SearchEvents  onClick = {handleSearchClick} onResult={onResult}/>
         <GoToLocation />

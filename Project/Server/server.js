@@ -264,7 +264,24 @@ app.get('/', (req, res) => {
 app.get('/all-events', async (req, res) => {
   try {
     const events = await Event.find();
-    res.json(events);
+    const allEvents =[];
+    for(let event of events){
+      const eventDates = await EventDate.findOne({ eventId: event.eventId });
+
+      const earliestEventDate = eventDates.indate[0].split('T')[0];
+      const latestEventDate = eventDates.indate[eventDates.indate.length - 1].split('T')[0];
+
+      const oneEvent ={
+        "id":event.eventId,
+        "name":event.title,
+        "earliestDate":earliestEventDate,
+        "latestDate":latestEventDate,
+        "price":(event.prices[0]===null) ? "0" : event.prices.sort((a, b) => a - b).toString() 
+      }
+
+      allEvents.push(oneEvent);
+    }
+    res.json(allEvents);
   } catch (error) {
     console.log('Error retrieving events:', error);
     res.status(500).json({ error: 'Internal server error' });

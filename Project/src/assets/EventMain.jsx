@@ -181,7 +181,5 @@ export default function EventMain (){
    
 }
 /** 
- 2. tweak favoriting algorithm
- 3. post favorited events to db
- 4. save starred state for each user
+  4. save starred state for each user
  */

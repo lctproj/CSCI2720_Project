@@ -338,6 +338,7 @@ app.get('/venue/:venueId', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 app.post('/navbar-venues', async (req, res) => {
   const { name, maxnum } = req.body;
   console.log(req.body);
@@ -355,7 +356,7 @@ app.post('/navbar-venues', async (req, res) => {
       const events = await Event.find({ venue: venue._id });
 
       const eventnum = events.length;
-      if (maxnum && eventnum < maxnum) {
+      if (maxnum && eventnum > maxnum) {
         continue;
       }
 

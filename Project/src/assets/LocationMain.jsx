@@ -138,7 +138,7 @@ export default function LocationMain (){
             display.map((location) => {
             return (
                 <LocationCard
-                key={location.id}
+                key={location.venueId}
                 locationname={location.name}
                 number={location.eventnum}
                 />);

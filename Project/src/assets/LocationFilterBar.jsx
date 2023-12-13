@@ -80,8 +80,8 @@ const sendSearchParams = async (params, onResult) => {
 
 export default function LocationFilterBar({onInputChange,onNumberChange, searchParams, onResult}){
     const handleSearchClick = () => {
-            sendSearchParams(searchParams, onResult);
-        };
+        sendSearchParams(searchParams, onResult);
+    };
     
     return(
         <div className= "location-filter-bar">

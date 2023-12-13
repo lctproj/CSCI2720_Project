@@ -59,10 +59,6 @@ const EventSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
-  venueid: {
-    type: String,
-    default: '',
-  },
   enquiry: {
     type: String,
     default: '',
@@ -135,6 +131,14 @@ const EventSchema = new mongoose.Schema({
   presenterorg: {
     type: String,
     default: '',
+  },
+  eventDates: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'EventDates',
+  },
+  venueId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Venues',
   },
 });
 
@@ -245,6 +249,10 @@ const saveEventDateData = (EventDate, eventDateData) => {
 const saveEventData = async (Event, Venue, eventsData) => {
   try {
     for (const element of eventsData) {
+      let venuetype = await Venue.findOne({ venueId: element.venueid })
+      let eventDate = await EventDate.findOne({ eventId: element.eventId })
+      element.venueId = venuetype._id;
+      element.eventDates = eventDate._id;
       const event = new Event(element);
       event.save();
     }
@@ -436,6 +444,8 @@ app.post('/create-user', async (req, res) => {
     res.status(500).json({ error: 'An error occurred while creating the user' });
   }
 });
+
+
 
 const port = 8964;
 app.listen(port, () => {

@@ -185,7 +185,7 @@ class SignIn extends React.Component {
             window.location.href = "/eventmain";
           })
           .catch(error => {
-            console.error('Error creating user:', error);
+            console.error('Error login in:', error);
             // Handle the error
           });
 

@@ -59,10 +59,6 @@ const EventSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
-  venueid: {
-    type: String,
-    default: '',
-  },
   enquiry: {
     type: String,
     default: '',
@@ -135,6 +131,14 @@ const EventSchema = new mongoose.Schema({
   presenterorg: {
     type: String,
     default: '',
+  },
+  eventDates: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'EventDates',
+  },
+  venueId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Venues',
   },
 });
 
@@ -219,6 +223,9 @@ console.log(VenueData);
 const eventDateDataPath = './Data/eventDates.json';
 const eventDateData = readJsonFromFile(eventDateDataPath);
 console.log(eventDateData);
+const userDataPath = './Data/users.json';
+const userData = readJsonFromFile(userDataPath);
+console.log(userData);
 
 const saveVenueData = (Venue, VenueData) => {
   try {
@@ -245,6 +252,10 @@ const saveEventDateData = (EventDate, eventDateData) => {
 const saveEventData = async (Event, Venue, eventsData) => {
   try {
     for (const element of eventsData) {
+      let venuetype = await Venue.findOne({ venueId: element.venueid })
+      let eventDate = await EventDate.findOne({ eventId: element.eventId })
+      element.venueId = venuetype._id;
+      element.eventDates = eventDate._id;
       const event = new Event(element);
       event.save();
     }
@@ -253,9 +264,21 @@ const saveEventData = async (Event, Venue, eventsData) => {
   }
 };
 
+const saveUserData = (User, UserData) => {
+  try {
+    for (const element of UserData) {
+      const user = new User(element);
+      user.save();
+    }
+  } catch (error) {
+    console.log("Failed to save new user", error);
+  }
+};
+
 saveVenueData(Venue, VenueData);
 saveEventDateData(EventDate, eventDateData);
 saveEventData(Event, Venue, eventsData);
+saveUserData(User, userData);
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
@@ -453,6 +476,8 @@ app.post('/create-user', async (req, res) => {
     res.status(500).json({ error: 'An error occurred while creating the user' });
   }
 });
+
+
 
 const port = 8964;
 app.listen(port, () => {

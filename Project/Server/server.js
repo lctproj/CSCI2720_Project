@@ -492,14 +492,14 @@ app.post('/login', async (req, res) => {
 
 app.put('/change-password', async (req, res) => {
   try {
-    const { userId, currentPassword, newPassword } = req.body;
+    const { username, password, newPassword } = req.body;
 
-    const user = await User.findById(userId);
+    const user = await User.find({username: username});
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    const passwordMatch = await bcrypt.compare(currentPassword, user.password);
+    const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
       return res.status(401).json({ error: 'Invalid current password' });
     }
@@ -537,19 +537,48 @@ app.post('/create-user', async (req, res) => {
   }
 });
 
-app.post('/add-favourite-venue', async (req, res) => {
+app.post('/user-data', async (req, res) => {
   try {
-    const { userId, venueId } = req.body;
+    const { username, token } = req.body;
 
-    // Find the user by userId
-    const user = await User.findById(userId);
+    // Verify the token
+    const decodedToken = jwt.verify(token, 'secretKey');
+
+    // Check if the decoded token contains the expected username
+    if (decodedToken.username !== username) {
+      return res.status(401).json({ error: 'Invalid username or token' });
+    }
+
+    // Fetch the user data based on the username
+    const user = await User.findOne({ username });
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Add the venueId to the user's favorite venues
-    user.favVenue.push(venueId);
+    // Return the user data
+    res.json({ user });
+  } catch (error) {
+    // Handle token verification errors
+    console.error('Error fetching user data:', error);
+    res.status(500).json({ error: 'An error occurred while fetching user data' });
+  }
+});
+
+app.post('/add-favourite-venue', async (req, res) => {
+  try {
+    const { username, venueId } = req.body;
+
+    // Find the user by userId
+    const user = await User.find({username: username});
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const venue = await Venue.find({venueId: venueId});
+
+    user.favVenue.push(venue._id);
 
     // Save the updated user
     await user.save();
@@ -557,6 +586,31 @@ app.post('/add-favourite-venue', async (req, res) => {
     res.status(200).json({ message: 'Favorite venue added successfully' });
   } catch (error) {
     console.error('Error adding favorite venue:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.post('/add-favourite-event', async (req, res) => {
+  try {
+    const { username, eventId } = req.body;
+
+    // Find the user by userId
+    const user = await User.find({username: username});
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const event = await Event.find({eventId: eventId});
+
+    user.favEvent.push(event._id);
+
+    // Save the updated user
+    await user.save();
+
+    res.status(200).json({ message: 'Favorite event added successfully' });
+  } catch (error) {
+    console.error('Error adding favorite event:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });

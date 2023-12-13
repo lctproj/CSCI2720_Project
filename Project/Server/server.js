@@ -356,61 +356,6 @@ app.get('/all-events', async (req, res) => {
   }
 });
 
-app.post('favorite-events', async (req, res) => {
-  const { id, username } = req.body;
-
-  try {
-    //Find user given username
-    const user = await User.findOne({ username: username }).populate('favEvents');
-
-    //Find event given ID
-    const newFavEvent = await Event.find({ eventId: id });
-
-    //Add event to list of favorite ID of that particular user
-    user.favEvent.push(newFavEvent._id);
-  } catch (e) {
-    console.log('Error adding to favorites:', e);
-    res.sendStatus(500);
-  }
-});
-
-app.delete('favorite-events', async (req, res) => {
-  const { id, username } = req.body;
-
-  try {
-    //Find user given username
-    const user = await User.findOne({ username: username }).populate('favEvents');
-
-    //Find event given ID
-    const deletingEvent = await Event.find({ eventId: id });
-
-    //filter out event with the same _id as the deletingEvent
-    user.favEvent = user.favEvent.filter(favEvent => !favEvent._id.equals(deletingEvent._id));
-  } catch (e) {
-    console.log('Error deleting from favorites:', e);
-    res.sendStatus(500);
-  }
-});
-
-app.post('all-favorite-events', async (req, res) => {
-  const { username } = req.body;
-
-  try {
-    const user = await User.findOne({ username: username }).populate('favEvents');
-
-    const favEventsList = user.favEvent;
-
-    const favEventsIdList = favEventsList.map(event => ({
-      eventId: event.eventId
-    }));
-
-    res.json(favEventsIdList);
-  } catch (err) {
-    console.error("Error fetching list of favorite events", err);
-    res.sendStatus(500);
-  }
-});
-
 app.get('/event/:eventId', async (req, res) => {
   const eventId = req.params.eventId;
 
@@ -502,42 +447,22 @@ app.get('/all-venues', async (req, res) => {
   }
 });
 
-app.post('favorite-venues', async (req, res) => {
-  const { id, username } = req.body;
+app.get('/venue/:venueId', async (req, res) => {
+  const venueId = req.params.venueId;
 
   try {
-    //Find user given username
-    const user = await User.findOne({ username: username }).populate('favVenues');
+    const venue = await Venue.find({ venueId: venueId });
 
-    //Find event given ID
-    const newFavVenue = await Venue.find({ venueId: id });
-
-    //Add event to list of favorite ID of that particular user
-    user.favVenue.push(newFavVenue._id);
-  } catch (e) {
-    console.log('Error adding to favorites:', e);
-    res.sendStatus(500);
+    if (venue) {
+      res.json(venue);
+    } else {
+      res.status(404).json({ error: 'Event not found' });
+    }
+  } catch (error) {
+    console.log('Error retrieving event:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
-
-app.delete('favorite-events', async (req, res) => {
-  const { id, username } = req.body;
-
-  try {
-    //Find user given username
-    const user = await User.findOne({ username: username }).populate('favVenues');
-
-    //Find event given ID
-    const deletingVenue = await Venue.find({ venueId: id });
-
-    //filter out event with the same _id as the deletingEvent
-    user.favVenue = user.favVenue.filter(favVenue => !favVenue._id.equals(deletingVenue._id));
-  } catch (e) {
-    console.log('Error deleting from favorites:', e);
-    res.sendStatus(500);
-  }
-});
-
 app.post('/navbar-venues', async (req, res) => {
   const { name, maxnum } = req.body;
 
@@ -575,23 +500,6 @@ app.post('/navbar-venues', async (req, res) => {
     res.status(500).json({ message: "Error fetching relevant venues" });
   }
 
-});
-
-app.get('/venue/:venueId', async (req, res) => {
-  const venueId = req.params.venueId;
-
-  try {
-    const venue = await Venue.find({ venueId: venueId });
-
-    if (venue) {
-      res.json(venue);
-    } else {
-      res.status(404).json({ error: 'Event not found' });
-    }
-  } catch (error) {
-    console.log('Error retrieving event:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
 });
 
 app.post('/login', async (req, res) => {
@@ -666,27 +574,16 @@ app.post('/create-user', async (req, res) => {
 
 app.post('/user-data', async (req, res) => {
   try {
-    const { username, token } = req.body;
+    const { username } = req.body;
 
-    // Verify the token
-    const decodedToken = jwt.verify(token, 'secretKey');
-
-    // Check if the decoded token contains the expected username
-    if (decodedToken.username !== username) {
-      return res.status(401).json({ error: 'Invalid username or token' });
-    }
-
-    // Fetch the user data based on the username
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ username: username });
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Return the user data
     res.json({ user });
   } catch (error) {
-    // Handle token verification errors
     console.error('Error fetching user data:', error);
     res.status(500).json({ error: 'An error occurred while fetching user data' });
   }

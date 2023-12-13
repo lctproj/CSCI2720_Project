@@ -525,7 +525,7 @@ app.post('/create-user', async (req, res) => {
     const newUser = new User({ username, password: hashedPassword, email });
     await newUser.save();
 
-    res.json({ message: 'User created successfully' });
+    res.status(200).json({ message: 'User created successfully' });
   } catch (error) {
     console.error('Error creating user:', error);
     res.status(500).json({ error: 'An error occurred while creating the user' });

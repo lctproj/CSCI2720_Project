@@ -5,6 +5,10 @@ const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://0.0.0.0:27017/CSCI2720Project');
 
+const app = express();
+app.use(cors());
+app.use(bodyParser.json());
+
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'Connection error:'));
 
@@ -157,47 +161,43 @@ const UserSchema = new mongoose.Schema({
     type: [mongoose.Schema.Types.ObjectId],
     ref: 'Event',
   }
-  });
+});
   
-  const User = mongoose.model("Users", UserSchema);
+const User = mongoose.model("Users", UserSchema);
   
-  const EventCommentSchema = new mongoose.Schema({
+const EventCommentSchema = new mongoose.Schema({
   eventId: {
-  type: mongoose.Schema.Types.ObjectId,
-  ref: 'Events',
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Events',
   },
   username: {
-  type: String,
-  required: [true, "Username is required"],
+    type: String,
+    required: [true, "Username is required"],
   },
   comment: {
-  type: String,
-  required: [true, "Comment is required"],
+    type: String,
+    required: [true, "Comment is required"],
   },
-  });
+});
   
-  const EventComment = mongoose.model("EventComments", EventCommentSchema);
+const EventComment = mongoose.model("EventComments", EventCommentSchema);
   
-  const VenueCommentSchema = new mongoose.Schema({
+const VenueCommentSchema = new mongoose.Schema({
   venueId: {
-  type: mongoose.Schema.Types.ObjectId,
-  ref: 'Venues',
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Venues',
   },
   username: {
-  type: String,
-  required: [true, "Username is required"],
+    type: String,
+    required: [true, "Username is required"],
   },
   comment: {
-  type: String,
-  required: [true, "Comment is required"],
+    type: String,
+    required: [true, "Comment is required"],
   },
-  });
+});
   
-  const VenueComment = mongoose.model("VenueComments", VenueCommentSchema);
-
-const app = express();
-app.use(cors());
-app.use(bodyParser.json());
+const VenueComment = mongoose.model("VenueComments", VenueCommentSchema);
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
@@ -283,7 +283,7 @@ app.post('/navbar-events', async (req, res) => {
         "eventId": event.eventId,
         "name": event.title,
         "price": (!event.prices || event.prices.length === 0 || event.prices[0] === null) ? [0] : event.prices.sort((a, b) => a - b),
-      "earliestDate": earliestEventDate,
+        "earliestDate": earliestEventDate,
         "latestDate": latestEventDate
       };
 
@@ -641,22 +641,22 @@ app.post('/admin/change-event', async (req, res) => {
 
 app.post('/admin/delete-event', async (req, res) => {
   try {
-    const { username, password, email } = req.body;
-
-    const existingUser = await User.findOne({ username });
-    if (existingUser) {
-      return res.status(409).json({ error: 'Username already exists' });
+    const { username, eventId } = req.body;
+    
+    if (username != 'admin') {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    console.log("Deleting event ID: ", eventId);
+    // Find and delete the event by ID
+    const deletedEvent = await Event.findOneAndDelete({ eventId: eventId });
+    if (!deletedEvent) {
+      return res.status(404).json({ error: 'Event not found' });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const newUser = new User({ username, password: hashedPassword, email });
-    await newUser.save();
-
-    res.status(200).json({ message: 'User created successfully' });
+    res.status(200).json({ message: 'Event deleted successfully' });
   } catch (error) {
-    console.error('Error creating user:', error);
-    res.status(500).json({ error: 'An error occurred while creating the user' });
+    console.error('Error deleting event:', error);
+    res.status(500).json({ error: 'An error occurred while deleting the event' });
   }
 });
 

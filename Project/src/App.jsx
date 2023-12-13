@@ -308,15 +308,18 @@ class AdminSignIn extends React.Component {
             })
             .then((data) => {
                 const user = data.username;
+                localStorage.setItem("user", user);
                 window.location.href = "/adminmain";
             })
             .catch((error) => {
                 console.error("Error login in:", error);
+                // Handle the error
             });
     };
     render() {
         return (
             <>
+                <pre>{JSON.stringify(this.state, null, 2)}</pre>
                 <form class="form" onSubmit={this.handleSubmit}>
                     <Header header="Sign In" />
                     <FlexColumn

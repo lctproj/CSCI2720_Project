@@ -181,8 +181,9 @@ class SignIn extends React.Component {
           .then(data => {
             // Handle the response from the server
             const token = data.token;
+            console.log(data);
             localStorage.setItem('token', token);
-            window.location.href = "/eventmain";
+            // window.location.href = "/eventmain";
           })
           .catch(error => {
             console.error('Error login in:', error);
@@ -213,7 +214,7 @@ class SignIn extends React.Component {
                         Create Account
                     </Link>
 
-                    <button class="button-submit">Next</button>
+                    <button class="button-submit" type = "submit">Next</button>
                 </div>
                 <div class="flex-row">
                     <Link to="/adminsignin" class="span">

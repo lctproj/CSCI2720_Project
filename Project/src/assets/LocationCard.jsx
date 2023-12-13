@@ -3,7 +3,7 @@ import { IoIosStar, IoIosStarOutline } from "react-icons/io";
 import React, { useState,useEffect } from 'react';
 import {Link} from 'react-router-dom';
 
-export default function LocationCard({id, locationname, number }) {
+export default function LocationCard({id, locationname, number ,username}) {
     const [starred, setStarred] = useState(false);
     const [isFetched, setIsFetched] = useState(false);
 
@@ -37,8 +37,7 @@ export default function LocationCard({id, locationname, number }) {
         //extract event details and format into JSON
         const favoriteLoc ={
             "id":id, 
-            "name": locationname,
-            "eventnum": number,
+            "username":username
         }
 
         if(starred) {
@@ -81,7 +80,7 @@ export default function LocationCard({id, locationname, number }) {
     return (
         <div className="event-card">
             <div className="location-element">
-            <Link to = {`/locationmain/locationid=${id}`}><p>{locationname}</p></Link>
+            <Link to = {`/venue/${id}`}><p>{locationname}</p></Link>
             </div>
             <div className="location-element"><p>{number}</p></div>
             <div className="location-element" style={{ cursor: 'pointer' }}>{StarIcon}</div>

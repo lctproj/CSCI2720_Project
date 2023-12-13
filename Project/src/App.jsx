@@ -505,27 +505,94 @@ class FlexColumn2 extends React.Component {
     }
 }
 class ChangePassword extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+          username: '',
+          password: '',
+          newPassword: '',
+          confirmPassword: '',
+        };
+      }
+    
+
+    handleChange = (event) => {
+    this.setState({ [event.target.name]: event.target.value });
+    this.setState({username: localStorage.getItem('user')});
+    };
+    
+    handleSubmit = (event) => {
+        event.preventDefault();
+        
+        const { username, password, newPassword, confirmPassword} = this.state;
+    
+        const userData = { username, password, newPassword};
+        
+        if (newPassword !== confirmPassword) {
+            alert("Passwords do not match");
+            return;
+          }
+
+        fetch('http://localhost:8964/change-password', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(userData),
+        })
+          .then((response)=> {
+
+            if (response.status == 404) {
+                alert("User not found");
+            } else if (response.status == 200) {
+                alert("Password changed successfully");
+                return response.json();
+            } else if (response.status == 401) {
+                alert("Invalid current password");
+            } else {
+                alert("Unknown error");
+            }
+          })
+          .then(data => {
+            window.location.href = "/eventmain";
+          })
+          .catch(error => {
+            console.error('Error in changing password:', error);
+            // Handle the error
+          });
+
+          
+      };
     render() {
         return (
-            <form class="form">
+            <form class="form" onSumbit = {this.handleSubmit}>
                 <Header header="Change Password" />
                 <FlexColumn
                     label="Old Password"
                     placeholder="Enter your old password"
+                    onChange = {this.handleChange}
+                    name = "password"
+                    type = "password"
                 />
                 <FlexColumn
                     label="New Password"
                     placeholder="Enter your new password"
+                    onChange = {this.handleChange}
+                    name = "newPassword"
+                    type = "password"
                 />
                 <FlexColumn
                     label="Confirm New Password"
                     placeholder="Enter your new password again"
+                    onChange = {this.handleChange}
+                    name = "confirmPassword"
+                    type = "password"
                 />
                 <div class="flex-row">
                     <Link to="/userhome" class="span">
                         back
                     </Link>
-                    <button class="button-submit">Confirm</button>
+                    <button class="button-submit" type="submit">Confirm</button>
                 </div>
                 <div class="flex-row"></div>
             </form>

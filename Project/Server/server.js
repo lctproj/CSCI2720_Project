@@ -275,12 +275,12 @@ const saveUserData = (User, UserData) => {
 };
 
 const selectTop10Location = async () => {
-  const results = await Venue.aggregate([
+  const venueResults = await Venue.aggregate([
     {
       $lookup: {
         from: "Events",
         localField: "venueId",
-        foreignField: "venueId",
+        foreignField: "venueid",
         as: "events"
       }
     },
@@ -307,37 +307,16 @@ const selectTop10Location = async () => {
     }
   ]);
 
-  
-  console.log(results);
-  const Top10LocationId = results.map((venue) => venue._id);
+
+  console.log(venueResults);
+  const Top10LocationId = venueResults.map((venue) => venue._id);
   await Venue.deleteMany({ _id: { $nin: Top10LocationId } });
   await Event.deleteMany({ venueId: { $nin: Top10LocationId } });
 
-  const results2 = await Event.aggregate([
-    {
-      $lookup: {
-        from: "EventDates",
-        localField: "eventId",
-        foreignField: "eventId",
-        as: "events"
-      }
-    },
-    {
-      $addFields: {
-        eventCount: { $size: "$events" }
-      }
-    },
-    {
-      $project: {
-        _id: 0,
-        eventDates: 1
-      }
-    }
-  ]);
-  
-  console.log(results2);
-  const selectedEvent = results2.map((event) => event.eventId);
-  await EventDate.deleteMany({ _id: { $nin: selectedEvent } });
+  const eventResults = await Event.find({});
+  console.log(eventResults);
+  const selectedEvent = eventResults.map((event) => event.eventId);
+  await EventDate.deleteMany({ eventId: { $nin: selectedEvent } });
 };
 
 const preprocessing = async () => {
@@ -356,19 +335,19 @@ app.get('/', (req, res) => {
 app.get('/all-events', async (req, res) => {
   try {
     const events = await Event.find();
-    const allEvents =[];
-    for(let event of events){
+    const allEvents = [];
+    for (let event of events) {
       const eventDates = await EventDate.findOne({ eventId: event.eventId });
 
       const earliestEventDate = eventDates.indate[0].split('T')[0];
       const latestEventDate = eventDates.indate[eventDates.indate.length - 1].split('T')[0];
 
-      const oneEvent ={
-        "id":event.eventId,
-        "name":event.title,
-        "earliestDate":earliestEventDate,
-        "latestDate":latestEventDate,
-        "price":(event.prices[0]===null) ? "0" : event.prices.sort((a, b) => a - b).toString() 
+      const oneEvent = {
+        "id": event.eventId,
+        "name": event.title,
+        "earliestDate": earliestEventDate,
+        "latestDate": latestEventDate,
+        "price": (event.prices[0] === null) ? "0" : event.prices.sort((a, b) => a - b).toString()
       }
 
       allEvents.push(oneEvent);
@@ -380,59 +359,59 @@ app.get('/all-events', async (req, res) => {
   }
 });
 
-app.post('favorite-events',  async(req, res)=> {
-  const {id,username} = req.body;
+app.post('favorite-events', async (req, res) => {
+  const { id, username } = req.body;
 
-  try{
+  try {
     //Find user given username
-    const user = await User.findOne({username: username}).populate('favEvents');
+    const user = await User.findOne({ username: username }).populate('favEvents');
 
     //Find event given ID
-    const newFavEvent = await Event.find({eventId:id});
+    const newFavEvent = await Event.find({ eventId: id });
 
     //Add event to list of favorite ID of that particular user
     user.favEvent.push(newFavEvent._id);
-  }catch(e){
+  } catch (e) {
     console.log('Error adding to favorites:', e);
     res.sendStatus(500);
   }
 });
 
-app.delete('favorite-events',  async(req, res)=> {
-  const {id,username} = req.body;
+app.delete('favorite-events', async (req, res) => {
+  const { id, username } = req.body;
 
-  try{
+  try {
     //Find user given username
-    const user = await User.findOne({username: username}).populate('favEvents');
+    const user = await User.findOne({ username: username }).populate('favEvents');
 
     //Find event given ID
-    const deletingEvent = await Event.find({eventId:id});
+    const deletingEvent = await Event.find({ eventId: id });
 
     //filter out event with the same _id as the deletingEvent
-    user.favEvent = user.favEvent.filter(favEvent => !favEvent._id.equals(deletingEvent._id));  
-  }catch(e){
+    user.favEvent = user.favEvent.filter(favEvent => !favEvent._id.equals(deletingEvent._id));
+  } catch (e) {
     console.log('Error deleting from favorites:', e);
     res.sendStatus(500);
   }
 });
 
 app.post('all-favorite-events', async (req, res) => {
-    const {username} = req.body;
+  const { username } = req.body;
 
-    try{
-      const user = await User.findOne({username: username}).populate('favEvents');
+  try {
+    const user = await User.findOne({ username: username }).populate('favEvents');
 
-      const favEventsList = user.favEvent;
+    const favEventsList = user.favEvent;
 
-      const favEventsIdList = favEventsList.map(event => ({
-        eventId: event.eventId 
+    const favEventsIdList = favEventsList.map(event => ({
+      eventId: event.eventId
     }));
 
-      res.json(favEventsIdList);
-    }catch(err){
-      console.error("Error fetching list of favorite events",err);
-      res.sendStatus(500);
-    }
+    res.json(favEventsIdList);
+  } catch (err) {
+    console.error("Error fetching list of favorite events", err);
+    res.sendStatus(500);
+  }
 });
 
 app.get('/event/:eventId', async (req, res) => {
@@ -452,17 +431,17 @@ app.get('/event/:eventId', async (req, res) => {
   }
 });
 
-app.post('/navbar-events', async (req,res)=>{
-  const {name,price,earliestDate,latestDate} = req.body;
+app.post('/navbar-events', async (req, res) => {
+  const { name, price, earliestDate, latestDate } = req.body;
 
-  let query={}
+  let query = {}
 
-  if(name){
+  if (name) {
     query.title = { $regex: name, $options: 'i' }
   }
 
-  try{
-    const events = await Event.find (query);
+  try {
+    const events = await Event.find(query);
     let filteredEvents = [];
 
     for (let event of events) {
@@ -484,20 +463,20 @@ app.post('/navbar-events', async (req,res)=>{
         continue;
       }
 
-      let eventObj ={
-        "eventId":event.eventId,
+      let eventObj = {
+        "eventId": event.eventId,
         "name": event.title,
-        "price":(!event.prices || event.prices.length === 0 || event.prices[0] === null) ? [0] : event.prices.sort((a, b) => a - b),
-        "earliestDate":earliestEventDate,
-        "latestDate":latestEventDate
+        "price": (!event.prices || event.prices.length === 0 || event.prices[0] === null) ? [0] : event.prices.sort((a, b) => a - b),
+        "earliestDate": earliestEventDate,
+        "latestDate": latestEventDate
       };
 
       filteredEvents.push(eventObj);
     }
-      res.json(filteredEvents);
-      return;
-    
-  }catch(err){
+    res.json(filteredEvents);
+    return;
+
+  } catch (err) {
     console.error("Error fetching relevant events", err);
     res.status(500).json({ message: "Error fetching relevant events" });
   }
@@ -507,14 +486,14 @@ app.post('/navbar-events', async (req,res)=>{
 app.get('/all-venues', async (req, res) => {
   try {
     const venues = await Venue.find();
-    const allVenues =[];
-    for(let venue of venues){
-      const events= await Event.find({venue:venue._id});
+    const allVenues = [];
+    for (let venue of venues) {
+      const events = await Event.find({ venue: venue._id });
 
-      const oneVenue ={
-        "id":venue.venueId,
-        "name":venue.venue,
-        "eventnum":events.length
+      const oneVenue = {
+        "id": venue.venueId,
+        "name": venue.venue,
+        "eventnum": events.length
       }
 
       allVenues.push(oneVenue);
@@ -526,75 +505,75 @@ app.get('/all-venues', async (req, res) => {
   }
 });
 
-app.post('favorite-venues',  async(req, res)=> {
-  const {id,username} = req.body;
+app.post('favorite-venues', async (req, res) => {
+  const { id, username } = req.body;
 
-  try{
+  try {
     //Find user given username
-    const user = await User.findOne({username: username}).populate('favVenues');
+    const user = await User.findOne({ username: username }).populate('favVenues');
 
     //Find event given ID
-    const newFavVenue = await Venue.find({venueId:id});
+    const newFavVenue = await Venue.find({ venueId: id });
 
     //Add event to list of favorite ID of that particular user
     user.favVenue.push(newFavVenue._id);
-  }catch(e){
+  } catch (e) {
     console.log('Error adding to favorites:', e);
     res.sendStatus(500);
   }
 });
 
-app.delete('favorite-events',  async(req, res)=> {
-  const {id,username} = req.body;
+app.delete('favorite-events', async (req, res) => {
+  const { id, username } = req.body;
 
-  try{
+  try {
     //Find user given username
-    const user = await User.findOne({username: username}).populate('favVenues');
+    const user = await User.findOne({ username: username }).populate('favVenues');
 
     //Find event given ID
-    const deletingVenue = await Venue.find({venueId:id});
+    const deletingVenue = await Venue.find({ venueId: id });
 
     //filter out event with the same _id as the deletingEvent
-    user.favVenue = user.favVenue.filter(favVenue => !favVenue._id.equals(deletingVenue._id));  
-  }catch(e){
+    user.favVenue = user.favVenue.filter(favVenue => !favVenue._id.equals(deletingVenue._id));
+  } catch (e) {
     console.log('Error deleting from favorites:', e);
     res.sendStatus(500);
   }
 });
 
-app.post('/navbar-venues', async (req,res)=>{
-  const {name,maxnum} = req.body;
+app.post('/navbar-venues', async (req, res) => {
+  const { name, maxnum } = req.body;
 
-  let query={}
+  let query = {}
 
-  if(name){
+  if (name) {
     query.title = { $regex: name, $options: 'i' }
   }
 
-  try{
-    const venues = await Venue.find (query);
+  try {
+    const venues = await Venue.find(query);
     let filteredVenues = [];
 
     for (let venue of venues) {
-      const events= await Event.find({venue:venue._id});
+      const events = await Event.find({ venue: venue._id });
 
-      const eventnum =events.length;
+      const eventnum = events.length;
       if (maxnum && eventnum < maxnum) {
         continue;
       }
 
-      let venueObj ={
-        "venueId":venue.venueId,
+      let venueObj = {
+        "venueId": venue.venueId,
         "name": venue.venue,
-        "eventnum":eventnum
+        "eventnum": eventnum
       };
 
       filteredVenues.push(venueObj);
     }
-      res.json(filteredVenues);
-      return;
-    
-  }catch(err){
+    res.json(filteredVenues);
+    return;
+
+  } catch (err) {
     console.error("Error fetching relevant venues", err);
     res.status(500).json({ message: "Error fetching relevant venues" });
   }
@@ -637,7 +616,7 @@ app.post('/login', async (req, res) => {
     }
 
 
-    res.status(200).json({username: username_to_front});
+    res.status(200).json({ username: username_to_front });
 
   } catch (error) {
     console.error('Error during login:', error);
@@ -649,7 +628,7 @@ app.put('/change-password', async (req, res) => {
   try {
     const { username, password, newPassword } = req.body;
 
-    const user = await User.find({username: username});
+    const user = await User.find({ username: username });
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
@@ -725,13 +704,13 @@ app.post('/add-favourite-venue', async (req, res) => {
     const { username, venueId } = req.body;
 
     // Find the user by userId
-    const user = await User.find({username: username});
+    const user = await User.find({ username: username });
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    const venue = await Venue.find({venueId: venueId});
+    const venue = await Venue.find({ venueId: venueId });
 
     user.favVenue.push(venue._id);
 
@@ -750,13 +729,13 @@ app.post('/add-favourite-event', async (req, res) => {
     const { username, eventId } = req.body;
 
     // Find the user by userId
-    const user = await User.find({username: username});
+    const user = await User.find({ username: username });
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    const event = await Event.find({eventId: eventId});
+    const event = await Event.find({ eventId: eventId });
 
     user.favEvent.push(event._id);
 

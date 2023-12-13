@@ -4,88 +4,71 @@ import React, { useState, useEffect } from 'react';
 import {Link} from 'react-router-dom';
 
 export default function EventCard({ id, eventname, earliestdate, latestdate, price, username }) {
-    const [starred, setStarred] = useState(false);
-   /* const [isFetched, setIsFetched] = useState(false);
-
-    useEffect(() => {
-        const fetchFavorites = async () => {
-            try {
-                const response = await fetch('http://localhost:8964/all-favorite-events/', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username: username })
-                });
-
-                if (!response.ok) {
-                    throw new Error('Error fetching favorite event list');
-                }
-
-                const favoriteList = await response.json();
-                const originallyStarred = favoriteList.some(event => event.eventId === id);
-                setStarred(originallyStarred);
-            } catch (err) {
-                console.error("Error fetching original starred state", err);
-            } finally {
-                setIsFetched(true);
-            }
-        };
-
-        fetchFavorites();
-    }, [id, username]);
-*/
-    const handleStar = async () => {     
+  
+    const handleAddClick = async () => {     
         //extract event details and format into JSON
         const favoriteEvent ={
-            "id":id, 
+            "eventId":id, 
             "username":username, 
+            "IsAdd": true
         }
 
-        if(starred) {
-            try{
-                const response = await fetch('http://localhost:8964/favorite-events',{ //url TBD
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(favoriteEvent)
-                });
+        try{
+            const response = await fetch('http://localhost:8964/favourite-event',{ //url TBD
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(favoriteEvent)
+            });
 
-                if (response.ok) {
-                    setStarred(prevStarred => !prevStarred);
-                } else {
-                    throw new Error(`HTTP error: ${response.status}`);
-                }
-            }catch(err){
-                console.error('Error adding event to favorites:', err);
+            if (response.ok) {
+                const result = await response.json();
+                console.log('Event added to favorites:', result);
+            } else {
+                throw new Error(`HTTP error: ${response.status}`);
             }
-        }else{
-            try{
-                const response = await fetch('http://localhost:8964/favorite-events',{
-                    method: 'DELETE',
-                    headers: {'Content-Type': 'application/json'},
-                });
+        }catch(err){
+            console.error('Error adding event to favorites:', err);
+        }
+    }
+        
+    const handleDeleteClick = async () => {     
+        //extract event details and format into JSON
+        const favoriteEvent ={
+            "eventId":id, 
+            "username":username, 
+            "IsAdd": false
+        }
 
-                if (response.ok) {
-                    setStarred(prevStarred => !prevStarred);
-                } else {
-                    throw new Error(`HTTP error: ${response.status}`);
-                }
-            }catch(err){
-                console.error('Error deleting event from favorites:', err);
+        try{
+            const response = await fetch('http://localhost:8964/favourite-event',{ //url TBD
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(favoriteEvent)
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                console.log('Event deleted from favorites:', result);
+            } else {
+                throw new Error(`HTTP error: ${response.status}`);
             }
+        }catch(err){
+            console.error('Error adding event to favorites:', err);
         }
     }
 
-    const StarIcon = starred ? <IoIosStar onClick={handleStar} /> 
-                             : <IoIosStarOutline onClick={handleStar} />;
+    let Id=parseInt(id);
 
     return (
         <div className="event-card">
             <div className="event-element">
-                <Link to = {`/event/${id}`}><p>{eventname}</p></Link>
+                <Link to = {`/event/${Id}`}><p>{eventname}</p></Link>
             </div>
             <div className="event-element"><p>{earliestdate}</p></div>
             <div className="event-element"><p>{latestdate}</p></div>
             <div className="event-element"><p>{price}</p></div>
-            <div className="event-element" style={{ cursor: 'pointer' }} >{StarIcon}</div>
+            <div className="add-button" onClick={handleAddClick}><p>Add to favorites</p></div>
+            <div className="delete-button" onClick={handleDeleteClick}><p>Remove from favorites</p> </div>
         </div>
     );
 }

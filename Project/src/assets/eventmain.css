@@ -1,6 +1,5 @@
 .event-main{
     width:100%;
-    background-color:blue;
     height: 100vh;
 }
 
@@ -91,6 +90,9 @@
 }
 
 .event-filter-bar{
+    background-color:blue;
+    position: sticky;
+    top:0px;
     display:flex;
     flex-direction:row;
     justify-content:space-between;

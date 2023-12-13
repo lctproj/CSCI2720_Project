@@ -115,7 +115,7 @@ export default function EventFilterBar({onInputChange,onPriceChange,onEarliestDa
         <SearchEvents  onClick = {handleSearchClick} onResult={onResult}/>
         <GoToLocation />
         <div>
-            <p id="username">{localStorage.getItem('token')}</p>
+            <p id="username">{localStorage.getItem('user')}</p>
         </div>
     </div>
 )

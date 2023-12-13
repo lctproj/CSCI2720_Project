@@ -1,11 +1,10 @@
 import "./locationmain.css";
 import LocationFilterBar from "./LocationFilterBar.jsx";
-import mockLocations from "./mockLocations.json"
 import LocationCard from "./LocationCard.jsx";
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import { HiArrowsUpDown, HiOutlineArrowSmallUp , HiOutlineArrowSmallDown  } from "react-icons/hi2";
 
-
+ 
 
 
 const HeaderBar = ({handleCategory,category, ascending}) =>{
@@ -38,6 +37,11 @@ const ArrowSign = ({ category, value, ascending }) => {
 export default function LocationMain (){
     const [searchInput,setInput]=useState('');
     const [maxNumber,setMaxNumber] = useState(50);
+
+    //search results
+    const [fetched, setFetched] = useState(false);
+    const [display, setDisplay] = useState([]);
+
     const [category ,setCategory] = useState('');
     const [ascending,setAscending] = useState(true);
 
@@ -58,39 +62,89 @@ export default function LocationMain (){
         }
     }
 
-   const filteredLocations = mockLocations.filter((location) =>
-        location.locationname.toLowerCase().includes(searchInput.toLowerCase())
-         ).filter((location) =>location.events.length<maxNumber
-        ).sort((a, b) => {
-            let aValue, bValue;
+    const searchParams = {
+        "name" : searchInput,
+        "maxnum" : maxNumber
+    }
 
-            if (category === 'locationname') {
-                aValue = a.locationname;
-                bValue = b.locationname;  
-            } else {
-                aValue = a.events.length;
-                bValue = b.events.length;
-            }
+    //change search results
+    const handleResults = (results) => {
+        setDisplay(results);
+      };
 
-            if (typeof aValue === 'string') {
-                return ascending ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+      const fetchInitial = async () => {
+        try {
+          const response = await fetch('http://localhost:8964/all-venues',{
+              method:'GET'
+          }); 
+          const data = await response.json();
+         // console.log('Fetched data:', data); 
+          setFetched(true); 
+          setDisplay(data);
+        } catch (error) {
+          console.error('Failed to fetch venue:', error);
+        }
+      };
+  
+      if(!fetched){
+        fetchInitial();
+      }
+
+      
+  useEffect(() => {
+      if (fetched) {
+        const sortedResults = [...display].sort((a, b) => {
+          let aValue, bValue;
+  
+          switch (category) {
+            case 'price':
+              aValue = a.eventnum; 
+              bValue = b.eventnum; 
+              break;
+            case 'name':
+            default:
+              aValue = a.name;
+              bValue = b.name;
+              break;
+          }
+  
+          if (ascending) {
+            if(typeof aValue !== 'number'){
+              return a.name.localeCompare(b.name);
             }
-            return ascending ? aValue - bValue : bValue - aValue;
+            return aValue - bValue;
+          } else {
+            if(typeof aValue !== 'number'){
+              return b.name.localeCompare(a.name);
+            }
+            return bValue - aValue;
+          }
         });
-
+  
+        setDisplay(sortedResults);
+      }
+    }, [category, ascending,fetched,display]);
+  
     
 
     return(
         <div className="location-main">
-            <LocationFilterBar onInputChange={handleSearchInput} onNumberChange={handleNumberChange} />
+            <LocationFilterBar onInputChange={handleSearchInput} onNumberChange={handleNumberChange} 
+             searchParams={searchParams} onResult={handleResults}/>
             <HeaderBar handleCategory={handleCategory} category={category} ascending={ascending} />
-            {filteredLocations.map((location, index) => (
+            {display.length === 0 ? (
+            <div className="event-element">No results...</div>
+            ) : (
+            display.map((event) => {
+              console.log('LocationCard props:', Math.max(...event.price));
+            return (
                 <LocationCard
-                key={index}
-                locationname={location.locationname}
-                number={location.events.length}
-                />
-            ))}
+                key={location.locId}
+                locationname={location.name}
+                number={location.eventnum}
+                />);
+            })
+            )}
         </div>
     );
 }

@@ -187,9 +187,9 @@ class SignIn extends React.Component {
           })
           .then(data => {
             // Handle the response from the server
-            const token = data.token;
-            console.log(data);
-            localStorage.setItem('token', token);
+            const user = JSON.stringify(data.user.username);
+            console.log(user);
+            localStorage.setItem('user', user);
             // window.location.href = "/eventmain";
           })
           .catch(error => {

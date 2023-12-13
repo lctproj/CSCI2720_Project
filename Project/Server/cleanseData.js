@@ -176,8 +176,8 @@ const writeAllJSON = async () => {
     });
 };
 
-export const initDatabase = async () => {
-    writeAllJSON()
-    .catch((error) => console.error('Error:', error));
+const initDatabase = async () => {
+    await writeAllJSON().catch((error) => console.error('Error:', error));
 };
 
+initDatabase();

@@ -132,8 +132,8 @@ export default function EventMain (){
                 bValue = new Date(b.latestDate);
                 break;
               case 'price':
-                aValue = (a.price.length===1?0:a.price[0]); 
-                bValue = (b.price.length===1?0:b.price[0]);
+                aValue = Math.max(...a.price); 
+                bValue = Math.max(...b.price); 
                 break;
               case 'eventname':
               default:
@@ -157,7 +157,7 @@ export default function EventMain (){
     
           setDisplay(sortedResults);
         }
-      }, [category, ascending]);
+      }, [category, ascending,fetched,display]);
     
 
     return(
@@ -167,11 +167,11 @@ export default function EventMain (){
                 searchParams={searchParams} onResult={handleResults}/>
             <HeaderBar handleCategory={handleCategory} category={category} ascending={ascending} />
             {display.length === 0 ? (
-            <div className="event-element">Loading or no results...</div>
+            <div className="event-element">No results...</div>
             ) : (
               
             display.map((event) => {
-              console.log('EventCard props:', event); 
+              console.log('EventCard props:', Math.max(...event.price));  
               return(
                 <EventCard
                 key={event.eventId}

@@ -418,7 +418,7 @@ app.post('/navbar-events', async (req,res)=>{
       let eventObj ={
         "eventId":event.eventId,
         "name": event.title,
-        "price":(event.prices[0]===null) ? 0 : event.prices.sort((a, b) => a - b).toString(),
+        "price":(!event.prices || event.prices.length === 0 || event.prices[0] === null) ? [0] : event.prices.sort((a, b) => a - b),
         "earliestDate":earliestEventDate,
         "latestDate":latestEventDate
       };

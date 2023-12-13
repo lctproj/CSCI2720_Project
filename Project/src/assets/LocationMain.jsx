@@ -10,15 +10,15 @@ import { HiArrowsUpDown, HiOutlineArrowSmallUp , HiOutlineArrowSmallDown  } from
 const HeaderBar = ({handleCategory,category, ascending}) =>{
     return(
         <div className="header-bar">
-            <div className="header-element" onClick={() => handleCategory('locationname')}>
+            <div className="location-card" onClick={() => handleCategory('locationname')}>
                 <p id="location-name">Location Name</p>
                 <ArrowSign value="locationname" category={category} ascending={ascending} />
             </div>
-            <div className="header-element" onClick={() => handleCategory('number')}>
+            <div className="location-card" onClick={() => handleCategory('number')}>
                 <p id="number">Number</p>
                 <ArrowSign value="number" category={category} ascending={ascending} />
             </div>
-            <div className="header-element">
+            <div style = {{width:'20%'}}>
                 <p id="favorite">Favorite</p>
             </div>
         </div>
@@ -78,7 +78,7 @@ export default function LocationMain (){
               method:'GET'
           }); 
           const data = await response.json();
-         // console.log('Fetched data:', data); 
+         console.log('Fetched data:', data); 
           setFetched(true); 
           setDisplay(data);
         } catch (error) {
@@ -112,18 +112,18 @@ export default function LocationMain (){
             if(typeof aValue !== 'number'){
               return aValue.localeCompare(bValue);
             }
-            return aValue - bValue;
+            return parseInt(aValue) - parseInt(bValue);
           } else {
             if(typeof aValue !== 'number'){
               return bValue.localeCompare(aValue);
             }
-            return bValue - aValue;
+            return parseInt(bValue) - parseInt(aValue);
           }
         });
   
         setDisplay(sortedResults);
       }
-    }, [category, ascending,fetched,display]);
+    }, [category, ascending]);
   
     
 
@@ -136,10 +136,9 @@ export default function LocationMain (){
             <div className="location-element">No results...</div>
             ) : (
             display.map((location) => {
-              console.log('LocationCard props:', location.eventnum);
             return (
                 <LocationCard
-                key={location.venueId}
+                key={location.id}
                 locationname={location.name}
                 number={location.eventnum}
                 />);

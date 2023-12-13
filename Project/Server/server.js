@@ -336,7 +336,8 @@ app.get('/all-events', async (req, res) => {
     for (let event of events) {
       const eventDates = await EventDate.findOne({ eventId: event.eventId });
 
-      const earliestEventDate = eventDates.indate[0].split('T')[0];
+      const earliestEventDate =  eventDates.indate[0].split('T')[0];
+
       const latestEventDate = eventDates.indate[eventDates.indate.length - 1].split('T')[0];
 
       const oneEvent = {
@@ -387,10 +388,9 @@ app.post('/navbar-events', async (req, res) => {
     let filteredEvents = [];
 
     for (let event of events) {
-      const eventDates = await EventDate.findOne({ eventId: event.eventId });
-
-      const earliestEventDate = eventDates.indate[0].split('T')[0];
-      const latestEventDate = eventDates.indate[eventDates.indate.length - 1].split('T')[0];
+     const eventdates = await EventDate.findOne({ eventId: event.eventId });
+      const earliestEventDate = eventdates.indate[0].split('T')[0];
+      const latestEventDate = eventdates.indate[eventdates.indate.length - 1].split('T')[0];
 
       if (earliestDate && earliestDate > earliestEventDate) {
         continue;
@@ -399,7 +399,7 @@ app.post('/navbar-events', async (req, res) => {
       if (latestDate && latestDate < latestEventDate) {
         continue;
       }
-
+ 
       const maxPrice = Math.max(...event.prices);
       if (price && maxPrice >= price) {
         continue;
@@ -409,18 +409,19 @@ app.post('/navbar-events', async (req, res) => {
         "eventId": event.eventId,
         "name": event.title,
         "price": (!event.prices || event.prices.length === 0 || event.prices[0] === null) ? [0] : event.prices.sort((a, b) => a - b),
-        "earliestDate": earliestEventDate,
+      "earliestDate": earliestEventDate,
         "latestDate": latestEventDate
       };
 
       filteredEvents.push(eventObj);
     }
     res.json(filteredEvents);
+    console.log(filteredEvents);
     return;
 
   } catch (err) {
     console.error("Error fetching relevant events", err);
-    res.status(500).json({ message: "Error fetching relevant events" });
+    res.sendStatus(500);
   }
 
 });
@@ -430,12 +431,12 @@ app.get('/all-venues', async (req, res) => {
     const venues = await Venue.find();
     const allVenues = [];
     for (let venue of venues) {
-      const events = await Event.find({ venue: venue._id });
+      const events = await Event.find({ venueId: venue._id });
 
       const oneVenue = {
         "id": venue.venueId,
         "name": venue.venue,
-        "eventnum": events.length
+        "eventnum": (events===null?0:events.length)
       }
 
       allVenues.push(oneVenue);
@@ -465,11 +466,11 @@ app.get('/venue/:venueId', async (req, res) => {
 });
 app.post('/navbar-venues', async (req, res) => {
   const { name, maxnum } = req.body;
-
+  console.log(req.body);
   let query = {}
 
   if (name) {
-    query.title = { $regex: name, $options: 'i' }
+    query.venue = { $regex: name, $options: 'i' }
   }
 
   try {
@@ -487,7 +488,7 @@ app.post('/navbar-venues', async (req, res) => {
       let venueObj = {
         "venueId": venue.venueId,
         "name": venue.venue,
-        "eventnum": eventnum
+        "eventnum": Number(eventnum)
       };
 
       filteredVenues.push(venueObj);

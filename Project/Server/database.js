@@ -126,8 +126,8 @@ const EventSchema = new mongoose.Schema({
         ref: 'EventDates',
     },
     venueId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Venues',
+        type: String,
+        required: [true, "venueId is required"]
     },
 });
 

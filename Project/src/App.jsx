@@ -26,6 +26,7 @@ class App extends React.Component {
         );
     }
 }
+
 class Home extends React.Component {
     render() {
         return (
@@ -281,7 +282,7 @@ class AdminSignIn extends React.Component {
             .then((data) => {
                 const user = data.username;
                 localStorage.setItem("user", user);
-                window.location.href = "/adminmain";
+                window.location.href = "/admineventmain";
             })
             .catch((error) => {
                 console.error("Error login in:", error);

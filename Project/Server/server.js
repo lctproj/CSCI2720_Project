@@ -3,7 +3,7 @@ const cors = require('cors');
 const cleanseData = require('./cleanseData.js')
 const fs = require('fs')
 const bodyParser = require('body-parser');
-const bcrypt = require(bcrypt);
+const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://0.0.0.0:27017/CSCI2720Project');
 

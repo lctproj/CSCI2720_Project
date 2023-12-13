@@ -1,26 +1,28 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import './App.css';
-import EventMain from './assets/EventMain';
-import LocationMain from './assets/LocationMain';
+import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import "./App.css";
+import EventMain from "./assets/EventMain";
+import LocationMain from "./assets/LocationMain";
+import AdminMain from "./assets/AdminMain";
 
 class App extends React.Component {
-  render() {
-    return (
-      <Router>
-        <Routes>
-          <Route path="/" element={<Home/>} />
-          <Route path="/create-account" element={<CreateAccount/>} />
-          <Route path="/signin" element={<SignIn/>} />
-          <Route path="/adminsignin" element={<AdminSignIn/>} />
-          <Route path="/userhome" element={<UserHome/>} />
-          <Route path="/changepw" element={<ChangePassword/>}/>
-          <Route path="/eventmain" element={<EventMain/>} />
-          <Route path="/locationmain" element={<LocationMain/>} />
-        </Routes>
-      </Router>
-    );
-  }
+    render() {
+        return (
+            <Router>
+                <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/create-account" element={<CreateAccount />} />
+                    <Route path="/signin" element={<SignIn />} />
+                    <Route path="/adminsignin" element={<AdminSignIn />} />
+                    <Route path="/adminmain" element={<AdminMain />} />
+                    <Route path="/userhome" element={<UserHome />} />
+                    <Route path="/changepw" element={<ChangePassword />} />
+                    <Route path="/eventmain" element={<EventMain />} />
+                    <Route path="/locationmain" element={<LocationMain />} />
+                </Routes>
+            </Router>
+        );
+    }
 }
 class Home extends React.Component {
     render() {
@@ -35,116 +37,114 @@ class CreateAccount extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-          username: '',
-          email: '',
-          password: '',
-          confirmPassword: '',
+            username: "",
+            email: "",
+            password: "",
+            confirmPassword: "",
         };
-      }
-    
+    }
 
     handleChange = (event) => {
-    this.setState({ [event.target.name]: event.target.value });
+        this.setState({ [event.target.name]: event.target.value });
     };
-    
+
     handleSubmit = (event) => {
         event.preventDefault();
-        
+
         const { username, email, password, confirmPassword } = this.state;
-    
+
         if (password !== confirmPassword) {
-          alert("Passwords do not match");
-          return;
+            alert("Passwords do not match");
+            return;
         }
-        
+
         if (!this.validateEmail(email)) {
-            alert('Please enter a valid email address');
+            alert("Please enter a valid email address");
             return;
         }
 
         const userData = { username, email, password };
-    
-        fetch('http://localhost:8964/create-user', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(userData),
+
+        fetch("http://localhost:8964/create-user", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(userData),
         })
-          .then((response) => {
-            if (response.status == 409) {
-                alert("Username already used");
-            } else if (response.status == 200) {
-                alert("User created successfully");
-                window.location.href = "/signin";
-            } else {
-                alert("An error occurred while creating the user");
-            }
-          })
-          .then(data => {
-            console.log(data);
-          })
-          .catch(error => {
-            console.log('Error creating user:', error);
-            // Handle the error
-          });
-
-
-      };
-
-    validateEmail = (email) => {
-    // Regular expression for email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+            .then((response) => {
+                if (response.status == 409) {
+                    alert("Username already used");
+                } else if (response.status == 200) {
+                    alert("User created successfully");
+                    window.location.href = "/signin";
+                } else {
+                    alert("An error occurred while creating the user");
+                }
+            })
+            .then((data) => {
+                console.log(data);
+            })
+            .catch((error) => {
+                console.log("Error creating user:", error);
+                // Handle the error
+            });
     };
 
-      
+    validateEmail = (email) => {
+        // Regular expression for email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+
     render() {
         return (
             <>
-            <form class="form" onSubmit={this.handleSubmit}>
-                <Header header="Create Account" />
-                <FlexColumn
-                    label="Username"
-                    placeholder="Enter your username"
-                    name = "username"
-                    handleChange={this.handleChange}
-                    type = "text"
-                />
-                <FlexColumn
-                    label="Email"
-                    placeholder="Enter your email"
-                    name = "email"
-                    handleChange={this.handleChange}
-                    type = "text"
-                />
-                <FlexColumn
-                    label="Password"
-                    placeholder="Enter your password"
-                    name = "password"
-                    handleChange={this.handleChange}
-                    type = "password"
-                />
-                <FlexColumn
-                    label="Confirmed Password"
-                    placeholder="Enter your password again"
-                    name = "confirmPassword"
-                    handleChange={this.handleChange}
-                    type = "password"
-                />
-                <div class="flex-row">
-                    <Link to="/signin" class="span">
-                        Sign In
-                    </Link>
+                <form class="form" onSubmit={this.handleSubmit}>
+                    <Header header="Create Account" />
+                    <FlexColumn
+                        label="Username"
+                        placeholder="Enter your username"
+                        name="username"
+                        handleChange={this.handleChange}
+                        type="text"
+                    />
+                    <FlexColumn
+                        label="Email"
+                        placeholder="Enter your email"
+                        name="email"
+                        handleChange={this.handleChange}
+                        type="text"
+                    />
+                    <FlexColumn
+                        label="Password"
+                        placeholder="Enter your password"
+                        name="password"
+                        handleChange={this.handleChange}
+                        type="password"
+                    />
+                    <FlexColumn
+                        label="Confirmed Password"
+                        placeholder="Enter your password again"
+                        name="confirmPassword"
+                        handleChange={this.handleChange}
+                        type="password"
+                    />
+                    <div class="flex-row">
+                        <Link to="/signin" class="span">
+                            Sign In
+                        </Link>
 
-                    <button class="button-submit" type = "submit">Next</button>
-                </div>
-                <div class="flex-row">
-                    <Link to="/adminsignin" class="span">
-                        Admin Sign In
-                    </Link>
-                </div>
-            </form>
+                        <button class="button-submit" type="submit">
+                            Next
+                        </button>
+                    </div>
+                    <div class="flex-row">
+                        <Link to="/adminsignin" class="span">
+                            Admin Sign In
+                        </Link>
+                    </div>
+                </form>
             </>
         );
     }
@@ -153,108 +153,170 @@ class SignIn extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-          username: '',
-          password: '',
+            username: "",
+            password: "",
         };
-      }
-    
+    }
 
     handleChange = (event) => {
-    this.setState({ [event.target.name]: event.target.value });
+        this.setState({ [event.target.name]: event.target.value });
     };
-    
+
     handleSubmit = (event) => {
         event.preventDefault();
-        
+
         const { username, password } = this.state;
-    
+
         const userData = { username, password };
-    
-        fetch('http://localhost:8964/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(userData),
+
+        fetch("http://localhost:8964/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(userData),
         })
-          .then((response)=> {
-
-            if (response.status == 401 || response.status == 404) {
-                alert("Invalid username or password");
-            } else if (response.status == 200) {
-                alert("Login successfully");
-                return response.json();
-            } else {
-                alert("Unknown error");
-            }
-          })
-          .then(data => {
-            const user = data.username;
-            localStorage.setItem('user', user);
-            window.location.href = "/eventmain";
-          })
-          .catch(error => {
-            console.error('Error login in:', error);
-            // Handle the error
-          });
-
-          
-      };
+            .then((response) => {
+                if (response.status == 401 || response.status == 404) {
+                    alert("Invalid username or password");
+                } else if (response.status == 200) {
+                    alert("Login successfully");
+                    return response.json();
+                } else {
+                    alert("Unknown error");
+                }
+            })
+            .then((data) => {
+                const user = data.username;
+                localStorage.setItem("user", user);
+                window.location.href = "/eventmain";
+            })
+            .catch((error) => {
+                console.error("Error login in:", error);
+                // Handle the error
+            });
+    };
     render() {
         return (
             <>
-            <form class="form" onSubmit = {this.handleSubmit}>
-                <Header header="Sign In" />
-                <FlexColumn
-                    label="Username"
-                    placeholder="Enter your username"
-                    handleChange={this.handleChange}
-                    type = "text"
-                    name = "username"
-                />
-                <br></br>
-                <FlexColumn
-                    label="Password"
-                    placeholder="Enter your password"
-                    handleChange={this.handleChange}
-                    type = "password"
-                    name = "password"
-                />
-                <div class="flex-row">
-                    <Link to="/create-account" class="span">
-                        Create Account
-                    </Link>
+                <form class="form" onSubmit={this.handleSubmit}>
+                    <Header header="Sign In" />
+                    <FlexColumn
+                        label="Username"
+                        placeholder="Enter your username"
+                        handleChange={this.handleChange}
+                        type="text"
+                        name="username"
+                    />
+                    <br></br>
+                    <FlexColumn
+                        label="Password"
+                        placeholder="Enter your password"
+                        handleChange={this.handleChange}
+                        type="password"
+                        name="password"
+                    />
+                    <div class="flex-row">
+                        <Link to="/create-account" class="span">
+                            Create Account
+                        </Link>
 
-                    <button class="button-submit" type = "submit">Next</button>
-                </div>
-                <div class="flex-row">
-                    <Link to="/adminsignin" class="span">
-                        Admin Sign In
-                    </Link>
-                </div>
-            </form>
+                        <button class="button-submit" type="submit">
+                            Next
+                        </button>
+                    </div>
+                    <div class="flex-row">
+                        <Link to="/adminsignin" class="span">
+                            Admin Sign In
+                        </Link>
+                    </div>
+                </form>
             </>
         );
     }
 }
 class AdminSignIn extends React.Component {
-  render() {
-    return(
-      <form className = "form">
-        <Header header = "Admin Sign In"/>
-        <FlexColumn label = "Username" placeholder = "Enter your username"/>
-        <br></br>
-        <FlexColumn label = "Password" placeholder = "Enter your password"/>
-        <div class="flex-row">
-        
-        <Link to="/signin" class = "span">
-        User Sign In
-        </Link>
-        <button class="button-submit">Next</button>
-        </div>
-      </form>
-    );
-  }
+    constructor(props) {
+        super(props);
+        this.state = {
+            username: "",
+            password: "",
+        };
+    }
+
+    handleChange = (event) => {
+        this.setState({ [event.target.name]: event.target.value });
+    };
+
+    handleSubmit = (event) => {
+        event.preventDefault();
+
+        const { username, password } = this.state;
+
+        const userData = { username, password };
+
+        fetch("http://localhost:8964/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(userData),
+        })
+            .then((response) => {
+                if (response.status == 401 || response.status == 404) {
+                    alert("Invalid username or password");
+                } else if (response.status == 200) {
+                    alert("Login successfully");
+                    return response.json();
+                } else {
+                    alert("Unknown error");
+                }
+            })
+            .then((data) => {
+                const user = data.username;
+                window.location.href = "/adminmain";
+            })
+            .catch((error) => {
+                console.error("Error login in:", error);
+            });
+    };
+    render() {
+        return (
+            <>
+                <form class="form" onSubmit={this.handleSubmit}>
+                    <Header header="Sign In" />
+                    <FlexColumn
+                        label="Username"
+                        placeholder="Enter your username"
+                        handleChange={this.handleChange}
+                        type="text"
+                        name="username"
+                    />
+                    <br></br>
+                    <FlexColumn
+                        label="Password"
+                        placeholder="Enter your password"
+                        handleChange={this.handleChange}
+                        type="password"
+                        name="password"
+                    />
+                    <div class="flex-row">
+                        <Link to="/create-account" class="span">
+                            Create Account
+                        </Link>
+                        <button class="button-submit" type="submit">
+                            Next
+                        </button>
+                    </div>
+                    <div class="flex-row">
+                        <Link to="/signin" class="span">
+                            User Sign In
+                        </Link>
+                    </div>
+                </form>
+            </>
+        );
+    }
 }
 class FlexColumn extends React.Component {
     render() {
@@ -269,8 +331,8 @@ class FlexColumn extends React.Component {
                         class="input"
                         onKeyDown={this.handleKeyDown}
                         placeholder={this.props.placeholder}
-                        onChange = {this.props.handleChange}
-                        name = {this.props.name}
+                        onChange={this.props.handleChange}
+                        name={this.props.name}
                     ></input>
                 </div>
             </>
@@ -508,94 +570,90 @@ class ChangePassword extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-          username: localStorage.getItem('user'),
-          password: '',
-          newPassword: '',
-          confirmPassword: '',
+            username: localStorage.getItem("user"),
+            password: "",
+            newPassword: "",
+            confirmPassword: "",
         };
-      }
-    
+    }
 
     handleChange = (event) => {
-    this.setState({ [event.target.name]: event.target.value });
+        this.setState({ [event.target.name]: event.target.value });
     };
-    
+
     handleSubmit = (event) => {
         event.preventDefault();
-        
-        const { username, password, newPassword, confirmPassword} = this.state;
-    
-        const userData = { username, password, newPassword};
+
+        const { username, password, newPassword, confirmPassword } = this.state;
+
+        const userData = { username, password, newPassword };
         console.log(userData);
         if (newPassword !== confirmPassword) {
             alert("Passwords do not match");
             return;
-          }
+        }
 
-        fetch('http://localhost:8964/change-password', {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(userData),
+        fetch("http://localhost:8964/change-password", {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(userData),
         })
-          .then((response)=> {
-
-            if (response.status == 404) {
-                alert("User not found");
-            } else if (response.status == 200) {
-                alert("Password changed successfully");
-                window.location.href = "/eventmain";
-            } else if (response.status == 401) {
-                alert("Invalid current password");
-            } else {
-                alert("Unknown error");
-            }
-          })
-          .then(data => {
-     
-          })
-          .catch(error => {
-            console.error('Error in changing password:', error);
-            // Handle the error
-          });
-
-          
-      };
+            .then((response) => {
+                if (response.status == 404) {
+                    alert("User not found");
+                } else if (response.status == 200) {
+                    alert("Password changed successfully");
+                    window.location.href = "/eventmain";
+                } else if (response.status == 401) {
+                    alert("Invalid current password");
+                } else {
+                    alert("Unknown error");
+                }
+            })
+            .then((data) => {})
+            .catch((error) => {
+                console.error("Error in changing password:", error);
+                // Handle the error
+            });
+    };
     render() {
         return (
             <>
-            <form class="form" onSubmit = {this.handleSubmit}>
-                <Header header="Change Password" />
-                <FlexColumn
-                    label="Old Password"
-                    placeholder="Enter your old password"
-                    handleChange={this.handleChange}
-                    name = "password"
-                    type = "password"
-                />
-                <FlexColumn
-                    label="New Password"
-                    placeholder="Enter your new password"
-                    handleChange={this.handleChange}
-                    name = "newPassword"
-                    type = "password"
-                />
-                <FlexColumn
-                    label="Confirm New Password"
-                    placeholder="Enter your new password again"
-                    handleChange={this.handleChange}
-                    name = "confirmPassword"
-                    type = "password"
-                />
-                <div class="flex-row">
-                    <Link to="/userhome" class="span">
-                        back
-                    </Link>
-                    <button class="button-submit" type="submit">Confirm</button>
-                </div>
-                <div class="flex-row"></div>
-            </form>
+                <form class="form" onSubmit={this.handleSubmit}>
+                    <Header header="Change Password" />
+                    <FlexColumn
+                        label="Old Password"
+                        placeholder="Enter your old password"
+                        handleChange={this.handleChange}
+                        name="password"
+                        type="password"
+                    />
+                    <FlexColumn
+                        label="New Password"
+                        placeholder="Enter your new password"
+                        handleChange={this.handleChange}
+                        name="newPassword"
+                        type="password"
+                    />
+                    <FlexColumn
+                        label="Confirm New Password"
+                        placeholder="Enter your new password again"
+                        handleChange={this.handleChange}
+                        name="confirmPassword"
+                        type="password"
+                    />
+                    <div class="flex-row">
+                        <Link to="/userhome" class="span">
+                            back
+                        </Link>
+                        <button class="button-submit" type="submit">
+                            Confirm
+                        </button>
+                    </div>
+                    <div class="flex-row"></div>
+                </form>
             </>
         );
     }

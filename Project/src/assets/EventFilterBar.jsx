@@ -3,6 +3,7 @@ import "./eventmain.css";
 import "../App.css";
 import { Link } from 'react-router-dom';
 import { IoSearch } from "react-icons/io5";
+import { FaRegUserCircle } from "react-icons/fa";
 
 const NameFilter = ({onInputChange}) => {
         const handleInputChange = (e) => {
@@ -114,9 +115,14 @@ export default function EventFilterBar({onInputChange,onPriceChange,onEarliestDa
         <DateFilter onEarliestDateChange={onEarliestDateChange} onLatestDateChange={onLatestDateChange}/>
         <SearchEvents  onClick = {handleSearchClick} onResult={onResult}/>
         <GoToLocation />
-        <div>
-        <p id="username">{localStorage.getItem('user')}</p>
+        <div className="go-to-userhome">
+      <Link to="/userhome" style={{ display: "flex", alignItems: "center" }}>
+        <div style={{ fontSize: "1.5rem", marginRight: "0.5rem" }}>
+          <FaRegUserCircle />
         </div>
+        <span>{localStorage.getItem("user")}</span>
+      </Link>
+    </div>
     </div>
 )
 }

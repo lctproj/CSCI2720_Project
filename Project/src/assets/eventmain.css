@@ -50,6 +50,15 @@
     min-height: 3rem;
     align-items: center;
 }
+.go-to-userhome{
+    background-color:white;
+    padding: 10px;
+    border-radius:5%;
+    margin:20px;
+    min-height: 3rem;
+    align-items: center;
+    font: black;
+}
 .search{
     background-color: rgb(234, 234, 33);
     border-radius: 50%;

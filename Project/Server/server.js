@@ -356,7 +356,7 @@ app.post('all-favorite-events', async (req, res) => {
       const favEventsList = user.favEvent;
 
       const favEventsIdList = favEventsList.map(event => ({
-        eventId: event.eventId  // Assuming _id is the property you want to send
+        eventId: event.eventId 
     }));
 
       res.json(favEventsIdList);
@@ -418,7 +418,7 @@ app.post('/navbar-events', async (req,res)=>{
       let eventObj ={
         "eventId":event.eventId,
         "name": event.title,
-        "price":event.prices.sort((a, b) => a - b).toString(),
+        "price":(event.prices[0]===null) ? 0 : event.prices.sort((a, b) => a - b).toString(),
         "earliestDate":earliestEventDate,
         "latestDate":latestEventDate
       };

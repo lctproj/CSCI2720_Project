@@ -51,7 +51,7 @@ export default function EventMain (){
     const [latestDate,setLatestDate] = useState('');
 
     //search results
-    const [fetched, setFetched] = useState([]);
+    const [fetched, setFetched] = useState(false);
     const [display, setDisplay] = useState([]);
 
     //sorting
@@ -88,16 +88,16 @@ export default function EventMain (){
       };
 
     //changes the sorting category
-        const handleCategory = (value) => {
-            if (value === category) {
-                setAscending(!ascending);
-            } else {
-                setCategory(value);
-                setAscending(true);
-            }
+    const handleCategory = (value) => {
+        if (value === category) {
+            setAscending(!ascending);
+        } else {
+            setCategory(value);
+            setAscending(true);
         }
+    }
 
-    useEffect(() => {
+    
         const fetchInitial = async () => {
           try {
             const response = await fetch('http://localhost:8964/all-events',{
@@ -105,19 +105,20 @@ export default function EventMain (){
             }); 
             const data = await response.json();
            // console.log('Fetched data:', data); 
-            setFetched(data); 
+            setFetched(true); 
             setDisplay(data);
           } catch (error) {
             console.error('Failed to fetch events:', error);
           }
         };
     
-        fetchInitial();
-      }, []);
+        if(!fetched){
+          fetchInitial();
+        }
 
         
     useEffect(() => {
-        if (fetched.length>0) {
+        if (fetched) {
           const sortedResults = [...display].sort((a, b) => {
             let aValue, bValue;
     
@@ -131,19 +132,25 @@ export default function EventMain (){
                 bValue = new Date(b.latestDate);
                 break;
               case 'price':
-                aValue = a.price; 
-                bValue = b.price;
+                aValue = (a.price.length===1?0:a.price[0]); 
+                bValue = (b.price.length===1?0:b.price[0]);
                 break;
               case 'eventname':
               default:
-                aValue = a.name
-                bValue = b.name
+                aValue = a.name.replace(/^\W+/, '');
+                bValue = b.name.replace(/^\W+/, '');
                 break;
             }
     
             if (ascending) {
+              if(typeof aValue !== 'number'){
+                return a.name.localeCompare(b.name);
+              }
               return aValue - bValue;
             } else {
+              if(typeof aValue !== 'number'){
+                return b.name.localeCompare(a.name);
+              }
               return bValue - aValue;
             }
           });

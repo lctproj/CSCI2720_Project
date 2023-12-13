@@ -425,7 +425,7 @@ app.post('all-favorite-events', async (req, res) => {
       const favEventsList = user.favEvent;
 
       const favEventsIdList = favEventsList.map(event => ({
-        eventId: event.eventId  // Assuming _id is the property you want to send
+        eventId: event.eventId 
     }));
 
       res.json(favEventsIdList);
@@ -487,7 +487,7 @@ app.post('/navbar-events', async (req,res)=>{
       let eventObj ={
         "eventId":event.eventId,
         "name": event.title,
-        "price":event.prices.sort((a, b) => a - b).toString(),
+        "price":(!event.prices || event.prices.length === 0 || event.prices[0] === null) ? [0] : event.prices.sort((a, b) => a - b),
         "earliestDate":earliestEventDate,
         "latestDate":latestEventDate
       };
@@ -535,6 +535,7 @@ app.post('/login', async (req, res) => {
   try {
     const { username, password } = req.body;
 
+
     const user = await User.findOne({ username: username });
     if (!user) {
       return res.status(404).json({ error: 'Invalid username or password' });
@@ -544,6 +545,9 @@ app.post('/login', async (req, res) => {
     if (!passwordMatch) {
       return res.status(401).json({ error: 'Invalid username or password' });
     }
+
+
+    res.json({ user: user });
 
   } catch (error) {
     console.error('Error during login:', error);

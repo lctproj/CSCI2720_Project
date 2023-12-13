@@ -51,7 +51,7 @@ export default function EventMain (){
     const [latestDate,setLatestDate] = useState('');
 
     //search results
-    const [fetched, setFetched] = useState([]);
+    const [fetched, setFetched] = useState(false);
     const [display, setDisplay] = useState([]);
 
     //sorting
@@ -88,16 +88,16 @@ export default function EventMain (){
       };
 
     //changes the sorting category
-        const handleCategory = (value) => {
-            if (value === category) {
-                setAscending(!ascending);
-            } else {
-                setCategory(value);
-                setAscending(true);
-            }
+    const handleCategory = (value) => {
+        if (value === category) {
+            setAscending(!ascending);
+        } else {
+            setCategory(value);
+            setAscending(true);
         }
+    }
 
-    useEffect(() => {
+    
         const fetchInitial = async () => {
           try {
             const response = await fetch('http://localhost:8964/all-events',{
@@ -105,19 +105,20 @@ export default function EventMain (){
             }); 
             const data = await response.json();
            // console.log('Fetched data:', data); 
-            setFetched(data); 
+            setFetched(true); 
             setDisplay(data);
           } catch (error) {
             console.error('Failed to fetch events:', error);
           }
         };
     
-        fetchInitial();
-      }, []);
+        if(!fetched){
+          fetchInitial();
+        }
 
         
     useEffect(() => {
-        if (fetched.length>0) {
+        if (fetched) {
           const sortedResults = [...display].sort((a, b) => {
             let aValue, bValue;
     
@@ -131,26 +132,32 @@ export default function EventMain (){
                 bValue = new Date(b.latestDate);
                 break;
               case 'price':
-                aValue = a.price; 
-                bValue = b.price;
+                aValue = Math.max(...a.price); 
+                bValue = Math.max(...b.price); 
                 break;
               case 'eventname':
               default:
-                aValue = a.name
-                bValue = b.name
+                aValue = a.name.replace(/^\W+/, '');
+                bValue = b.name.replace(/^\W+/, '');
                 break;
             }
     
             if (ascending) {
+              if(typeof aValue !== 'number'){
+                return a.name.localeCompare(b.name);
+              }
               return aValue - bValue;
             } else {
+              if(typeof aValue !== 'number'){
+                return b.name.localeCompare(a.name);
+              }
               return bValue - aValue;
             }
           });
     
           setDisplay(sortedResults);
         }
-      }, [category, ascending]);
+      }, [category, ascending,fetched,display]);
     
 
     return(
@@ -160,11 +167,11 @@ export default function EventMain (){
                 searchParams={searchParams} onResult={handleResults}/>
             <HeaderBar handleCategory={handleCategory} category={category} ascending={ascending} />
             {display.length === 0 ? (
-            <div className="event-element">Loading or no results...</div>
+            <div className="event-element">No results...</div>
             ) : (
               
             display.map((event) => {
-              console.log('EventCard props:', event); 
+              console.log('EventCard props:', Math.max(...event.price));  
               return(
                 <EventCard
                 key={event.eventId}

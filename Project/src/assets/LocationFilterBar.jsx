@@ -2,6 +2,8 @@ import React from 'react';
 import "./locationmain.css";
 import "../App.css";
 import { Link } from 'react-router-dom';
+import { IoSearch } from "react-icons/io5";
+
 
 const NameFilter = ({onInputChange}) => {
         const handleInputChange = (e) => {
@@ -21,17 +23,27 @@ const NameFilter = ({onInputChange}) => {
 }
 
 const NumberSlider = ({onNumberChange}) =>{
+    const [upperBound,setUpperBound] = useState(40);
     const handleNumberChange = (e) => {
         const value = e.target.value;
         onNumberChange(value);
+        setTimeout(()=>setUpperBound(value),  300);
     };
 
     return(
         <div className='number-slider'>
-            <label htmlFor="numberrange" className="flex flex-col">Number of events (less than ) </label>
-            <input type="range" min="0" max="10" id="numberrange"  onInput={handleNumberChange}/>
+            <label htmlFor="numberrange" className="flex flex-col">Number of events (less than {upperBound}) </label>
+            <input type="range" min="0" max="40" id="numberrange"  onInput={handleNumberChange}/>
         </div>
     )
+}
+
+const SearchEvents = ({ onClick })=>{
+    return(
+        <div className="search" onClick={ onClick }>
+            <IoSearch aria-label="Search locations"/>
+        </div>
+    );
 }
 
 const GoToEvents = () =>{
@@ -44,18 +56,41 @@ const GoToEvents = () =>{
     );
 }
 
-export default function LocationFilterBar({onInputChange,onNumberChange}){
+const sendSearchParams = async (params, onResult) => {
+    try {
+      const response = await fetch('http://localhost:8964/navbar-venues', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(params)
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      } else {
+        const data = await response.json();
+        onResult(data);
+      }
+    } catch (error) {
+      console.error('Error sending search inputs', error.message);
+    }
+  };
+
+
+export default function LocationFilterBar({onInputChange,onNumberChange, searchParams, onResult}){
+    const handleSearchClick = () => {
+            sendSearchParams(searchParams, onResult);
+        };
+    
     return(
         
+
         <div className= "location-filter-bar">
             <NameFilter onInputChange={onInputChange}/>
             <NumberSlider onNumberChange={onNumberChange} />
+            <SearchEvents  onClick = {handleSearchClick} onResult={onResult}/>
             <GoToEvents />
             <div>
                 <p id="username">Username</p>
-            </div>
-            <div>
-                <img id="usericon" src="./free-user-icon-3296-thumb.png" alt="user icon" />
             </div>
         </div>
     )

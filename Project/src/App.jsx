@@ -32,29 +32,104 @@ class Home extends React.Component {
     }
 }
 class CreateAccount extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+          username: '',
+          email: '',
+          password: '',
+          confirmPassword: '',
+        };
+      }
+    
+
+    handleChange = (event) => {
+    this.setState({ [event.target.name]: event.target.value });
+    };
+    
+    handleSubmit = (event) => {
+        event.preventDefault();
+        
+        const { username, email, password, confirmPassword } = this.state;
+    
+        if (password !== confirmPassword) {
+          alert("Passwords do not match");
+          return;
+        }
+        
+        if (!this.validateEmail(email)) {
+            alert('Please enter a valid email address');
+            return;
+        }
+        
+        const userData = { username, email, password };
+    
+        fetch('http://localhost:8964/create-user', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(userData),
+        })
+          .then(response => response.json())
+          .then(data => {
+            // Handle the response from the server
+            console.log(data);
+          })
+          .catch(error => {
+            console.log('Error creating user:', error);
+            // Handle the error
+          });
+
+          window.location.href = "/signin";
+      };
+
+    validateEmail = (email) => {
+    // Regular expression for email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+    };
+
+      
     render() {
         return (
-            <form class="form">
+            <>
+            <form class="form" onSubmit={this.handleSubmit}>
                 <Header header="Create Account" />
                 <FlexColumn
                     label="Username"
                     placeholder="Enter your username"
+                    name = "username"
+                    handleChange={this.handleChange}
+                    type = "text"
                 />
-                <FlexColumn label="Email" placeholder="Enter your email" />
+                <FlexColumn
+                    label="Email"
+                    placeholder="Enter your email"
+                    name = "email"
+                    handleChange={this.handleChange}
+                    type = "text"
+                />
                 <FlexColumn
                     label="Password"
                     placeholder="Enter your password"
+                    name = "password"
+                    handleChange={this.handleChange}
+                    type = "password"
                 />
                 <FlexColumn
                     label="Confirmed Password"
                     placeholder="Enter your password again"
+                    name = "confirmPassword"
+                    handleChange={this.handleChange}
+                    type = "password"
                 />
                 <div class="flex-row">
                     <Link to="/signin" class="span">
                         Sign In
                     </Link>
 
-                    <button class="button-submit">Next</button>
+                    <button class="button-submit" type = "submit">Next</button>
                 </div>
                 <div class="flex-row">
                     <Link to="/adminsignin" class="span">
@@ -62,6 +137,7 @@ class CreateAccount extends React.Component {
                     </Link>
                 </div>
             </form>
+            </>
         );
     }
 }
@@ -123,10 +199,12 @@ class FlexColumn extends React.Component {
                 </div>
                 <div class="inputForm">
                     <input
-                        type="text"
+                        type={this.props.type}
                         class="input"
                         onKeyDown={this.handleKeyDown}
                         placeholder={this.props.placeholder}
+                        onChange = {this.props.handleChange}
+                        name = {this.props.name}
                     ></input>
                 </div>
             </>

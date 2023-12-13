@@ -692,52 +692,71 @@ app.post('/user-data', async (req, res) => {
   }
 });
 
-app.post('/add-favourite-venue', async (req, res) => {
+app.post('/favourite-venue', async (req, res) => {
   try {
-    const { username, venueId } = req.body;
+    const { username, venueId, IsAdd } = req.body;
 
-    // Find the user by userId
-    const user = await User.find({ username: username });
+    // Find the user by username
+    const user = await User.findOne({ username: username });
 
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+    const venue = await Venue.findOne({ venueId: venueId });
+
+    if (!venue) {
+      return res.status(404).json({ error: 'Venue not found' });
     }
 
-    const venue = await Venue.find({ venueId: venueId });
+    if (IsAdd) {
+      const isFavorite = user.favVenue.includes(venue._id);
 
-    user.favVenue.push(venue._id);
+      if (isFavorite) {
+        return res.status(400).json({ error: 'Venue already in favorites' });
+      }
+
+      user.favVenue.push(venue._id);
+    } else {
+      // Remove the venue from the user's favorites
+      user.favVenue.pull(venue._id);
+    }
 
     // Save the updated user
     await user.save();
 
-    res.status(200).json({ message: 'Favorite venue added successfully' });
+    res.status(200).json({ message: 'Favorite venue updated successfully' });
   } catch (error) {
-    console.error('Error adding favorite venue:', error);
+    console.error('Error updating favorite venue:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-app.post('/add-favourite-event', async (req, res) => {
+app.post('/favourite-event', async (req, res) => {
   try {
-    const { username, eventId } = req.body;
+    const { username, eventId, IsAdd } = req.body;
 
-    // Find the user by userId
-    const user = await User.find({ username: username });
+    const user = await User.findOne({ username: username });
 
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+    const event = await Event.findOne({ eventId: eventId });
+
+    if (!event) {
+      return res.status(404).json({ error: 'Event not found' });
     }
 
-    const event = await Event.find({ eventId: eventId });
+    if (IsAdd) {
+      const isFavorite = user.favEvent.includes(event._id);
 
-    user.favEvent.push(event._id);
+      if (isFavorite) {
+        return res.status(400).json({ error: 'Venue already in favorites' });
+      }
 
-    // Save the updated user
+      user.favEvent.push(event._id);
+    } else {
+      user.favEvent.pull(event._id);
+    }
+
     await user.save();
 
-    res.status(200).json({ message: 'Favorite event added successfully' });
+    res.status(200).json({ message: 'Favorite venue updated successfully' });
   } catch (error) {
-    console.error('Error adding favorite event:', error);
+    console.error('Error updating favorite venue:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });

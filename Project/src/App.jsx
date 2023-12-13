@@ -61,7 +61,7 @@ class CreateAccount extends React.Component {
             alert('Please enter a valid email address');
             return;
         }
-        
+
         const userData = { username, email, password };
     
         fetch('http://localhost:8964/create-user', {
@@ -142,18 +142,71 @@ class CreateAccount extends React.Component {
     }
 }
 class SignIn extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+          username: '',
+          password: '',
+        };
+      }
+    
+
+    handleChange = (event) => {
+    this.setState({ [event.target.name]: event.target.value });
+    };
+    
+    handleSubmit = (event) => {
+        event.preventDefault();
+        
+        const { username, password } = this.state;
+    
+        const userData = { username, password };
+    
+        fetch('http://localhost:8964/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(userData),
+        })
+          .then((response)=> {
+                if (response) {
+                    return response.json();
+                } else if (response.status == 401) {
+                    alert("Invalid username or password");
+                } else {
+                    alert ("Unknown error");
+                }
+          })
+          .then(data => {
+            // Handle the response from the server
+            const token = data.token;
+            localStorage.setItem('token', token);
+            window.location.href = "/eventmain";
+          })
+          .catch(error => {
+            console.error('Error creating user:', error);
+            // Handle the error
+          });
+
+          
+      };
     render() {
         return (
-            <form class="form">
+            <form class="form" onSubmit = {this.handleSubmit}>
                 <Header header="Sign In" />
                 <FlexColumn
                     label="Username"
                     placeholder="Enter your username"
+                    handleChange={this.handleChange}
+                    type = "text"
                 />
                 <br></br>
                 <FlexColumn
                     label="Password"
                     placeholder="Enter your password"
+                    handleChange={this.handleChange}
+                    type = "password"
                 />
                 <div class="flex-row">
                     <Link to="/create-account" class="span">

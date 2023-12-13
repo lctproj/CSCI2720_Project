@@ -292,11 +292,83 @@ app.get('/', (req, res) => {
 app.get('/all-events', async (req, res) => {
   try {
     const events = await Event.find();
-    res.json(events);
+    const allEvents =[];
+    for(let event of events){
+      const eventDates = await EventDate.findOne({ eventId: event.eventId });
+
+      const earliestEventDate = eventDates.indate[0].split('T')[0];
+      const latestEventDate = eventDates.indate[eventDates.indate.length - 1].split('T')[0];
+
+      const oneEvent ={
+        "id":event.eventId,
+        "name":event.title,
+        "earliestDate":earliestEventDate,
+        "latestDate":latestEventDate,
+        "price":(event.prices[0]===null) ? "0" : event.prices.sort((a, b) => a - b).toString() 
+      }
+
+      allEvents.push(oneEvent);
+    }
+    res.json(allEvents);
   } catch (error) {
     console.log('Error retrieving events:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
+});
+
+app.post('favorite-events',  async(req, res)=> {
+  const {id,username} = req.body;
+
+  try{
+    //Find user given username
+    const user = await User.findOne({username: username}).populate('favEvents');
+
+    //Find event given ID
+    const newFavEvent = await Event.find({eventId:id});
+
+    //Add event to list of favorite ID of that particular user
+    user.favEvent.push(newFavEvent._id);
+  }catch(e){
+    console.log('Error adding to favorites:', e);
+    res.sendStatus(500);
+  }
+});
+
+app.delete('favorite-events',  async(req, res)=> {
+  const {id,username} = req.body;
+
+  try{
+    //Find user given username
+    const user = await User.findOne({username: username}).populate('favEvents');
+
+    //Find event given ID
+    const deletingEvent = await Event.find({eventId:id});
+
+    //filter out event with the same _id as the deletingEvent
+    user.favEvent = user.favEvent.filter(favEvent => !favEvent._id.equals(deletingEvent._id));  
+  }catch(e){
+    console.log('Error deleting from favorites:', e);
+    res.sendStatus(500);
+  }
+});
+
+app.post('all-favorite-events', async (req, res) => {
+    const {username} = req.body;
+
+    try{
+      const user = await User.findOne({username: username}).populate('favEvents');
+
+      const favEventsList = user.favEvent;
+
+      const favEventsIdList = favEventsList.map(event => ({
+        eventId: event.eventId  // Assuming _id is the property you want to send
+    }));
+
+      res.json(favEventsIdList);
+    }catch(err){
+      console.error("Error fetching list of favorite events",err);
+      res.sendStatus(500);
+    }
 });
 
 app.get('/event/:eventId', async (req, res) => {

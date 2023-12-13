@@ -88,7 +88,7 @@ class CreateAccount extends React.Component {
         })
           .then((response) => {
             if (response.status == 409) {
-                alert("Username already used");
+                alert("Username has been used");
             } else if (response.status == 200) {
                 alert("User created successfully");
                 window.location.href = "/signin";

@@ -546,7 +546,7 @@ class ChangePassword extends React.Component {
                 alert("User not found");
             } else if (response.status == 200) {
                 alert("Password changed successfully");
-                return response.json();
+                window.location.href = "/eventmain";
             } else if (response.status == 401) {
                 alert("Invalid current password");
             } else {
@@ -554,7 +554,7 @@ class ChangePassword extends React.Component {
             }
           })
           .then(data => {
-            window.location.href = "/eventmain";
+     
           })
           .catch(error => {
             console.error('Error in changing password:', error);
@@ -565,7 +565,7 @@ class ChangePassword extends React.Component {
       };
     render() {
         return (
-            <form class="form" onSumbit = {this.handleSubmit}>
+            <form class="form" onSubmit = {this.handleSubmit}>
                 <Header header="Change Password" />
                 <FlexColumn
                     label="Old Password"

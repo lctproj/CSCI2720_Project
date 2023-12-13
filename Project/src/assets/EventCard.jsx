@@ -10,10 +10,6 @@ export default function EventCard({ id, eventname, earliestdate, latestdate, pri
         //extract event details and format into JSON
         const favoriteEvent ={
             "id":id, 
-            "name": eventname,
-            "earliestdate": earliestdate,
-            "latestdate": latestdate,
-            "price": price
         }
 
         if(starred) {

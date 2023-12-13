@@ -312,6 +312,42 @@ app.get('/all-events', async (req, res) => {
   }
 });
 
+app.post('favorite-events',  async(req, res)=> {
+  const {id,username} = req.body;
+
+  try{
+    //Find user given username
+    const user = await User.findOne({username: username}).populate('favEvents');
+
+    //Find event given ID
+    const newFavEvent = await Event.find({eventId:id});
+
+    //Add event to list of favorite ID of that particular user
+    user.favEvents.push(newFavEvent._id);
+  }catch(e){
+    console.log('Error adding to favorites:', e);
+    res.sendStatus(500);
+  }
+});
+
+app.delete('favorite-events',  async(req, res)=> {
+  const {id,username} = req.body;
+
+  try{
+    //Find user given username
+    const user = await User.findOne({username: username}).populate('favEvents');
+
+    //Find event given ID
+    const deletingEvent = await Event.find({eventId:id});
+
+    //filter out event with the same _id as the deletingEvent
+    user.favEvents = user.favEvents.filter(favEvent => !favEvent._id.equals(deletingEvent._id));  
+  }catch(e){
+    console.log('Error deleting from favorites:', e);
+    res.sendStatus(500);
+  }
+});
+
 app.get('/event/:eventId', async (req, res) => {
   const eventId = req.params.eventId;
 

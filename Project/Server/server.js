@@ -625,7 +625,7 @@ app.put('/change-password', async (req, res) => {
   try {
     const { username, password, newPassword } = req.body;
 
-    const existingUser = await User.find({ username: username });
+    const existingUser = await User.findOne({ username: username });
     if (existingUser) {
       return res.status(409).json({ error: 'Username already exists' });
     }

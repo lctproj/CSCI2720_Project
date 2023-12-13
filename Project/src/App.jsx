@@ -657,7 +657,7 @@ class ChangePassword extends React.Component {
                 <p style={{ color: 'red' }}>{this.state.message}</p>
                 <div class="flex-row">
                     <Link to="/userhome" class="span">
-                        back
+                        Back
                     </Link>
                     <button class="button-submit" type="submit">Confirm</button>
                 </div>

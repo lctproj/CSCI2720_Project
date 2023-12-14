@@ -627,8 +627,6 @@ app.post('/admin/change-event', async (req, res) => {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    updatedEvent = JSON.parse(updatedEvent);
-
     const event = await Event.updateOne({ eventId: eventId }, updatedEvent, { new: true });
     if (!event) {
       return res.status(404).json({ error: 'Event not found' });

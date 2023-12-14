@@ -160,14 +160,6 @@ const UserSchema = new mongoose.Schema({
   favEvent: {
     type: [mongoose.Schema.Types.ObjectId],
     ref: 'Event',
-  },
-  favVenueName: {
-    type: [mongoose.Schema.Types.String],
-    ref: 'Venue',
-  },
-  favEventName: {
-    type: [mongoose.Schema.Types.String],
-    ref: 'Event',
   }
 });
   
@@ -475,7 +467,7 @@ app.post('/user-data', async (req, res) => {
 
 app.post('/favourite-venue', async (req, res) => {
   try {
-    const { username, venueId, venuename, IsAdd } = req.body;
+    const { username, venueId, IsAdd } = req.body;
 
     const user = await User.findOne({ username: username });
 

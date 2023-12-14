@@ -154,15 +154,7 @@ required: true
 favEvent: {
 type: [String],
 required: true
-},
-favVenueName: {
-    type: [mongoose.Schema.Types.String],
-    ref: 'Venue',
-  },
-  favEventName: {
-    type: [mongoose.Schema.Types.String],
-    ref: 'Event',
-  }
+}
 });
 
 const User = mongoose.model("Users", UserSchema);

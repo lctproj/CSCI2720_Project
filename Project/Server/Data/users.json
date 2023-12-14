@@ -1,39 +1,30 @@
 [
-    {
-        "username": "admin",
-        "password": "admin",
-        "email": "admin@admin.com",
-        "favVenue": [],
-        "favEvent": [],
-        "favEventName": [],
-        "favVenueName": []
-    },
-    {
-      "username": "user1",
-      "password": "password1",
-      "email": "user1@example.com",
+  {
+      "username": "admin",
+      "password": "admin",
+      "email": "admin@admin.com",
       "favVenue": [],
-      "favEvent": [],
-      "favEventName": [],
-      "favVenueName": []
-
-    },
-    {
-      "username": "user2",
-      "password": "password2",
-      "email": "user2@example.com",
-      "favVenue": [],
-      "favEvent": [],
-      "favEventName": [],
-      "favVenueName": []
-    },
-    {
-      "username": "user3",
-      "password": "password3",
-      "email": "user3@example.com",
-      "favVenue": [],
-      "favEvent": [],
-      "favEventName": [],
-      "favVenueName": []
-    }
-  ]
+      "favEvent": []
+  },
+  {
+    "username": "user1",
+    "password": "password1",
+    "email": "user1@example.com",
+    "favVenue": [],
+    "favEvent": []
+  },
+  {
+    "username": "user2",
+    "password": "password2",
+    "email": "user2@example.com",
+    "favVenue": [],
+    "favEvent": []
+  },
+  {
+    "username": "user3",
+    "password": "password3",
+    "email": "user3@example.com",
+    "favVenue": [],
+    "favEvent": []
+  }
+]

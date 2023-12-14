@@ -6,6 +6,7 @@ import LocationMain from "./assets/LocationMain";
 import AdminEventMain from "./assets/AdminEventMain";
 import AdminVenueMain from "./assets/AdminVenueMain";
 import Locationintro from './assets/Locationintro';
+import Eventintro from './assets/Eventintro';
 
 class App extends React.Component {
   render() {
@@ -23,6 +24,7 @@ class App extends React.Component {
           <Route path="/eventmain" element={<EventMain/>} />
           <Route path="/locationmain" element={<LocationMain/>} />
           <Route path="/locationintro" element={<Locationintro/>} /> 
+          <Route path="/eventintro" element={<Eventintro/>} /> 
         </Routes>
       </Router>
     );

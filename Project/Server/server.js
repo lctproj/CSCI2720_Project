@@ -12,193 +12,159 @@ app.use(bodyParser.json());
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'Connection error:'));
 
-const VenueSchema = new mongoose.Schema({
-  latitude: {
-    type: String,
-  },
-    longitude: {
-    type: String,
-  },
-  venueId: {
-    type: String,
-    required: [true, "Venue ID is required"],
-    unique: true,
-  },
-  venue: {
-    type: String,
-    required: [true, "Venue name is required"],
-  },
-});
-  
-const Venue = mongoose.model("Venues", VenueSchema);
-  
-const DateSchema = new mongoose.Schema({
-  indate: {
-    type: [String],
-  },
-  eventId: {
-    type: String,
-    required: [true, "eventId is required"],
-    unique: true
-  },
-});
-  
-const EventDate = mongoose.model('EventDates', DateSchema);
-  
 const EventSchema = new mongoose.Schema({
   cat1: {
-    type: String,
-    default: '',
+      type: String,
+      default: '',
   },
   cat2: {
-    type: String,
-    default: '',
+      type: String,
+      default: '',
   },
   enquiry: {
-    type: String,
-    default: '',
+      type: String,
+      default: '',
   },
   fax: {
-    type: String,
-    default: '',
+      type: String,
+      default: '',
   },
   email: {
-    type: String,
-    default: '',
+      type: String,
+      default: '',
   },
   saledate: {
-    type: String,
-    default: '',
+      type: String,
+      default: '',
   },
   interbook: {
-    type: String,
-    default: '',
+      type: String,
+      default: '',
   },
   eventId: {
-    type: String,
-    required: [true, "eventId is required"],
-    unique: true
+      type: String,
+      required: [true, "eventId is required"],
+      unique: true
   },
   prices: {
-    type: [Number],
-    default: '',
+      type: [Number],
+      default: '',
   },
   title: {
-    type: String,
-    default: '',
+      type: String,
+      default: '',
   },
   predate: {
-    type: String,
-    default: '',
+      type: String,
+      default: '',
   },
   progtime: {
-    type: String,
-    default: '',
+      type: String,
+      default: '',
   },
   progtime: {
-    type: String,
-    default: '',
+      type: String,
+      default: '',
   },
   agelimit: {
-    type: String,
-    default: '',
+      type: String,
+      default: '',
   },
   price: {
-    type: String,
-    default: '',
+      type: String,
+      default: '',
   },
   desc: {
-    type: String,
-    default: '',
+      type: String,
+      default: '',
   },
   url: {
-    type: String,
-    default: '',
+      type: String,
+      default: '',
   },
   tagenturl: {
-    type: String,
-    default: '',
+      type: String,
+      default: '',
   },
   remark: {
-    type: String,
-    default: '',
+      type: String,
+      default: '',
   },
   presenterorg: {
-    type: String,
-    default: '',
+      type: String,
+      default: '',
   },
   eventDates: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'EventDates',
+      type: [String],
+      default: [],
   },
   venueId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Venues',
+      type: String,
+      required: [true, "venueId is required"]
   },
 });
-  
+
 const Event = mongoose.model("Events", EventSchema);
-  
+
 const UserSchema = new mongoose.Schema({
   username: {
-    type: String,
-    required: [true, "Username is required"],
-    unique: true,
+      type: String,
+      required: [true, "Username is required"],
+      unique: true,
   },
   password: {
-    type: String,
-    required: [true, "Password is required"],
+      type: String,
+      required: [true, "Password is required"],
   },
   email: {
-    type: String,
-    required: [true, "Email is required"],
+      type: String,
+      required: [true, "Email is required"],
   },
   favVenue: {
-    type: [mongoose.Schema.Types.ObjectId],
-    ref: 'Venue',
+      type: [String],
+      required: true
   },
   favEvent: {
-    type: [mongoose.Schema.Types.ObjectId],
-    ref: 'Event',
+      type: [String],
+      required: true
   }
 });
-  
+
 const User = mongoose.model("Users", UserSchema);
-  
+
 const EventCommentSchema = new mongoose.Schema({
   eventId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Events',
+      type: String,
+      required: [true, "eventId is required"],
   },
   username: {
-    type: String,
-    required: [true, "Username is required"],
+      type: String,
+      required: [true, "Username is required"],
   },
   comment: {
-    type: String,
-    required: [true, "Comment is required"],
+      type: String,
+      required: [true, "Comment is required"],
   },
 });
-  
+
 const EventComment = mongoose.model("EventComments", EventCommentSchema);
-  
+
 const VenueCommentSchema = new mongoose.Schema({
   venueId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Venues',
+      type: String,
+      required: [true, "venueId is required"],
   },
   username: {
-    type: String,
-    required: [true, "Username is required"],
+      type: String,
+      required: [true, "Username is required"],
   },
   comment: {
-    type: String,
-    required: [true, "Comment is required"],
+      type: String,
+      required: [true, "Comment is required"],
   },
 });
-  
-const VenueComment = mongoose.model("VenueComments", VenueCommentSchema);
 
+const VenueComment = mongoose.model("VenueComments", VenueCommentSchema);
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });

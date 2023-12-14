@@ -6,39 +6,6 @@ mongoose.connect('mongodb://0.0.0.0:27017/CSCI2720Project');
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'Connection error:'));
 
-const VenueSchema = new mongoose.Schema({
-    latitude: {
-        type: String,
-    },
-    longitude: {
-        type: String,
-    },
-    venueId: {
-        type: String,
-        required: [true, "Venue ID is required"],
-        unique: true,
-    },
-    venue: {
-        type: String,
-        required: [true, "Venue name is required"],
-    },
-});
-
-const Venue = mongoose.model("Venues", VenueSchema);
-
-const DateSchema = new mongoose.Schema({
-    indate: {
-        type: [String],
-    },
-    eventId: {
-        type: String,
-        required: [true, "eventId is required"],
-        unique: true
-    },
-});
-
-const EventDate = mongoose.model('EventDates', DateSchema);
-
 const EventSchema = new mongoose.Schema({
     cat1: {
         type: String,
@@ -122,8 +89,8 @@ const EventSchema = new mongoose.Schema({
         default: '',
     },
     eventDates: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'EventDates',
+        type: [String],
+        default: [],
     },
     venueId: {
         type: String,
@@ -134,61 +101,61 @@ const EventSchema = new mongoose.Schema({
 const Event = mongoose.model("Events", EventSchema);
 
 const UserSchema = new mongoose.Schema({
-username: {
-type: String,
-required: [true, "Username is required"],
-unique: true,
-},
-password: {
-type: String,
-required: [true, "Password is required"],
-},
-email: {
-type: String,
-required: [true, "Email is required"],
-},
-favVenue: {
-type: [String],
-required: true
-},
-favEvent: {
-type: [String],
-required: true
-}
+    username: {
+        type: String,
+        required: [true, "Username is required"],
+        unique: true,
+    },
+    password: {
+        type: String,
+        required: [true, "Password is required"],
+    },
+    email: {
+        type: String,
+        required: [true, "Email is required"],
+    },
+    favVenue: {
+        type: [String],
+        required: true
+    },
+    favEvent: {
+        type: [String],
+        required: true
+    }
 });
 
 const User = mongoose.model("Users", UserSchema);
 
 const EventCommentSchema = new mongoose.Schema({
-eventId: {
-type: mongoose.Schema.Types.ObjectId,
-ref: 'Events',
-},
-username: {
-type: String,
-required: [true, "Username is required"],
-},
-comment: {
-type: String,
-required: [true, "Comment is required"],
-},
+    eventId: {
+        type: String,
+        required: [true, "eventId is required"],
+    },
+    username: {
+        type: String,
+        required: [true, "Username is required"],
+    },
+    comment: {
+        type: String,
+        required: [true, "Comment is required"],
+    },
 });
 
 const EventComment = mongoose.model("EventComments", EventCommentSchema);
 
 const VenueCommentSchema = new mongoose.Schema({
-venueId: {
-type: mongoose.Schema.Types.ObjectId,
-ref: 'Venues',
-},
-username: {
-type: String,
-required: [true, "Username is required"],
-},
-comment: {
-type: String,
-required: [true, "Comment is required"],
-},
+    venueId: {
+        type: String,
+        required: [true, "venueId is required"],
+    },
+    username: {
+        type: String,
+        required: [true, "Username is required"],
+    },
+    comment: {
+        type: String,
+        required: [true, "Comment is required"],
+    },
 });
 
 const VenueComment = mongoose.model("VenueComments", VenueCommentSchema);

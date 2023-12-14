@@ -38,4 +38,4 @@ const Map = () => {
   );
 };
 
-export default App;
+export default Map;

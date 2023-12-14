@@ -19,8 +19,8 @@ class App extends React.Component {
                     <Route path="/adminvenuemain" element={<AdminVenueMain />} />
                     <Route path="/userhome" element={<UserHome />} />
                     <Route path="/changepw" element={<ChangePassword />} />
-                    <Route path="/eventmain" element={<EventMain />} />
-                    <Route path="/locationmain" element={<LocationMain />} />
+                    <Route path="/event/main" element={<EventMain />} />
+                    <Route path="/location/main" element={<LocationMain />} />
                 </Routes>
             </Router>
         );

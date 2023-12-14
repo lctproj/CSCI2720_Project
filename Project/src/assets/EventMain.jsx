@@ -145,15 +145,17 @@ export default function EventMain (){
             }
     
             if (ascending) {
-              if(typeof aValue !== 'number'){
+              if (Number(aValue) && Number(bValue)) {
+                return Number(aValue) - Number(bValue);
+              } else {
                 return a.name.localeCompare(b.name);
               }
-              return aValue - bValue;
             } else {
-              if(typeof aValue !== 'number'){
+              if (Number(aValue) && Number(bValue)) {
+                return Number(bValue) - Number(aValue);
+              } else {
                 return b.name.localeCompare(a.name);
               }
-              return bValue - aValue;
             }
           });
     
@@ -163,7 +165,7 @@ export default function EventMain (){
     
 
     return(
-        <div className="event-main">
+        <div className="event-main"  >
             <EventFilterBar onInputChange={handleSearchInput} onPriceChange={handlePriceChange} 
                 onEarliestDateChange={handleEarliestDateChange} onLatestDateChange={handleLatestDateChange} 
                 searchParams={searchParams} onResult={handleResults}/>

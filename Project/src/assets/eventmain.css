@@ -1,6 +1,7 @@
 .event-main{
     width:100%;
     height: 100vh;
+    position: sticky;
 }
 
 .event-name{
@@ -138,6 +139,7 @@ text-align: center;
     flex-direction:row;
     justify-content: space-around;
     padding:3px;
+   
 }
 
 .event-card{
@@ -155,7 +157,6 @@ text-align: center;
 .event-filter-bar{
     background-color:blue;
     position: sticky;
-    top:0px;
     display:flex;
     flex-direction:row;
     justify-content:space-between;

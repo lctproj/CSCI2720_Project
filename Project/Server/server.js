@@ -308,7 +308,7 @@ app.get('/all-venues', async (req, res) => {
       const events = await Event.find({ venueId: venue._id });
 
       const oneVenue = {
-        "id": venue.venueId,
+        "venueId": venue.venueId,
         "name": venue.venue,
         "eventnum": (events===null?0:events.length)
       }

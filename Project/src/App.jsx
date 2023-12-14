@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import './App.css';
 import EventMain from './assets/EventMain';
 import LocationMain from './assets/LocationMain';
+import Locationintro from './assets/Locationintro';
 
 class App extends React.Component {
   render() {
@@ -17,11 +18,12 @@ class App extends React.Component {
           <Route path="/changepw" element={<ChangePassword/>}/>
           <Route path="/eventmain" element={<EventMain/>} />
           <Route path="/locationmain" element={<LocationMain/>} />
+          <Route path="/locationintro" element={<Locationintro/>} /> 
         </Routes>
       </Router>
     );
   }
-}
+} 
 class Home extends React.Component {
     render() {
         return (

@@ -1,0 +1,32 @@
+.background {
+    color: black;
+    padding: 30px;
+  }
+.buttonleft
+{
+   color:white; 
+}
+.buttonright{
+    color:white;
+}
+.comment{
+    font-size:32px;
+}
+input{
+    height: 100px;
+    width:50%;
+}
+.header-bar{
+    background-color:lightgray;
+    display:flex;
+    flex-direction:row;
+    justify-content: space-around;
+    padding:3px;
+}
+.header-element{
+    display:flex;
+    flex-direction:row;
+    justify-content:space-around;
+    width:20%;
+    align-items: center;
+}

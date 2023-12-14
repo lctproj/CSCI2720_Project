@@ -6,6 +6,7 @@ import LocationMain from "./assets/LocationMain";
 import AdminEventMain from "./assets/AdminEventMain";
 import AdminVenueMain from "./assets/AdminVenueMain";
 import Locationintro from './assets/Locationintro';
+import { FaRegUserCircle } from "react-icons/fa";
 
 class App extends React.Component {
   render() {
@@ -423,6 +424,8 @@ class UserHome extends React.Component {
             userEmail: null,
             favVenue: null,
             favEvent: null,
+            favVeneuID: null,
+            favEventID: null,
         };
     }
     componentDidMount() {
@@ -445,17 +448,17 @@ class UserHome extends React.Component {
           const data = await response.json();
           console.log(data);
       
-          if (response.ok) {
+          if (response) {
             const { user } = data;
       
             if (user) {
               this.setState({
                 userEmail: user.email,
-                favVenue: user.favVenue,
-                favEvent: user.favEvent,
+                favVenue: user.favVenueName,
+                favEvent: user.favEventName,
               });
       
-              this.fetchTitles();
+             
             } else {
               console.error('Error fetching user data:', data.error);
             }
@@ -466,41 +469,6 @@ class UserHome extends React.Component {
           console.error('Error fetching user data:', error);
         }
       };
-      
-      fetchTitles = async () => {
-        try {
-          const { favVenue, favEvent } = this.state;
-      
-          const eventResponse = await fetch('http://localhost:8964/all-events');
-          const eventData = await eventResponse.json();
-          const venueResponse = await fetch('http://localhost:8964/all-venues');
-          const venueData = await venueResponse.json();  
-          if (eventResponse) {
-           // const filteredEvents = eventData.filter((event) =>
-        //favEvent.includes(event._id)
-     // );
-            //const eventTitles = filteredEvents.map((event) => event.name);
-            const eventTitles = eventData.map((event) => event.name);
-            this.setState({
-              favEvent: eventTitles,
-            });
-          } else {
-            console.error('Error fetching event data:', eventData.error);
-          }
-          if (venueResponse) {
-        
-            const venueTitles = venueData.map((venue) => venue.name);
-            this.setState({
-              favVenue: venueTitles,
-            });
-          } else {
-            console.error('Error fetching venue data:', venueData.error);
-        } }catch (error) {
-          console.error('Error fetching event data:', error);
-      };}
-      componentDidMount() {
-        this.fetchUserData(); 
-      }
 
     toggleLocation = () => {
         this.setState((prevState) => ({
@@ -515,7 +483,7 @@ class UserHome extends React.Component {
     };
 
     handleHomeClick = () => {
-        window.location.href = "/";
+        window.location.href = "/eventmain";
     };
     handleLogout = () => {
         window.location.href = "/signin";
@@ -542,18 +510,20 @@ class UserHome extends React.Component {
                             src="/src/assets/home-icon.svg"
                             alt="Home Icon"
                             id="homeicon"
+                            onClick={this.handleHomeClick}
                         />
                     </button>
                 </div>
                 <div class="top-bar">
-                    <div class="user-details">
-                        <span id="username">{localStorage.getItem('user')}</span>
-                        <img
-                            src="/src/assets/user-icon.svg"
-                            alt="User Icon"
-                            id="usericon"
-                        />
-                    </div>
+                <div className="go-to-userhome">
+      <Link to="/userhome" style={{ display: "flex", alignItems: "left" }}>
+        <div style={{ fontSize: "1.5rem", marginRight: "0.5rem" ,alignItems: "center"}}>
+          <FaRegUserCircle />
+        </div>
+        <span>{localStorage.getItem("user")}</span>
+      </Link>
+    </div>
+                    
                 </div>
                 <div class="backgruond">
                     <div class="content">

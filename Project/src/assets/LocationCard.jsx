@@ -2,14 +2,14 @@ import './locationmain.css';
 import React from 'react';
 import {Link} from 'react-router-dom';
 
-export default function LocationCard({id, locationname, number ,username, originalStar}) {
+export default function LocationCard({id, locationname, number ,username}) {
   
     const handleAddClick = async () => {     
         //extract event details and format into JSON
         const favoriteLoc ={
             "id":id, 
             "username":username,
-            "isAdd":true
+            "IsAdd":true
         }
 
             try{
@@ -33,9 +33,9 @@ export default function LocationCard({id, locationname, number ,username, origin
         const handleDeleteClick = async () => {     
             //extract event details and format into JSON
             const favoriteLoc ={
-                "id":id, 
+                "venueId":id, 
                 "username":username,
-                "isAdd":false
+                "IsAdd":false
             }
     
                 try{
@@ -52,7 +52,7 @@ export default function LocationCard({id, locationname, number ,username, origin
                         throw new Error(`HTTP error: ${response.status}`);
                     }
                 }catch(err){
-                    console.error('Error adding location to favorites:', err);
+                    console.error('Error deleting location to favorites:', err);
                 }
             }
   

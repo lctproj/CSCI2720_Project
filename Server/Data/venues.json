@@ -1,0 +1,788 @@
+[
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "100",
+    "venue": "Tai Po Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "101",
+    "venue": "Ping Shan Tin Shui Wai Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "102",
+    "venue": "To Kwa Wan Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "103",
+    "venue": "Tseung Kwan O Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "104",
+    "venue": "Tsim Sha Tsui Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "105",
+    "venue": "Tsing Yi Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "106",
+    "venue": "Tsuen Wan Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "107",
+    "venue": "Tsz Wan Shan Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "108",
+    "venue": "Tuen Mun Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "109",
+    "venue": "Un Chau Street Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "110",
+    "venue": "Wong Nai Chung Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "111",
+    "venue": "Yau Ma Tei Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "112",
+    "venue": "Yiu Tung Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "113",
+    "venue": "Yuen Long Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "1720",
+    "venue": "Tin Shui Wai North Public Library"
+  },
+  {
+    "latitude": "22.501639",
+    "longitude": "114.128911",
+    "venueId": "3110031",
+    "venue": "North District Town Hall (Auditorium)"
+  },
+  {
+    "latitude": "22.501639",
+    "longitude": "114.128911",
+    "venueId": "3110267",
+    "venue": "North District Town Hall (Function Room 2)"
+  },
+  {
+    "latitude": "22.501639",
+    "longitude": "114.128911",
+    "venueId": "3110565",
+    "venue": "North District Town Hall (Function Room 1)"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "3210299",
+    "venue": "Queen Elizabeth Stadium (Arena)"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "357",
+    "venue": "Fu Shan Public Library"
+  },
+  {
+    "latitude": "22.38136",
+    "longitude": "114.18990",
+    "venueId": "36310035",
+    "venue": "Sha Tin Town Hall (Auditorium)"
+  },
+  {
+    "latitude": "22.38136",
+    "longitude": "114.18990",
+    "venueId": "36310036",
+    "venue": "Sha Tin Town Hall (Cultural Activities Hall)"
+  },
+  {
+    "latitude": "22.38136",
+    "longitude": "114.18990",
+    "venueId": "36310037",
+    "venue": "Sha Tin Town Hall (Exhibition Gallery)"
+  },
+  {
+    "latitude": "22.38136",
+    "longitude": "114.18990",
+    "venueId": "36310304",
+    "venue": "Sha Tin Town Hall (Dance Studio)"
+  },
+  {
+    "latitude": "22.38136",
+    "longitude": "114.18990",
+    "venueId": "36310566",
+    "venue": "Sha Tin Town Hall (Conference Room)"
+  },
+  {
+    "latitude": "22.38136",
+    "longitude": "114.18990",
+    "venueId": "36310593",
+    "venue": "Sha Tin Town Hall (Lecture Room 1)"
+  },
+  {
+    "latitude": "22.38136",
+    "longitude": "114.18990",
+    "venueId": "36310594",
+    "venue": "Sha Tin Town Hall (Lecture Room 2)"
+  },
+  {
+    "latitude": "22.38136",
+    "longitude": "114.18990",
+    "venueId": "36311771",
+    "venue": "Sha Tin Town Hall (Music Studio)"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "4662",
+    "venue": "Siu Sai Wan Public Library"
+  },
+  {
+    "latitude": "22.29386",
+    "longitude": "114.17053",
+    "venueId": "501",
+    "venue": "Hong Kong Cultural Centre"
+  },
+  {
+    "latitude": "22.29386",
+    "longitude": "114.17053",
+    "venueId": "50110014",
+    "venue": "Hong Kong Cultural Centre (Concert Hall)"
+  },
+  {
+    "latitude": "22.29386",
+    "longitude": "114.17053",
+    "venueId": "50110015",
+    "venue": "Hong Kong Cultural Centre (Grand Theatre)"
+  },
+  {
+    "latitude": "22.29386",
+    "longitude": "114.17053",
+    "venueId": "50110016",
+    "venue": "Hong Kong Cultural Centre (Studio Theatre)"
+  },
+  {
+    "latitude": "22.29386",
+    "longitude": "114.17053",
+    "venueId": "50110303",
+    "venue": "Hong Kong Cultural Centre (Exhibition Gallery)"
+  },
+  {
+    "latitude": "22.29386",
+    "longitude": "114.17053",
+    "venueId": "50117386",
+    "venue": "Hong Kong Cultural Centre (Foyer Exhibition Areas)"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "53",
+    "venue": "Aberdeen Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "54",
+    "venue": "Ap Lei Chau Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "55",
+    "venue": "Butterfly Estate Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "56",
+    "venue": "Chai Wan Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "57",
+    "venue": "Cheung Chau Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "58",
+    "venue": "City Hall Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "59",
+    "venue": "Electric Road Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "599",
+    "venue": "Tung Chung Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "60",
+    "venue": "Fa Yuen Street Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "61",
+    "venue": "Fanling Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "62",
+    "venue": "Hong Kong Central Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "6210513",
+    "venue": "Hong Kong Central Library (G/F Lecture Theatre)"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "6210646",
+    "venue": "Hong Kong Central Library (G/F Exhibition Gallery)"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "63",
+    "venue": "Hung Hom Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "64",
+    "venue": "Kowloon City Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "65",
+    "venue": "Kowloon Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "66",
+    "venue": "Lai Chi Kok Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "67",
+    "venue": "Lam Tin Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "68",
+    "venue": "Lek Yuen Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "6824",
+    "venue": "Hong Kong Coliseum (Arena)"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "6858",
+    "venue": "Tiu Keng Leng Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "69",
+    "venue": "Lockhart Road Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "70",
+    "venue": "Lok Fu Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "71",
+    "venue": "Lung Hing Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "72",
+    "venue": "Mui Wo Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "73",
+    "venue": "Ngau Chi Wan Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "74",
+    "venue": "Ngau Tau Kok Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "7434",
+    "venue": "Fanling South Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "75",
+    "venue": "North Kwai Chung Public Library"
+  },
+  {
+    "latitude": "22.285056",
+    "longitude": "114.222075",
+    "venueId": "75010017",
+    "venue": "Hong Kong Film Archive (Cinema)"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "76",
+    "venue": "North Lamma Public Library"
+  },
+  {
+    "latitude": "22.391810",
+    "longitude": "113.976771",
+    "venueId": "76810048",
+    "venue": "Tuen Mun Town Hall (Auditorium)"
+  },
+  {
+    "latitude": "22.391810",
+    "longitude": "113.976771",
+    "venueId": "76810049",
+    "venue": "Tuen Mun Town Hall (Cultural Activities Hall)"
+  },
+  {
+    "latitude": "22.391810",
+    "longitude": "113.976771",
+    "venueId": "76810050",
+    "venue": "Tuen Mun Town Hall (Exhibition Gallery)"
+  },
+  {
+    "latitude": "22.391810",
+    "longitude": "113.976771",
+    "venueId": "76810200",
+    "venue": "Tuen Mun Town Hall (Lecture Room 2)"
+  },
+  {
+    "latitude": "22.391810",
+    "longitude": "113.976771",
+    "venueId": "76810294",
+    "venue": "Tuen Mun Town Hall (Dance Studio)"
+  },
+  {
+    "latitude": "22.391810",
+    "longitude": "113.976771",
+    "venueId": "76810295",
+    "venue": "Tuen Mun Town Hall (Music Studio)"
+  },
+  {
+    "latitude": "22.391810",
+    "longitude": "113.976771",
+    "venueId": "76810312",
+    "venue": "Tuen Mun Town Hall (Conference Room)"
+  },
+  {
+    "latitude": "22.391810",
+    "longitude": "113.976771",
+    "venueId": "76810831",
+    "venue": "Tuen Mun Town Hall (Lecture Room (1))"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "7698",
+    "venue": "Hong Kong Heritage Museum (Theatre)"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "77",
+    "venue": "North Point Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "7744",
+    "venue": "Yuen Chau Kok Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "78",
+    "venue": "Shek Kip Mei Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "79",
+    "venue": "Peng Chau Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "80",
+    "venue": "Po On Road Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "81",
+    "venue": "Pok Fu Lam Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "811",
+    "venue": "Ma On Shan Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "8186",
+    "venue": "Black Box Theatre, Kwai Tsing Theatre"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "82",
+    "venue": "Quarry Bay Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "8265",
+    "venue": "Sham Shui Po Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "826517385",
+    "venue": "Sham Shui Po Public Library (Hong Kong Central Library Multi-Purpose Display and Reading Area\r\n)"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "83",
+    "venue": "Sai Kung Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "84",
+    "venue": "Lei Yue Mun Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "85",
+    "venue": "San Po Kong Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "86",
+    "venue": "Sau Mau Ping Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "87",
+    "venue": "Sha Tau Kok Public Library"
+  },
+  {
+    "latitude": "22.35665",
+    "longitude": "114.12623",
+    "venueId": "871",
+    "venue": "Kwai Tsing Theatre"
+  },
+  {
+    "latitude": "22.35665",
+    "longitude": "114.12623",
+    "venueId": "87110023",
+    "venue": "Kwai Tsing Theatre (Auditorium)"
+  },
+  {
+    "latitude": "22.35665",
+    "longitude": "114.12623",
+    "venueId": "87110024",
+    "venue": "Kwai Tsing Theatre (Dance Studio)"
+  },
+  {
+    "latitude": "22.35665",
+    "longitude": "114.12623",
+    "venueId": "87110026",
+    "venue": "Kwai Tsing Theatre (Rehearsal Room)"
+  },
+  {
+    "latitude": "22.35665",
+    "longitude": "114.12623",
+    "venueId": "87110120",
+    "venue": "Kwai Tsing Theatre (Lecture Room)"
+  },
+  {
+    "latitude": "22.44152",
+    "longitude": "114.02289",
+    "venueId": "87310051",
+    "venue": "Yuen Long Theatre (Auditorium)"
+  },
+  {
+    "latitude": "22.44152",
+    "longitude": "114.02289",
+    "venueId": "87310196",
+    "venue": "Yuen Long Theatre (Lecture Room)"
+  },
+  {
+    "latitude": "22.44152",
+    "longitude": "114.02289",
+    "venueId": "87310362",
+    "venue": "Yuen Long Theatre (Dance Studio)"
+  },
+  {
+    "latitude": "22.44152",
+    "longitude": "114.02289",
+    "venueId": "87310544",
+    "venue": "Yuen Long Theatre (Rehearsal Room)"
+  },
+  {
+    "latitude": "22.44152",
+    "longitude": "114.02289",
+    "venueId": "87311966",
+    "venue": "Yuen Long Theatre (Function Room)"
+  },
+  {
+    "latitude": "22.44152",
+    "longitude": "114.02289",
+    "venueId": "87315528",
+    "venue": "Yuen Long Theatre (Exhibition Corner)"
+  },
+  {
+    "latitude": "22.334583",
+    "longitude": "114.208766",
+    "venueId": "87410028",
+    "venue": "Ngau Chi Wan Civic Centre (Cultural Activities Hall)"
+  },
+  {
+    "latitude": "22.334583",
+    "longitude": "114.208766",
+    "venueId": "87410030",
+    "venue": "Ngau Chi Wan Civic Centre (Theatre)"
+  },
+  {
+    "latitude": "22.282279",
+    "longitude": "114.161545",
+    "venueId": "87510008",
+    "venue": "Hong Kong City Hall (Concert Hall)"
+  },
+  {
+    "latitude": "22.282279",
+    "longitude": "114.161545",
+    "venueId": "87510009",
+    "venue": "Hong Kong City Hall (Recital Hall)"
+  },
+  {
+    "latitude": "22.282279",
+    "longitude": "114.161545",
+    "venueId": "87510010",
+    "venue": "Hong Kong City Hall (Theatre)"
+  },
+  {
+    "latitude": "22.282279",
+    "longitude": "114.161545",
+    "venueId": "87510305",
+    "venue": "Hong Kong City Hall (Exhibition Hall)"
+  },
+  {
+    "latitude": "22.282279",
+    "longitude": "114.161545",
+    "venueId": "87510494",
+    "venue": "Hong Kong City Hall (Exhibition Gallery)"
+  },
+  {
+    "latitude": "22.31368",
+    "longitude": "114.18556",
+    "venueId": "87610118",
+    "venue": "Ko Shan Theatre (Theatre)"
+  },
+  {
+    "latitude": "22.31368",
+    "longitude": "114.18556",
+    "venueId": "87616551",
+    "venue": "Ko Shan Theatre (New Wing Auditorium)"
+  },
+  {
+    "latitude": "22.28602",
+    "longitude": "114.14967",
+    "venueId": "87810041",
+    "venue": "Sheung Wan Civic Centre (Lecture Hall)"
+  },
+  {
+    "latitude": "22.28602",
+    "longitude": "114.14967",
+    "venueId": "87810042",
+    "venue": "Sheung Wan Civic Centre (Theatre)"
+  },
+  {
+    "latitude": "22.28602",
+    "longitude": "114.14967",
+    "venueId": "87810777",
+    "venue": "Sheung Wan Civic Centre (Art Studio (1))"
+  },
+  {
+    "latitude": "22.28602",
+    "longitude": "114.14967",
+    "venueId": "87810778",
+    "venue": "Sheung Wan Civic Centre (Art Studio (2))"
+  },
+  {
+    "latitude": "22.28602",
+    "longitude": "114.14967",
+    "venueId": "87810779",
+    "venue": "Sheung Wan Civic Centre (Art Studios (1) & (2))"
+  },
+  {
+    "latitude": "22.28602",
+    "longitude": "114.14967",
+    "venueId": "87810780",
+    "venue": "Sheung Wan Civic Centre (Dance Practice Room)"
+  },
+  {
+    "latitude": "22.28602",
+    "longitude": "114.14967",
+    "venueId": "87810961",
+    "venue": "Sheung Wan Civic Centre (Rehearsal Hall)"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "88",
+    "venue": "Sha Tin Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "89",
+    "venue": "Shek Tong Tsui Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "90",
+    "venue": "Shek Wai Kok Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "91",
+    "venue": "Sheung Shui Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "92",
+    "venue": "Shui Wo Street Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "93",
+    "venue": "Shun Lee Estate Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "94",
+    "venue": "Smithfield Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "95",
+    "venue": "South Kwai Chung Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "96",
+    "venue": "South Lamma Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "969",
+    "venue": "Stanley Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "97",
+    "venue": "Tai Hing Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "98",
+    "venue": "Tai Kok Tsui Public Library"
+  },
+  {
+    "latitude": "",
+    "longitude": "",
+    "venueId": "99",
+    "venue": "Tai O Public Library"
+  }
+]

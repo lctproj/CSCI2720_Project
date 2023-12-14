@@ -71,25 +71,25 @@ export default function LocationMain (){
     const handleResults = (results) => {
         setDisplay(results);
       };
-
-      const fetchInitial = async () => {
-        try {
-          const response = await fetch('http://localhost:8964/all-venues',{
-              method:'GET'
-          }); 
-          const data = await response.json();
-         // console.log('Fetched data:', data); 
-          setFetched(true); 
-          setDisplay(data);
-        } catch (error) {
-          console.error('Failed to fetch venue:', error);
+      useEffect(() => {
+        const fetchInitial = async () => {
+          try {
+            const response = await fetch('http://localhost:8964/all-venues', {
+              method: 'GET'
+            });
+            const data = await response.json();
+            // console.log('Fetched data:', data);
+            setFetched(true);
+            setDisplay(data);
+          } catch (error) {
+            console.error('Failed to fetch venues:', error);
+          }
+        };
+      
+        if (!fetched) {
+          fetchInitial();
         }
-      };
-  
-      if(!fetched){
-        fetchInitial();
-      }
-
+      }, [fetched]); 
       
   useEffect(() => {
       if (fetched) {
@@ -97,11 +97,11 @@ export default function LocationMain (){
           let aValue, bValue;
   
           switch (category) {
-            case 'eventnum':
+            case 'number':
               aValue = a.eventnum; 
               bValue = b.eventnum; 
               break;
-            case 'name':
+            case 'locationname':
             default:
               aValue = a.name || '';
               bValue = b.name || '';
@@ -109,26 +109,28 @@ export default function LocationMain (){
           }
   
           if (ascending) {
-            if(typeof aValue !== 'number'){
-              return aValue.localeCompare(bValue);
+            if (Number(aValue) && Number(bValue)) {
+              return Number(aValue) - Number(bValue);
+            } else {
+              return a.name.localeCompare(b.name);
             }
-            return aValue - bValue;
           } else {
-            if(typeof aValue !== 'number'){
-              return bValue.localeCompare(aValue);
+            if (Number(aValue) && Number(bValue)) {
+              return Number(bValue) - Number(aValue);
+            } else {
+              return b.name.localeCompare(a.name);
             }
-            return bValue - aValue;
           }
         });
   
         setDisplay(sortedResults);
       }
-    }, [category, ascending,fetched,display]);
+    }, [category, ascending]);
   
     
 
     return(
-        <div className="location-main">
+        <div className="location-main" >
             <LocationFilterBar onInputChange={handleSearchInput} onNumberChange={handleNumberChange} 
              searchParams={searchParams} onResult={handleResults}/>
             <HeaderBar handleCategory={handleCategory} category={category} ascending={ascending} />
@@ -136,7 +138,6 @@ export default function LocationMain (){
             <div className="location-element">No results...</div>
             ) : (
             display.map((location) => {
-              console.log('LocationCard props:', location.eventnum);
             return (
                 <LocationCard
                 key={location.venueId}

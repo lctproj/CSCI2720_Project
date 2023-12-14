@@ -98,24 +98,26 @@ export default function EventMain (){
     }
 
     
-        const fetchInitial = async () => {
-          try {
-            const response = await fetch('http://localhost:8964/all-events',{
-                method:'GET'
-            }); 
-            const data = await response.json();
-           // console.log('Fetched data:', data); 
-            setFetched(true); 
-            setDisplay(data);
-          } catch (error) {
-            console.error('Failed to fetch events:', error);
-          }
-        };
-    
-        if(!fetched){
-          fetchInitial();
+    useEffect(() => {
+      const fetchInitial = async () => {
+        try {
+          const response = await fetch('http://localhost:8964/all-events', {
+            method: 'GET'
+          });
+          const data = await response.json();
+          // console.log('Fetched data:', data);
+          setFetched(true);
+          setDisplay(data);
+        } catch (error) {
+          console.error('Failed to fetch events:', error);
         }
-
+      };
+    
+      if (!fetched) {
+        fetchInitial();
+      }
+    }, [fetched]); 
+ 
         
     useEffect(() => {
         if (fetched) {
@@ -143,25 +145,27 @@ export default function EventMain (){
             }
     
             if (ascending) {
-              if(typeof aValue !== 'number'){
+              if (Number(aValue) && Number(bValue)) {
+                return Number(aValue) - Number(bValue);
+              } else {
                 return a.name.localeCompare(b.name);
               }
-              return aValue - bValue;
             } else {
-              if(typeof aValue !== 'number'){
+              if (Number(aValue) && Number(bValue)) {
+                return Number(bValue) - Number(aValue);
+              } else {
                 return b.name.localeCompare(a.name);
               }
-              return bValue - aValue;
             }
           });
     
           setDisplay(sortedResults);
         }
-      }, [category, ascending,fetched,display]);
+      }, [category, ascending]);
     
 
     return(
-        <div className="event-main">
+        <div className="event-main"  >
             <EventFilterBar onInputChange={handleSearchInput} onPriceChange={handlePriceChange} 
                 onEarliestDateChange={handleEarliestDateChange} onLatestDateChange={handleLatestDateChange} 
                 searchParams={searchParams} onResult={handleResults}/>
@@ -169,18 +173,18 @@ export default function EventMain (){
             {display.length === 0 ? (
             <div className="event-element">No results...</div>
             ) : (
-              
-            display.map((event) => {
-              console.log('EventCard props:', Math.max(...event.price));  
-              return(
-                <EventCard
-                key={event.eventId}
-                eventname={event.name}
-                earliestdate={event.earliestDate}
-                latestdate={event.latestDate}
-                price={event.price}
-                />);
-            })
+             
+              display.map((event) => {
+                return(
+                  <EventCard
+                  key={event.id}
+                  eventname={event.name}
+                  earliestdate={event.earliestDate}
+                  latestdate={event.latestDate}
+                  price={event.price}
+                  />);
+              })
+            
         )}
         </div>
     );

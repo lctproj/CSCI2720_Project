@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import './App.css';
-import EventMain from './assets/EventMain';
-import LocationMain from './assets/LocationMain';
+import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import "./App.css";
+import EventMain from "./assets/EventMain";
+import LocationMain from "./assets/LocationMain";
+import AdminEventMain from "./assets/AdminEventMain";
+import AdminVenueMain from "./assets/AdminVenueMain";
 import Locationintro from './assets/Locationintro';
 
 class App extends React.Component {
@@ -14,6 +16,8 @@ class App extends React.Component {
           <Route path="/create-account" element={<CreateAccount/>} />
           <Route path="/signin" element={<SignIn/>} />
           <Route path="/adminsignin" element={<AdminSignIn/>} />
+          <Route path="/admineventmain" element={<AdminEventMain />} />
+          <Route path="/adminvenuemain" element={<AdminVenueMain />} />
           <Route path="/userhome" element={<UserHome/>} />
           <Route path="/changepw" element={<ChangePassword/>}/>
           <Route path="/eventmain" element={<EventMain/>} />
@@ -23,7 +27,7 @@ class App extends React.Component {
       </Router>
     );
   }
-} 
+}
 class Home extends React.Component {
     render() {
         return (
@@ -240,23 +244,89 @@ class SignIn extends React.Component {
     }
 }
 class AdminSignIn extends React.Component {
-  render() {
-    return(
-      <form className = "form">
-        <Header header = "Admin Sign In"/>
-        <FlexColumn label = "Username" placeholder = "Enter your username"/>
-        <br></br>
-        <FlexColumn label = "Password" placeholder = "Enter your password"/>
-        <div class="flex-row">
-        
-        <Link to="/signin" class = "span">
-        User Sign In
-        </Link>
-        <button class="button-submit">Next</button>
-        </div>
-      </form>
-    );
-  }
+    constructor(props) {
+        super(props);
+        this.state = {
+            username: "",
+            password: "",
+        };
+    }
+
+    handleChange = (event) => {
+        this.setState({ [event.target.name]: event.target.value });
+    };
+
+    handleSubmit = (event) => {
+        event.preventDefault();
+
+        const { username, password } = this.state;
+
+        const userData = { username, password };
+
+        fetch("http://localhost:8964/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(userData),
+        })
+            .then((response) => {
+                if (response.status == 401 || response.status == 404) {
+                    alert("Invalid username or password");
+                } else if (response.status == 200) {
+                    alert("Login successfully");
+                    return response.json();
+                } else {
+                    alert("Unknown error");
+                }
+            })
+            .then((data) => {
+                const user = data.username;
+                localStorage.setItem("user", user);
+                window.location.href = "/admineventmain";
+            })
+            .catch((error) => {
+                console.error("Error login in:", error);
+            });
+    };
+    render() {
+        return (
+            <>
+                <pre>{JSON.stringify(this.state, null, 2)}</pre>
+                <form class="form" onSubmit={this.handleSubmit}>
+                    <Header header="Sign In" />
+                    <FlexColumn
+                        label="Username"
+                        placeholder="Enter your username"
+                        handleChange={this.handleChange}
+                        type="text"
+                        name="username"
+                    />
+                    <br></br>
+                    <FlexColumn
+                        label="Password"
+                        placeholder="Enter your password"
+                        handleChange={this.handleChange}
+                        type="password"
+                        name="password"
+                    />
+                    <div class="flex-row">
+                        <Link to="/create-account" class="span">
+                            Create Account
+                        </Link>
+                        <button class="button-submit" type="submit">
+                            Next
+                        </button>
+                    </div>
+                    <div class="flex-row">
+                        <Link to="/signin" class="span">
+                            User Sign In
+                        </Link>
+                    </div>
+                </form>
+            </>
+        );
+    }
 }
 class FlexColumn extends React.Component {
     render() {
@@ -300,7 +370,7 @@ class Header extends React.Component {
         }));
     };
     render() {
-        const { expandedLocation, expandedEvent } = this.state;
+        const { expandedLocation, expandedEvent,userEmail } = this.state;
 
         const locationBoxClass = expandedLocation
             ? "location-box expanded"
@@ -317,8 +387,87 @@ class UserHome extends React.Component {
         this.state = {
             expandedLocation: false,
             expandedEvent: false,
+            userEmail: null,
+            favVenue: null,
+            favEvent: null,
         };
     }
+    componentDidMount() {
+        if (!this.state.userEmail) {
+          this.fetchUserData();
+        }
+      }
+      
+      fetchUserData = async () => {
+        try {
+          const username = localStorage.getItem('user');
+          const response = await fetch('http://localhost:8964/user-data', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username }),
+          });
+      
+          const data = await response.json();
+          console.log(data);
+      
+          if (response.ok) {
+            const { user } = data;
+      
+            if (user) {
+              this.setState({
+                userEmail: user.email,
+                favVenue: user.favVenue,
+                favEvent: user.favEvent,
+              });
+      
+              this.fetchTitles();
+            } else {
+              console.error('Error fetching user data:', data.error);
+            }
+          } else {
+            console.error('Error fetching user data:', data.error);
+          }
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+        }
+      };
+      
+      fetchTitles = async () => {
+        try {
+          const { favVenue, favEvent } = this.state;
+      
+          const eventResponse = await fetch('http://localhost:8964/all-events');
+          const eventData = await eventResponse.json();
+          const venueResponse = await fetch('http://localhost:8964/all-venues');
+          const venueData = await venueResponse.json();  
+          if (eventResponse) {
+           // const filteredEvents = eventData.filter((event) =>
+        //favEvent.includes(event._id)
+     // );
+            //const eventTitles = filteredEvents.map((event) => event.name);
+            const eventTitles = eventData.map((event) => event.name);
+            this.setState({
+              favEvent: eventTitles,
+            });
+          } else {
+            console.error('Error fetching event data:', eventData.error);
+          }
+          if (venueResponse) {
+        
+            const venueTitles = venueData.map((venue) => venue.name);
+            this.setState({
+              favVenue: venueTitles,
+            });
+          } else {
+            console.error('Error fetching venue data:', venueData.error);
+        } }catch (error) {
+          console.error('Error fetching event data:', error);
+      };}
+      componentDidMount() {
+        this.fetchUserData(); 
+      }
 
     toggleLocation = () => {
         this.setState((prevState) => ({
@@ -342,7 +491,7 @@ class UserHome extends React.Component {
         window.location.href = "/changepw";
     };
     render() {
-        const { expandedLocation, expandedEvent } = this.state;
+        const { expandedLocation, expandedEvent, userEmail, favVenue, favEvent } = this.state;
 
         const locationBoxClass = expandedLocation
             ? "location-box expanded"
@@ -365,7 +514,7 @@ class UserHome extends React.Component {
                 </div>
                 <div class="top-bar">
                     <div class="user-details">
-                        <span id="username">&lt;username&gt;</span>
+                        <span id="username">{localStorage.getItem('user')}</span>
                         <img
                             src="/src/assets/user-icon.svg"
                             alt="User Icon"
@@ -379,7 +528,7 @@ class UserHome extends React.Component {
                         <br></br>
                         <FlexColumn1
                             label="Email"
-                            placeholder="abc@example.com"
+                            placeholder={ userEmail || "Loading..."}
                         />
                         <br></br>
                         <h2 className="profile-subheading">My Favorites</h2>
@@ -392,23 +541,18 @@ class UserHome extends React.Component {
                             </div>
                             {expandedLocation && (
                                 <div className="location-list">
-                                    <FlexColumn2
-                                        label="Location 1"
-                                        placeholder="location 1"
-                                        className="location-item"
-                                    />
-                                    <FlexColumn2
-                                        label="Location 2"
-                                        placeholder="location 2"
-                                        className="location-item"
-                                    />
-                                    <FlexColumn2
-                                        label="Location 3"
-                                        placeholder="location 3"
-                                        className="location-item"
-                                    />
-                                </div>
-                            )}
+                                   {favVenue.map((favVenue, index) => (
+                                <FlexColumn2
+                                key={index}
+                                label={`Location ${index + 1}`}
+                                placeholder={favVenue}
+                                className="location-item"
+                            
+                                />
+                            ))}
+                            </div>
+                        )}
+
                             <img
                                 src="/src/assets/down-arrow.png"
                                 alt="Down Arrow"
@@ -417,7 +561,7 @@ class UserHome extends React.Component {
                                 }`}
                             />
                         </div>
-
+                        <br></br>
                         <div className={eventBoxClass}>
                             <div onClick={this.toggleEvent}>
                                 <FlexColumn1
@@ -427,20 +571,17 @@ class UserHome extends React.Component {
                             </div>
                             {expandedEvent && (
                                 <div className="event-list">
-                                    <FlexColumn2
-                                        label="Event 1"
-                                        placeholder="event 1"
-                                    />
-                                    <FlexColumn2
-                                        label="Event 2"
-                                        placeholder="event 2"
-                                    />
-                                    <FlexColumn2
-                                        label="Event 3"
-                                        placeholder="event 3"
-                                    />
-                                </div>
-                            )}
+                                    {favEvent.map((favEvent, index) => (
+                                <FlexColumn2
+                                key={index}
+                                label={`Event ${index + 1}`}
+                                placeholder={favEvent}
+                                className="event-item"
+                                />
+                            ))}
+                            </div>
+                        )}
+
                             <img
                                 src="/src/assets/down-arrow.png"
                                 alt="Down Arrow"

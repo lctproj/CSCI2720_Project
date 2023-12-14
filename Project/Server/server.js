@@ -1,26 +1,22 @@
 const express = require('express');
 const cors = require('cors');
-const fs = require('fs')
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://0.0.0.0:27017/CSCI2720Project');
 
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'Connection error:'));
-
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-console.log("Connection is open...");
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'Connection error:'));
 
-// DB Schema
 const VenueSchema = new mongoose.Schema({
   latitude: {
     type: String,
   },
-  longitude: {
+    longitude: {
     type: String,
   },
   venueId: {
@@ -33,9 +29,9 @@ const VenueSchema = new mongoose.Schema({
     required: [true, "Venue name is required"],
   },
 });
-
+  
 const Venue = mongoose.model("Venues", VenueSchema);
-
+  
 const DateSchema = new mongoose.Schema({
   indate: {
     type: [String],
@@ -46,9 +42,9 @@ const DateSchema = new mongoose.Schema({
     unique: true
   },
 });
-
+  
 const EventDate = mongoose.model('EventDates', DateSchema);
-
+  
 const EventSchema = new mongoose.Schema({
   cat1: {
     type: String,
@@ -140,9 +136,9 @@ const EventSchema = new mongoose.Schema({
     ref: 'Venues',
   },
 });
-
+  
 const Event = mongoose.model("Events", EventSchema);
-
+  
 const UserSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -166,9 +162,9 @@ const UserSchema = new mongoose.Schema({
     ref: 'Event',
   }
 });
-
+  
 const User = mongoose.model("Users", UserSchema);
-
+  
 const EventCommentSchema = new mongoose.Schema({
   eventId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -183,9 +179,9 @@ const EventCommentSchema = new mongoose.Schema({
     required: [true, "Comment is required"],
   },
 });
-
+  
 const EventComment = mongoose.model("EventComments", EventCommentSchema);
-
+  
 const VenueCommentSchema = new mongoose.Schema({
   venueId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -200,131 +196,9 @@ const VenueCommentSchema = new mongoose.Schema({
     required: [true, "Comment is required"],
   },
 });
-
+  
 const VenueComment = mongoose.model("VenueComments", VenueCommentSchema);
 
-const readJsonFromFile = (filePath) => {
-  try {
-    const jsonData = fs.readFileSync(filePath, 'utf8');
-    return JSON.parse(jsonData);
-  } catch (error) {
-    console.error('Error reading JSON file:', error);
-    return null;
-  }
-};
-
-const eventsDataPath = './Data/events.json';
-const eventsData = readJsonFromFile(eventsDataPath);
-console.log(eventsData);
-const VenueDataPath = './Data/venues.json';
-const VenueData = readJsonFromFile(VenueDataPath);
-console.log(VenueData);
-const eventDateDataPath = './Data/eventDates.json';
-const eventDateData = readJsonFromFile(eventDateDataPath);
-console.log(eventDateData);
-const userDataPath = './Data/users.json';
-const userData = readJsonFromFile(userDataPath);
-console.log(userData);
-
-const saveVenueData = (Venue, VenueData) => {
-  try {
-    for (const element of VenueData) {
-      const venue = new Venue(element);
-      venue.save();
-    }
-  } catch (error) {
-    console.log("Failed to save new venue", error);
-  }
-};
-
-const saveEventDateData = (EventDate, eventDateData) => {
-  try {
-    for (const element of eventDateData) {
-      const eventDate = new EventDate(element);
-      eventDate.save();
-    }
-  } catch (error) {
-    console.log("Failed to save new event date", error);
-  }
-};
-
-const saveEventData = async (Event, Venue, eventsData) => {
-  try {
-    for (const element of eventsData) {
-      let venuetype = await Venue.findOne({ venueId: element.venueid })
-      let eventDate = await EventDate.findOne({ eventId: element.eventId })
-      element.venueId = venuetype._id;
-      element.eventDates = eventDate._id;
-      const event = new Event(element);
-      event.save();
-    }
-  } catch (error) {
-    console.log("Failed to save new event data", error);
-  }
-};
-
-const saveUserData = (User, UserData) => {
-  try {
-    for (const element of UserData) {
-      const user = new User(element);
-      user.save();
-    }
-  } catch (error) {
-    console.log("Failed to save new user", error);
-  }
-};
-
-const selectTop10Location = async () => {
-  const venueResults = await Venue.aggregate([
-    {
-      $lookup: {
-        from: "Events",
-        localField: "venueId",
-        foreignField: "venueid",
-        as: "events"
-      }
-    },
-    {
-      $addFields: {
-        eventCount: { $size: "$events" }
-      }
-    },
-    {
-      $sort: { eventCount: -1, venue: 1 }
-    },
-    {
-      $limit: 10
-    },
-    {
-      $project: {
-        _id: 1,
-        latitude: 0,
-        longitude: 0,
-        venueId: 0,
-        venue: 0,
-        events: 0
-      }
-    }
-  ]);
-
-  const Top10LocationId = venueResults.map((venue) => venue._id);
-  await Venue.deleteMany({ _id: { $nin: Top10LocationId } });
-  await Event.deleteMany({ venueId: { $nin: Top10LocationId } });
-
-  const eventResults = await Event.find({});
-  const selectedEvent = eventResults.map((event) => event.eventId);
-  await EventDate.deleteMany({ eventId: { $nin: selectedEvent } });
-};
-
-const preprocessing = async () => {
-  await saveVenueData(Venue, VenueData);
-  await saveEventDateData(EventDate, eventDateData);
-  await saveEventData(Event, Venue, eventsData);
-  await saveUserData(User, userData);
-  await selectTop10Location();
-};
-
-preprocessing();
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
@@ -336,7 +210,8 @@ app.get('/all-events', async (req, res) => {
     for (let event of events) {
       const eventDates = await EventDate.findOne({ eventId: event.eventId });
 
-      const earliestEventDate = eventDates.indate[0].split('T')[0];
+      const earliestEventDate =  eventDates.indate[0].split('T')[0];
+
       const latestEventDate = eventDates.indate[eventDates.indate.length - 1].split('T')[0];
 
       const oneEvent = {
@@ -360,7 +235,7 @@ app.get('/event/:eventId', async (req, res) => {
   const eventId = req.params.eventId;
 
   try {
-    const event = await Event.find({ eventId: eventId });
+    const event = await Event.findOne({ eventId: eventId });
 
     if (event) {
       res.json(event);
@@ -387,10 +262,9 @@ app.post('/navbar-events', async (req, res) => {
     let filteredEvents = [];
 
     for (let event of events) {
-      const eventDates = await EventDate.findOne({ eventId: event.eventId });
-
-      const earliestEventDate = eventDates.indate[0].split('T')[0];
-      const latestEventDate = eventDates.indate[eventDates.indate.length - 1].split('T')[0];
+     const eventdates = await EventDate.findOne({ eventId: event.eventId });
+      const earliestEventDate = eventdates.indate[0].split('T')[0];
+      const latestEventDate = eventdates.indate[eventdates.indate.length - 1].split('T')[0];
 
       if (earliestDate && earliestDate > earliestEventDate) {
         continue;
@@ -399,7 +273,7 @@ app.post('/navbar-events', async (req, res) => {
       if (latestDate && latestDate < latestEventDate) {
         continue;
       }
-
+ 
       const maxPrice = Math.max(...event.prices);
       if (price && maxPrice >= price) {
         continue;
@@ -416,11 +290,12 @@ app.post('/navbar-events', async (req, res) => {
       filteredEvents.push(eventObj);
     }
     res.json(filteredEvents);
+    console.log(filteredEvents);
     return;
 
   } catch (err) {
     console.error("Error fetching relevant events", err);
-    res.status(500).json({ message: "Error fetching relevant events" });
+    res.sendStatus(500);
   }
 
 });
@@ -430,12 +305,12 @@ app.get('/all-venues', async (req, res) => {
     const venues = await Venue.find();
     const allVenues = [];
     for (let venue of venues) {
-      const events = await Event.find({ venue: venue._id });
+      const events = await Event.find({ venueId: venue._id });
 
       const oneVenue = {
-        "id": venue.venueId,
+        "venueId": venue.venueId,
         "name": venue.venue,
-        "eventnum": events.length
+        "eventnum": (events===null?0:events.length)
       }
 
       allVenues.push(oneVenue);
@@ -463,13 +338,14 @@ app.get('/venue/:venueId', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 app.post('/navbar-venues', async (req, res) => {
   const { name, maxnum } = req.body;
-
+  console.log(req.body);
   let query = {}
 
   if (name) {
-    query.title = { $regex: name, $options: 'i' }
+    query.venue = { $regex: name, $options: 'i' }
   }
 
   try {
@@ -480,14 +356,14 @@ app.post('/navbar-venues', async (req, res) => {
       const events = await Event.find({ venue: venue._id });
 
       const eventnum = events.length;
-      if (maxnum && eventnum < maxnum) {
+      if (maxnum && eventnum > maxnum) {
         continue;
       }
 
       let venueObj = {
         "venueId": venue.venueId,
         "name": venue.venue,
-        "eventnum": eventnum
+        "eventnum": Number(eventnum)
       };
 
       filteredVenues.push(venueObj);
@@ -593,7 +469,6 @@ app.post('/favourite-venue', async (req, res) => {
   try {
     const { username, venueId, IsAdd } = req.body;
 
-    // Find the user by username
     const user = await User.findOne({ username: username });
 
     const venue = await Venue.findOne({ venueId: venueId });
@@ -603,16 +478,16 @@ app.post('/favourite-venue', async (req, res) => {
     }
 
     if (IsAdd) {
-      const isFavorite = user.favVenue.includes(venue._id);
+      const isFavorite = user.favVenue.includes(venue.venueId);
 
       if (isFavorite) {
         return res.status(400).json({ error: 'Venue already in favorites' });
       }
 
-      user.favVenue.push(venue._id);
+      user.favVenue.push(venue.venueId);
     } else {
       // Remove the venue from the user's favorites
-      user.favVenue.pull(venue._id);
+      user.favVenue.pull(venue.venueId);
     }
 
     // Save the updated user
@@ -638,15 +513,15 @@ app.post('/favourite-event', async (req, res) => {
     }
 
     if (IsAdd) {
-      const isFavorite = user.favEvent.includes(event._id);
+      const isFavorite = user.favEvent.includes(event.eventId);
 
       if (isFavorite) {
         return res.status(400).json({ error: 'Venue already in favorites' });
       }
 
-      user.favEvent.push(event._id);
+      user.favEvent.push(event.eventId);
     } else {
-      user.favEvent.pull(event._id);
+      user.favEvent.pull(event.eventId);
     }
 
     await user.save();
@@ -655,6 +530,132 @@ app.post('/favourite-event', async (req, res) => {
   } catch (error) {
     console.error('Error updating favorite venue:', error);
     res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.put('/admin/change-user', async (req, res) => {
+  try {
+    const { username, password, newPassword } = req.body;
+    console.log(req.body);
+    const existingUser = await User.findOne({ username: username });
+    const passwordMatch = await bcrypt.compare(password, existingUser.password);
+    if (!passwordMatch) {
+      return res.status(401).json({ error: 'Invalid current password' });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    existingUser.password = hashedPassword;
+    await existingUser.save();
+
+    res.json({ message: 'Password changed successfully' });
+  } catch (error) {
+    console.error('Error changing password:', error);
+    res.status(500).json({ error: 'An error occurred while changing the password' });
+  }
+});
+
+app.post('/admin/create-user', async (req, res) => {
+  try {
+    const { username, password, email } = req.body;
+
+    const existingUser = await User.findOne({ username });
+    if (existingUser) {
+      return res.status(409).json({ error: 'Username already exists' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = new User({ username, password: hashedPassword, email });
+    await newUser.save();
+
+    res.status(200).json({ message: 'User created successfully' });
+  } catch (error) {
+    console.error('Error creating user:', error);
+    res.status(500).json({ error: 'An error occurred while creating the user' });
+  }
+});
+
+app.put('/admin/delete-user', async (req, res) => {
+  try {
+    const { username, password, newPassword } = req.body;
+    console.log(req.body);
+    const existingUser = await User.findOne({ username: username });
+    const passwordMatch = await bcrypt.compare(password, existingUser.password);
+    if (!passwordMatch) {
+      return res.status(401).json({ error: 'Invalid current password' });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    existingUser.password = hashedPassword;
+    await existingUser.save();
+
+    res.json({ message: 'Password changed successfully' });
+  } catch (error) {
+    console.error('Error changing password:', error);
+    res.status(500).json({ error: 'An error occurred while changing the password' });
+  }
+});
+
+app.post('/admin/create-event', async (req, res) => {
+  try {
+    const { username, password, email } = req.body;
+
+    const existingUser = await User.findOne({ username });
+    if (existingUser) {
+      return res.status(409).json({ error: 'Username already exists' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = new User({ username, password: hashedPassword, email });
+    await newUser.save();
+
+    res.status(200).json({ message: 'User created successfully' });
+  } catch (error) {
+    console.error('Error creating user:', error);
+    res.status(500).json({ error: 'An error occurred while creating the user' });
+  }
+});
+
+app.post('/admin/change-event', async (req, res) => {
+  try {
+    const { username, eventId, updatedEvent } = req.body;
+
+    if (username != 'admin') {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const event = await Event.updateOne({ eventId: eventId }, updatedEvent, { new: true });
+    if (!event) {
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    res.status(200).json({ message: 'Event updated successfully', event });
+  } catch (error) {
+    console.error('Error changing event:', error);
+    res.status(500).json({ error: 'An error occurred while changing the event' });
+  }
+});
+app.post('/admin/delete-event', async (req, res) => {
+  try {
+    const { username, eventId } = req.body;
+    
+    if (username != 'admin') {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    console.log("Deleting event ID: ", eventId);
+    // Find and delete the event by ID
+    const deletedEvent = await Event.findOneAndDelete({ eventId: eventId });
+    if (!deletedEvent) {
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    res.status(200).json({ message: 'Event deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting event:', error);
+    res.status(500).json({ error: 'An error occurred while deleting the event' });
   }
 });
 

@@ -45,6 +45,7 @@ function Home() {
 
     const handleIsEvent = () => {
         setIsEvent(!isEvent);
+        setFetched(!fetched);
     };
 
     const checkLoggedIn = () => {
@@ -99,8 +100,23 @@ function Home() {
           initEventData();
         }
       }, [fetched,isEvent]); 
-   
-    //after filtering event page
+
+     const handleSearch = async () => {
+        const filtered = events.filter(
+            (event) =>
+                event.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+                event.price >= Math.min(...priceRange) &&
+                event.price <= Math.max(...priceRange) &&
+                event.date >= dateRange.startDate &&
+                event.date <= dateRange.endDate
+        );
+        setFilteredEvents(filtered);
+//--
+        // Call fetchEventData to fetch data with the updated search criteria
+        await fetchEventData();
+    };
+
+    //after applying filters event page
     const fetchEventData = async () => {
         try {
             const response = await fetch(
@@ -170,8 +186,9 @@ function Home() {
     
           setFilteredEvents(sortedEvents);
         }
-      }, [category, ascending]);
+      }, [category, ascending,fetched,isEvent]);
 
+  
     //initialize venue page
     const initVenueData = async () => {
         try {
@@ -181,21 +198,25 @@ function Home() {
             const data = await response.json();
             setVenues(data);
             setFilteredVenues(data);
+
+            setFetched(!fetched);
         } catch (error) {
             console.error("Error fetching venue data:", error);
         }
     };
 
+
+
     //switch to venue mode
     useEffect(() => {
-        if (!fetched && isEvent) {
+        if (!fetched && !isEvent) {
           initVenueData();
         }
       }, [fetched,isEvent]); 
 
       //sort venue
       useEffect(() => {
-      if (fetched) {
+      if (fetched && !isEvent) {
         const sortedResults = [...filteredVenues].sort((a, b) => {
           let aValue, bValue;
   
@@ -233,20 +254,7 @@ function Home() {
  
 
 
-    const handleSearch = async () => {
-        const filtered = events.filter(
-            (event) =>
-                event.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-                event.price >= Math.min(...priceRange) &&
-                event.price <= Math.max(...priceRange) &&
-                event.date >= dateRange.startDate &&
-                event.date <= dateRange.endDate
-        );
-        setFilteredEvents(filtered);
-//--
-        // Call fetchEventData to fetch data with the updated search criteria
-        await fetchEventData();
-    };
+    
 
     const handleVenueSearch = async () => {
         const filtered = venues.filter((venue) =>
@@ -267,7 +275,7 @@ function Home() {
         }
     }
 
-    const ArrowSign = ({ category, value, ascending }) => {
+    const ArrowSign = ( {category, value, ascending }) => {
         if (category === value) { //if the category matches
             return ascending ? <HiOutlineArrowSmallUp /> : <HiOutlineArrowSmallDown />;
         } //and 'ascending' is true, sort in ascending order, else descending

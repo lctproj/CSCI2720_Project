@@ -92,14 +92,14 @@ function Home() {
         }
     };
 
-     
+    //switch to event mode
     useEffect(() => {
         if (!fetched && isEvent) {
           initEventData();
         }
-      }, [fetched]); 
+      }, [fetched,isEvent]); 
    
-
+    //initialize venue page
     const initVenueData = async () => {
         try {
             const response = await fetch("http://localhost:8964/all-venues", {
@@ -113,6 +113,51 @@ function Home() {
         }
     };
 
+    //switch to venue mode
+    useEffect(() => {
+        if (!fetched && isEvent) {
+          initVenueData();
+        }
+      }, [fetched,isEvent]); 
+
+      //sort venue
+      useEffect(() => {
+      if (fetched) {
+        const sortedResults = [...filteredVenues].sort((a, b) => {
+          let aValue, bValue;
+  
+          switch (category) {
+            case 'number':
+              aValue = a.eventnum; 
+              bValue = b.eventnum; 
+              break;
+            case 'name':
+            default:
+              aValue = a.name || '';
+              bValue = b.name || '';
+              break;
+          }
+  
+          if (ascending) {
+            if (Number(aValue) && Number(bValue)) {
+              return Number(aValue) - Number(bValue);
+            } else {
+              return a.name.localeCompare(b.name);
+            }
+          } else {
+            if (Number(aValue) && Number(bValue)) {
+              return Number(bValue) - Number(aValue);
+            } else {
+              return b.name.localeCompare(a.name);
+            }
+          }
+        });
+  
+        setFilteredVenues(sortedResults);
+      }
+    }, [category, ascending]);
+   
+    //initialize event page
     const fetchEventData = async () => {
         try {
             const response = await fetch(
@@ -138,8 +183,9 @@ function Home() {
         }
     };
 
+    //sorting event page
     useEffect(() => {
-        if (fetched) {
+        if (fetched && isEvent) {
           const sortedEvents = [...filteredEvents].sort((a, b) => {
             let aValue, bValue;
     

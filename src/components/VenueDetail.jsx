@@ -29,7 +29,7 @@ function VenueDetails() {
             <h2>Venue Details</h2>
             <p>Venue Name: {venue.venue}</p>
             <p>Venue ID: {venue.venueId}</p>
-            <Map />
+            <Map jsonData={venue} />
         </div>
     );
 }

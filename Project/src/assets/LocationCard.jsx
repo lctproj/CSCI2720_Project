@@ -1,5 +1,4 @@
-import './locationmain.css';
-import React from 'react';
+ import React from 'react';
 import {Link} from 'react-router-dom';
 
 export default function LocationCard({id, locationname, number ,username}) {
@@ -59,13 +58,15 @@ export default function LocationCard({id, locationname, number ,username}) {
             let Id=Number(id);
 
     return (
-        <div className="event-card">
-            <div className="location-element" style={{width:'30%'}}>
+        <div className="bg-gray-300 rounded border-2 border-black flex flex-row justify-around items-center py-1 my-1">
+            <div className="w-1/5 items-center flex flex-row justify-around" style={{width:'30%'}}>
             <Link to = {`/venue/${Id}`}><p>{locationname}</p></Link>
             </div>
-            <div className="location-element"style={{width:'30%'}}><p>{number}</p></div>
-            <div className="add-button" onClick={handleAddClick}><p>Add to favorites</p></div>
-            <div className="delete-button" onClick={handleDeleteClick}><p>Remove from favorites</p> </div>
+            <div className="w-1/5 items-center flex flex-row justify-around"style={{width:'30%'}}><p>{number}</p></div>
+            <div className="bg-green-200 rounded-md m-2 flex flex-row justify-center 
+                items-center text-center h-1/2 hover:cursor-pointer hover:border-2 hover:border-black" onClick={handleAddClick}><p>Add to favorites</p></div>
+            <div className="bg-red-200 rounded-md m-2 flex flex-row justify-center 
+                items-center text-center h-1/2 hover:cursor-pointer hover:border-2 hover:border-black" onClick={handleDeleteClick}><p>Remove from favorites</p> </div>
         </div>
     );
 }

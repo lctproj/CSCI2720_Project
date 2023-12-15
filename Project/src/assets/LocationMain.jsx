@@ -9,16 +9,16 @@ import { HiArrowsUpDown, HiOutlineArrowSmallUp , HiOutlineArrowSmallDown  } from
 
 const HeaderBar = ({handleCategory,category, ascending}) =>{
     return(
-        <div className="header-bar">
-            <div className="header-element" onClick={() => handleCategory('locationname')}>
+        <div className="bg-gray-200 flex justify-around p-1">
+            <div className="flex justify-around w-1/5 items-center hover:cursor-pointer hover:border-black" onClick={() => handleCategory('locationname')}>
                 <p id="location-name">Location Name</p>
                 <ArrowSign value="locationname" category={category} ascending={ascending} />
             </div>
-            <div className="header-element" onClick={() => handleCategory('number')}>
+            <div className="flex justify-around w-1/5 items-center hover:cursor-pointer hover:border-black" onClick={() => handleCategory('number')}>
                 <p id="number">Number</p>
                 <ArrowSign value="number" category={category} ascending={ascending} />
             </div>
-            <div className="header-element">
+            <div className="flex justify-around w-1/5 items-center hover:cursor-pointer hover:border-black">
                 <p id="favorite">Favorite</p>
             </div>
         </div>
@@ -130,12 +130,12 @@ export default function LocationMain (){
     
 
     return(
-        <div className="location-main" >
+        <div className="w-full h-full sticky" >
             <LocationFilterBar onInputChange={handleSearchInput} onNumberChange={handleNumberChange} 
              searchParams={searchParams} onResult={handleResults}/>
             <HeaderBar handleCategory={handleCategory} category={category} ascending={ascending} />
             {display.length === 0 ? (
-            <div className="location-element">No results...</div>
+            <div className="w-1/5 items-center flex justify-around">No results...</div>
             ) : (
             display.map((location) => {
             return (

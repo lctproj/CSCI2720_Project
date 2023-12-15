@@ -1,4 +1,3 @@
-import "./eventmain.css";
 import EventFilterBar from "./EventFilterBar.jsx";
 import EventCard from "./EventCard.jsx";
 import React, {useState,useEffect } from "react";
@@ -10,24 +9,24 @@ const HeaderBar = ({handleCategory,category, ascending}) =>{
         //for each element
         //,a click sets the category to its corresponding one
         //,and resets the sorting order to ascending and the arrow
-        <div className="header-bar">
-            <div className="header-element" onClick={() => handleCategory('eventname')}>
+        <div className="bg-gray-200 flex justify-around p-1">
+            <div className="flex justify-around w-1/5 items-center hover:cursor-pointer hover:border-black" onClick={() => handleCategory('eventname')}>
                 <p id="event-name">Event Name</p>
                 <ArrowSign value="eventname" category={category} ascending={ascending} />
             </div>
-            <div className="header-element" onClick={() => handleCategory('earliestdate')}>
+            <div className="flex justify-around w-1/5 items-center hover:cursor-pointer hover:border-black" onClick={() => handleCategory('earliestdate')}>
                 <p id="earliest-date">Earliest Date</p>
                 <ArrowSign value="earliestdate" category={category} ascending={ascending} />
             </div>
-            <div className="header-element" onClick={() => handleCategory('latestdate')}>
+            <div className="flex justify-around w-1/5 items-center hover:cursor-pointer hover:border-black" onClick={() => handleCategory('latestdate')}>
                 <p id="latest-date">Latest Date</p>
                 <ArrowSign value="latestdate" category={category} ascending={ascending} />
             </div>
-            <div className="header-element" onClick={() => handleCategory('price')}>
+            <div className="flex justify-around w-1/5 items-center hover:cursor-pointer hover:border-black" onClick={() => handleCategory('price')}>
                 <p id="price">Price(s) (in HKD)</p>
                 <ArrowSign value="price" category={category} ascending={ascending} />
             </div>
-            <div className="header-element">
+            <div className="flex justify-around w-1/5 items-center hover:cursor-pointer hover:border-black">
                 <p id="favorite">Favorite</p>
             </div>
         </div>
@@ -165,13 +164,13 @@ export default function EventMain (){
     
 
     return(
-        <div className="event-main"  >
+        <div className="w-full h-full sticky"  >
             <EventFilterBar onInputChange={handleSearchInput} onPriceChange={handlePriceChange} 
                 onEarliestDateChange={handleEarliestDateChange} onLatestDateChange={handleLatestDateChange} 
                 searchParams={searchParams} onResult={handleResults}/>
             <HeaderBar handleCategory={handleCategory} category={category} ascending={ascending} />
             {display.length === 0 ? (
-            <div className="event-element">No results...</div>
+            <div className="w-1/5 items-center flex justify-around">No results...</div>
             ) : (
              
               display.map((event) => {
@@ -191,6 +190,3 @@ export default function EventMain (){
 
    
 }
-/** 
-  4. save starred state for each user
- */

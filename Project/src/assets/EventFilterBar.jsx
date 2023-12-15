@@ -11,10 +11,10 @@ const NameFilter = ({onInputChange}) => {
         };
         
         return(
-            <div className="bg-white rounded-sm min-h-12 ml-2.5">
+            <div className="bg-white rounded-sm min-h-12 ml-2.5 flex flex-col">
                 <label htmlFor="eventname"  >Event name</label>
                 <input type="text" id="event-name-search" 
-                placeholder="Enter event name" className="bg-white border border-black flex flex-col" onChange={handleInputChange}
+                placeholder="Enter event name" className="bg-white border border-black " onChange={handleInputChange}
                 />
             </div>
     );
@@ -114,7 +114,7 @@ export default function EventFilterBar({onInputChange,onPriceChange,onEarliestDa
         <DateFilter onEarliestDateChange={onEarliestDateChange} onLatestDateChange={onLatestDateChange}/>
         <SearchEvents  onClick = {handleSearchClick} onResult={onResult}/>
         <GoToLocation />
-        <div className="go-to-userhome">
+        <div className="bg-white p-2.5 rounded m-5 min-h-12 items-center font-bold">
       <Link to="/userhome" style={{ display: "flex", alignItems: "center" }}>
         <div className="text-xl mr-2">
           <FaRegUserCircle />

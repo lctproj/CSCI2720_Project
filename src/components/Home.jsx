@@ -24,7 +24,7 @@ function Home() {
     });
     const [isEvent, setIsEvent] = useState(true);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [username, setUsername] = useState("")
+    const [username, setUsername] = useState("");
 
     const handleDateRangeClick = () => {
         setDatePickerVisible(!datePickerVisible);
@@ -150,114 +150,139 @@ function Home() {
     // Event
     if (isEvent) {
         return (
-            <div className="p-4">
-                <div className="flex items-center justify-between w-full gap-4 mb-16">
-                    <div className="flex items-center gap-4">
-                        <input
-                            type="text"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            placeholder="Search events..."
-                            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                        <div className="relative">
-                            <button
-                                onClick={handleDateRangeClick}
-                                className="px-4 py-2 text-black bg-gray-200 rounded-lg focus:outline-none"
-                            >
-                                {dateRange.startDate.toDateString()} -{" "}
-                                {dateRange.endDate.toDateString()}
-                            </button>
-                            {datePickerVisible && (
-                                <div className="absolute z-10 mt-2">
-                                    <DateRangePicker
-                                        ranges={[dateRange]}
-                                        onChange={handleDateRangeChange}
-                                    />
-                                </div>
-                            )}
-                        </div>
-                        <div className="flex items-center space-x-4">
-                            <label htmlFor="priceRange" className="text-black">
-                                Price Range:
-                            </label>
-                            <div className="flex items-center">
-                                <Range
-                                    step={1}
-                                    min={tolPriceRange[0]}
-                                    max={tolPriceRange[1]}
-                                    values={priceRange}
-                                    onChange={handlePriceRangeChange}
-                                    renderTrack={({ props, children }) => (
-                                        <div
-                                            {...props}
-                                            className="h-2 bg-gray-300 w-64"
-                                        >
-                                            {children}
+            <div>
+                <div className="top">
+                    <div className="sticky top-0 z-10 bg-blue-500">
+                        <div className="flex items-center justify-between w-full gap-4 p-4">
+                            <div className="flex items-center gap-4">
+                                <input
+                                    type="text"
+                                    value={searchQuery}
+                                    onChange={(e) =>
+                                        setSearchQuery(e.target.value)
+                                    }
+                                    placeholder="Search events..."
+                                    className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                />
+                                <div className="relative">
+                                    <button
+                                        onClick={handleDateRangeClick}
+                                        className="px-4 py-2 text-black bg-white rounded-lg focus:outline-none"
+                                    >
+                                        {dateRange.startDate.toDateString()} -{" "}
+                                        {dateRange.endDate.toDateString()}
+                                    </button>
+                                    {datePickerVisible && (
+                                        <div className="absolute z-10 mt-2">
+                                            <DateRangePicker
+                                                ranges={[dateRange]}
+                                                onChange={handleDateRangeChange}
+                                            />
                                         </div>
                                     )}
-                                    renderThumb={({ props }) => (
-                                        <div
-                                            {...props}
-                                            className="h-6 w-6 rounded-full bg-white shadow-md"
+                                </div>
+                                <div className="flex items-center space-x-4">
+                                    <label
+                                        htmlFor="priceRange"
+                                        className="text-white"
+                                    >
+                                        Price Range:
+                                    </label>
+                                    <div className="flex items-center">
+                                        <Range
+                                            step={1}
+                                            min={tolPriceRange[0]}
+                                            max={tolPriceRange[1]}
+                                            values={priceRange}
+                                            onChange={handlePriceRangeChange}
+                                            renderTrack={({
+                                                props,
+                                                children,
+                                            }) => (
+                                                <div
+                                                    {...props}
+                                                    className="h-2 bg-gray-300 w-64"
+                                                >
+                                                    {children}
+                                                </div>
+                                            )}
+                                            renderThumb={({ props }) => (
+                                                <div
+                                                    {...props}
+                                                    className="h-6 w-6 rounded-full bg-white shadow-md"
+                                                />
+                                            )}
                                         />
-                                    )}
-                                />
-                                <output className="ml-2 text-black">
-                                    {priceRange[0]} - {priceRange[1]}
-                                </output>
+                                        <output className="ml-4 text-white">
+                                            {priceRange[0]} - {priceRange[1]}
+                                        </output>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="flex items-center space-x-4">
+                                <button
+                                    onClick={handleSearch}
+                                    className="px-4 py-2 text-white bg-blue-500 rounded-lg focus:outline-none hover:bg-blue-600"
+                                >
+                                    Search
+                                </button>
+                                <button
+                                    onClick={handleIsEvent}
+                                    className="px-4 py-2 text-white bg-blue-500 rounded-lg focus:outline-none hover:bg-blue-600"
+                                >
+                                    Find by Venue
+                                </button>
+                                {isLoggedIn ? (
+                                    <button className="px-4 py-2 text-white bg-blue-500 rounded-lg focus:outline-none hover:bg-blue-600">
+                                        <Link to={`/info/`}>
+                                            My Account: {username}
+                                        </Link>
+                                    </button>
+                                ) : (
+                                    <button className="px-4 py-2 text-white bg-blue-500 rounded-lg focus:outline-none hover:bg-blue-600">
+                                        <Link to={`/signin`}>Login</Link>
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </div>
-                    <div className="flex items-center space-x-4">
-                        <button
-                            onClick={handleSearch}
-                            className="px-4 py-2 text-white bg-blue-500 rounded-lg focus:outline-none hover:bg-blue-600"
-                        >
-                            Search
-                        </button>
-                        <button
-                            onClick={handleIsEvent}
-                            className="px-4 py-2 text-white bg-blue-500 rounded-lg focus:outline-none hover:bg-blue-600"
-                        >
-                            Find by Venue
-                        </button>
-                        {isLoggedIn ? (
-                            <button className="px-4 py-2 text-white bg-blue-500 rounded-lg focus:outline-none hover:bg-blue-600">
-                                <Link to={`/info/`}>My Account : {username}</Link>
-                            </button>
-                        ) : (
-                            <button className="px-4 py-2 text-white bg-blue-500 rounded-lg focus:outline-none hover:bg-blue-600">
-                                <Link to={`/signin`}>Login</Link>
-                            </button>
-                        )}
-                    </div>
                 </div>
-                <table className="w-full border-collapse">
+                <table className="w-full border-collapse table-auto">
                     <thead>
                         <tr>
-                            <th className="text-black">Event Name</th>
-                            <th className="text-black">Price</th>
-                            <th className="text-black">Earliest Date</th>
-                            <th className="text-black">Latest Date</th>
+                            <th className="text-black bg-gray-200 px-4 py-2">
+                                Event Name
+                            </th>
+                            <th className="text-black bg-gray-200 px-4 py-2">
+                                Price
+                            </th>
+                            <th className="text-black bg-gray-200 px-4 py-2">
+                                Earliest Date
+                            </th>
+                            <th className="text-black bg-gray-200 px-4 py-2">
+                                Latest Date
+                            </th>
                         </tr>
                     </thead>
                     {filteredEvents.length !== 0 ? (
                         <tbody>
                             {filteredEvents.map((event) => (
                                 <tr key={event.eventId}>
-                                    <td className="text-black">
-                                        <Link to={`/event/${event.eventId}`}>
+                                    <td className="text-black border px-4 py-2">
+                                        <Link
+                                            to={`/event/${event.eventId}`}
+                                            className="text-blue-500 hover:underline"
+                                        >
                                             {event.name}
                                         </Link>
                                     </td>
-                                    <td className="text-black">
+                                    <td className="text-black border px-4 py-2">
                                         {event.price}
                                     </td>
-                                    <td className="text-black">
+                                    <td className="text-black border px-4 py-2">
                                         {event.earliestDate}
                                     </td>
-                                    <td className="text-black">
+                                    <td className="text-black border px-4 py-2">
                                         {event.latestDate}
                                     </td>
                                 </tr>
@@ -266,7 +291,12 @@ function Home() {
                     ) : (
                         <tbody>
                             <tr>
-                                <td className="text-black">No events found</td>
+                                <td
+                                    className="text-black border px-4 py-2"
+                                    colSpan="4"
+                                >
+                                    No events found
+                                </td>
                             </tr>
                         </tbody>
                     )}
@@ -277,8 +307,8 @@ function Home() {
 
     // Venue
     return (
-        <div className="p-4">
-            <div className="flex items-center justify-between w-full gap-4 mb-16">
+        <div className="">
+            <div className="flex items-center bg-blue-500 justify-between w-full gap-4 p-4">
                 <div className="flex items-center gap-4">
                     <input
                         type="text"
@@ -301,35 +331,55 @@ function Home() {
                     >
                         Find by Event
                     </button>
-                    <button className="px-4 py-2 text-white bg-blue-500 rounded-lg focus:outline-none hover:bg-blue-600">
-                        <Link to={`/signin`}>Login</Link>
-                    </button>
+                    {isLoggedIn ? (
+                        <button className="px-4 py-2 text-white bg-blue-500 rounded-lg focus:outline-none hover:bg-blue-600">
+                            <Link to={`/info/`}>My Account: {username}</Link>
+                        </button>
+                    ) : (
+                        <button className="px-4 py-2 text-white bg-blue-500 rounded-lg focus:outline-none hover:bg-blue-600">
+                            <Link to={`/signin`}>Login</Link>
+                        </button>
+                    )}
                 </div>
             </div>
             <table className="w-full border-collapse">
                 <thead>
                     <tr>
-                        <th className="text-black">Venue Name</th>
-                        <th className="text-black">Number of Events</th>
+                        <th className="text-black bg-gray-200 px-4 py-2">
+                            Venue Name
+                        </th>
+                        <th className="text-black bg-gray-200 px-4 py-2">
+                            Number of Events
+                        </th>
                     </tr>
                 </thead>
                 {filteredVenues.length !== 0 ? (
                     <tbody>
                         {filteredVenues.map((venue) => (
                             <tr key={venue.venueId}>
-                                <td className="text-black">
-                                    <Link to={`/venue/${venue.venueId}`}>
+                                <td className="text-black border px-4 py-2">
+                                    <Link
+                                        to={`/venue/${venue.venueId}`}
+                                        className="text-blue-500 hover:underline"
+                                    >
                                         {venue.name}
                                     </Link>
                                 </td>
-                                <td className="text-black">{venue.eventnum}</td>
+                                <td className="text-black border px-4 py-2">
+                                    {venue.eventnum}
+                                </td>
                             </tr>
                         ))}
                     </tbody>
                 ) : (
                     <tbody>
                         <tr>
-                            <td className="text-black">No events found</td>
+                            <td
+                                className="text-black border px-4 py-2"
+                                colSpan="2"
+                            >
+                                No venues found
+                            </td>
                         </tr>
                     </tbody>
                 )}

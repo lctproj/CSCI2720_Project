@@ -135,27 +135,28 @@ function EventDetails() {
                 console.log(favEvent);
                 setIsFavorite(favEvent.includes(eventId) || favEvent != []);
                 console.log(isFavorite);
-              } else if (response.status === 401) {
+            } else if (response.status === 401) {
                 console.log("Unauthorized access");
-              } else {
+            } else {
                 console.log("Error retrieving user:", response.statusText);
-              }
-            } catch (error) {
-              console.log("Error checking favorite status:", error);
             }
+        } catch (error) {
+            console.log("Error checking favorite status:", error);
+        }
     };
 
     return (
-        <div>
-            <h2>Event Details</h2>
+        <div className="p-4">
+            <h2 className="text-2xl font-bold mb-4">Event Details</h2>
             {Object.entries(filteredEvent).map(([key, value]) => (
-                <p key={key}>
-                    {keyToNameMapping[key]}:{" "}
+                <p key={key} className="mb-2 text-black">
+                    <span className="font-bold">{keyToNameMapping[key]}: </span>
                     {key.endsWith("url") ? (
                         <a
                             href={value}
                             target="_blank"
                             rel="noopener noreferrer"
+                            className="text-blue-500 hover:underline"
                         >
                             {value}
                         </a>
@@ -165,11 +166,17 @@ function EventDetails() {
                 </p>
             ))}
             {isFavorite ? (
-                <button onClick={() => addToFavorites(false)}>
+                <button
+                    onClick={() => addToFavorites(false)}
+                    className="bg-blue-500 text-white rounded-md px-4 py-2"
+                >
                     <Favorite />
                 </button>
             ) : (
-                <button onClick={() => addToFavorites(true)}>
+                <button
+                    onClick={() => addToFavorites(true)}
+                    className="bg-white text-blue-500 border-blue-500 rounded-md px-4 py-2"
+                >
                     <FavoriteBorder />
                 </button>
             )}

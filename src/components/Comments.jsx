@@ -84,22 +84,33 @@ const Comments = ({ Id, isEvent }) => {
     };
 
     return (
-        <div>
-            <h2>Comments</h2>
-            <form onSubmit={handleSubmit}>
+        <div className="p-4">
+            <h2 className="text-3xl font-bold mb-6">Comments</h2>
+            <form className="mb-6" onSubmit={handleSubmit}>
                 <textarea
+                    className="border border-gray-300 rounded-md p-4 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Leave a comment"
                     value={comment}
                     onChange={(event) => setComment(event.target.value)}
-                    onKeyDown={handleKeyDown} // Bind Enter key to handleSubmit
+                    onKeyDown={handleKeyDown}
                 ></textarea>
-                <br />
-                <button type="submit">Submit</button>
+                <button
+                    type="submit"
+                    className="bg-blue-500 hover:bg-blue-600 text-white rounded-md px-6 py-3 transition duration-200"
+                >
+                    Submit
+                </button>
             </form>
             {comments.map((comment) => (
-                <div key={comment._id}>
+                <div
+                    key={comment._id}
+                    className="mb-4 p-4 bg-gray-100 rounded-lg"
+                >
                     <p>
-                        {comment.username}: {comment.comment}
+                        <span className="font-bold text-blue-500">
+                            {comment.username}:{" "}
+                        </span>
+                        {comment.comment}
                     </p>
                 </div>
             ))}

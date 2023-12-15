@@ -1,0 +1,91 @@
+[{
+  "_id": {
+    "$oid": "657bd6e700826bdba2ade01d"
+  },
+  "latitude": "22.249333580252074",
+  "longitude": "114.15547399242523",
+  "venueId": "53",
+  "venue": "Aberdeen Public Library",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "657bd6e700826bdba2ade01e"
+  },
+  "latitude": "22.244669134595824",
+  "longitude": "114.15588218913079",
+  "venueId": "54",
+  "venue": "Ap Lei Chau Public Library",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "657bd6e700826bdba2ade01f"
+  },
+  "latitude": "22.37657014744397",
+  "longitude": "113.96362612552997",
+  "venueId": "55",
+  "venue": "Butterfly Estate Public Library",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "657bd6e700826bdba2ade020"
+  },
+  "latitude": "22.2634524021522",
+  "longitude": "114.24088308688826",
+  "venueId": "56",
+  "venue": "Chai Wan Public Library",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "657bd6e700826bdba2ade021"
+  },
+  "latitude": "22.207154587835916",
+  "longitude": "114.02934234437313",
+  "venueId": "57",
+  "venue": "Cheung Chau Public Library",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "657bd6e700826bdba2ade022"
+  },
+  "latitude": "22.282379533335337",
+  "longitude": "114.16105857212236",
+  "venueId": "58",
+  "venue": "City Hall Public Library",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "657bd6e700826bdba2ade023"
+  },
+  "latitude": "22.289808351201508",
+  "longitude": "114.19420556601119",
+  "venueId": "59",
+  "venue": "Electric Road Public Library",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "657bd6e700826bdba2ade025"
+  },
+  "latitude": "22.320942128401686",
+  "longitude": "114.17135297154962",
+  "venueId": "60",
+  "venue": "Fa Yuen Street Public Library",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "657bd6e700826bdba2ade026"
+  },
+  "latitude": "22.500360893741004",
+  "longitude": "114.1447292928764",
+  "venueId": "61",
+  "venue": "Fanling Public Library",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "657bd6e700826bdba2ade04c"
+  },
+  "latitude": "22.356978358626314",
+  "longitude": "114.12672843717824",
+  "venueId": "8186",
+  "venue": "Black Box Theatre, Kwai Tsing Theatre",
+  "__v": 0
+}]

@@ -39,7 +39,7 @@ function AccountInfo() {
             body: JSON.stringify({ username: payload.username }),
           });
       
-          if (response.ok) {
+          if (response) {
             const data = await response.json();
             console.log(data);
             setUser(data.user); // Assuming the user data is in the "user" property of the response
@@ -59,6 +59,7 @@ function AccountInfo() {
         <div>
             <h2>User Details</h2>
             <p>Username: {user.username}</p>
+            <p>Username: {user.email}</p>
         </div>
     );
 }

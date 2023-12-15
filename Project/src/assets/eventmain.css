@@ -1,0 +1,192 @@
+.event-main{
+    width:100%;
+    height: 100vh;
+    position: sticky;
+}
+
+.event-name{
+    background-color: white;
+    border:0.25px black solid;
+    display:flex;
+    flex-direction:column;
+}
+
+.event-name-filter{
+    background-color: white;
+    border-radius:2px;    
+    min-height: 3rem;
+    margin-left: 10px;
+ }
+
+.price-slider{
+    display:flex;
+    flex-direction:column;
+    background-color:white;
+    border-radius:5%;
+    padding:5px;
+    margin:20px;
+    height: 75%;
+    min-height: 3rem;
+
+}
+
+.date{
+    display:flex;
+    flex-direction:row;
+    justify-content: space-between;
+}
+
+.date-filter{
+    background-color: white;
+    display:flex;
+    flex-direction:column;
+    padding:0 2px;
+    min-height: 3rem;
+}
+.go-to-location{
+    background-color:white;
+    padding:5px;
+    border-radius:5%;
+    margin:20px;
+    min-height: 3rem;
+    align-items: center;
+}
+.go-to-userhome{
+    background-color:white;
+    padding: 10px;
+    border-radius:5%;
+    margin:20px;
+    min-height: 3rem;
+    align-items: center;
+    font: black;
+}
+.search{
+    background-color: rgb(234, 234, 33);
+    border-radius: 50%;
+    padding:5px;
+    margin:20px;
+    height: 75%;
+    font-size: 2rem;
+}
+
+.search:hover{
+    background-color: rgb(234, 234, 33);
+    border-radius: 50%;
+    padding:5px;
+    margin:20px;
+    height: 75%;
+    cursor:pointer;
+    font-size: 2rem;
+
+}
+
+.add-button{
+    background-color:lightgreen;
+    border-radius:2%;
+    margin:0.5rem;
+    display:flex;
+    flex-direction:row;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 60%;
+}
+
+.add-button:hover{
+    background-color:lightgreen;
+    border-radius:2%;
+    margin:0.5rem;
+    display:flex;
+    flex-direction:row;
+    justify-content: center;
+    align-items: center;
+    border:2px solid black;
+    cursor:pointer;
+    text-align: center;
+
+}
+.delete-button{
+    background-color:red;
+    border-radius:2%;
+    margin:0.5rem;
+    display:flex;
+    flex-direction:row;
+    justify-content: center;
+    align-items: center;
+    width:fit-content;
+    text-align: center;
+    height: 60%;
+
+ 
+}
+
+.delete-button:hover{
+    background-color:red;
+    border-radius:2%;
+    margin:0.5rem;
+    display:flex;
+    flex-direction:row;
+    justify-content: center;
+    align-items: center;
+    border:2px solid black;
+    cursor:pointer;
+text-align: center;
+}
+
+.header-bar{
+    background-color:lightgray;
+    display:flex;
+    flex-direction:row;
+    justify-content: space-around;
+    padding:3px;
+   
+}
+
+.event-card{
+    background-color: lightgray;
+    border-radius:1%;
+    border:3px black solid;
+    display:flex;
+    flex-direction:row;
+    justify-content:space-around;
+    align-items:center;
+    padding:2px 0;
+    margin:2px 0;
+}
+
+.event-filter-bar{
+    background-color:blue;
+    position: sticky;
+    display:flex;
+    flex-direction:row;
+    justify-content:space-between;
+    align-items: center;
+}
+
+.header-element{
+    display:flex;
+    flex-direction:row;
+    justify-content:space-around;
+    width:20%;
+    align-items: center;
+}
+
+.header-element:hover{
+    display:flex;
+    flex-direction:row;
+    justify-content:space-around;
+    width:20%;
+    align-items: center;
+    border: 2px solid black;
+    cursor: pointer;
+}
+
+
+.event-element{
+    width:20%;
+    align-items: center;
+    display:flex;
+    flex-direction:row;
+    justify-content:space-around;
+
+}

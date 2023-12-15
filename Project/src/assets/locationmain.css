@@ -1,0 +1,150 @@
+.location-main{
+    height: 100vh;
+    position: sticky;
+}
+
+.location-name{
+    background-color: white;
+    border:0.25px black solid;
+    display:flex;
+    flex-direction:column;
+}
+
+.location-element{
+    text-align: center;
+}
+.location-name-filter{
+    background-color: white;
+    border-radius:2px;
+    min-height: 3rem;
+    margin-left: 10px;
+}
+
+.number-slider{
+    display:flex;
+    flex-direction:column;
+    background-color:white;
+    border-radius:5%;
+    padding:5px;
+    margin:20px;
+    height: 75%;
+}
+
+.go-to-events{
+    background-color:white;
+    padding:5px;
+    border-radius:5%;
+    margin:20px;
+    height: 75%;
+}
+.search{
+    background-color: white;
+    border-radius: 50%;
+    padding:5px;
+    margin:20px;
+    height: 75%;
+}
+.header-element{
+    display:flex;
+    flex-direction:row;
+    justify-content:space-around;
+    width:20%;
+    align-items: center;
+}
+
+.header-element:hover{
+    display:flex;
+    flex-direction:row;
+    justify-content:space-around;
+    width:20%;
+    align-items: center;
+    border: 2px solid black;
+    cursor: pointer;
+}
+
+.header-bar{
+    background-color:lightgray;
+    display:flex;
+    flex-direction:row;
+    justify-content: space-around;
+    padding:3px;
+    position:sticky;
+}
+
+.location-card{
+    background-color: lightgray;
+    border-radius:1%;
+    border:3px black solid;
+    display:flex;
+    flex-direction:row;
+    justify-content:space-around;
+    padding:2px 0;
+    margin:2px 0;
+    align-items:center;
+    width:30%;
+}
+
+.location-filter-bar{
+    display:flex;
+    flex-direction:row;
+    justify-content:space-between;
+    align-items: center;
+    position: sticky;
+    background-color:blue;
+    position:sticky;
+
+
+}
+
+.add-button{
+    background-color:lightgreen;
+    border-radius:2%;
+    margin:0.5rem;
+    display:flex;
+    flex-direction:row;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 60%;
+}
+
+.add-button:hover{
+    background-color:lightgreen;
+    border-radius:2%;
+    margin:0.5rem;
+    display:flex;
+    flex-direction:row;
+    justify-content: center;
+    align-items: center;
+    border:2px solid black;
+    cursor:pointer;
+    text-align: center;
+
+}
+.delete-button{
+    background-color:red;
+    border-radius:2%;
+    margin:0.5rem;
+    display:flex;
+    flex-direction:row;
+    justify-content: center;
+    align-items: center;
+    width:fit-content;
+    text-align: center;
+    height: 60%;
+
+ 
+}
+
+.delete-button:hover{
+    background-color:red;
+    border-radius:2%;
+    margin:0.5rem;
+    display:flex;
+    flex-direction:row;
+    justify-content: center;
+    align-items: center;
+    border:2px solid black;
+    cursor:pointer;
+text-align: center;
+}

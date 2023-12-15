@@ -5,28 +5,30 @@ import EventMain from "./assets/EventMain";
 import LocationMain from "./assets/LocationMain";
 import AdminEventMain from "./assets/AdminEventMain";
 import AdminVenueMain from "./assets/AdminVenueMain";
+import Locationintro from './assets/Locationintro';
+import { FaRegUserCircle } from "react-icons/fa";
 
 class App extends React.Component {
-    render() {
-        return (
-            <Router>
-                <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/create-account" element={<CreateAccount />} />
-                    <Route path="/signin" element={<SignIn />} />
-                    <Route path="/adminsignin" element={<AdminSignIn />} />
-                    <Route path="/admineventmain" element={<AdminEventMain />} />
-                    <Route path="/adminvenuemain" element={<AdminVenueMain />} />
-                    <Route path="/userhome" element={<UserHome />} />
-                    <Route path="/changepw" element={<ChangePassword />} />
-                    <Route path="/event/main" element={<EventMain />} />
-                    <Route path="/location/main" element={<LocationMain />} />
-                </Routes>
-            </Router>
-        );
-    }
+  render() {
+    return (
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home/>} />
+          <Route path="/create-account" element={<CreateAccount/>} />
+          <Route path="/signin" element={<SignIn/>} />
+          <Route path="/adminsignin" element={<AdminSignIn/>} />
+          <Route path="/admineventmain" element={<AdminEventMain />} />
+          <Route path="/adminvenuemain" element={<AdminVenueMain />} />
+          <Route path="/userhome" element={<UserHome/>} />
+          <Route path="/changepw" element={<ChangePassword/>}/>
+          <Route path="/eventmain" element={<EventMain/>} />
+          <Route path="/locationmain" element={<LocationMain/>} />
+          <Route path="/locationintro" element={<Locationintro/>} /> 
+        </Routes>
+      </Router>
+    );
+  }
 }
-
 class Home extends React.Component {
     render() {
         return (
@@ -44,13 +46,24 @@ class CreateAccount extends React.Component {
           email: '',
           password: '',
           confirmPassword: '',
+          message: '',
         };
       }
     
 
     handleChange = (event) => {
-    this.setState({ [event.target.name]: event.target.value });
-    };
+        const { name, value } = event.target;
+        this.setState({ [name]: value }, () => {
+          if (!this.validatePassword(this.state.password)) {
+            this.setState({
+              message:
+                "Password must have a minimum length of 8 characters, contain at least one uppercase letter, one lowercase letter, one numeric character, and one special character.",
+            });
+          } else {
+            this.setState({ message: "" });
+          }
+        });
+      };
     
     handleSubmit = (event) => {
         event.preventDefault();
@@ -67,6 +80,10 @@ class CreateAccount extends React.Component {
             return;
         }
 
+        if(!this.validatePassword(this.state.password)) {
+            alert("Password format invalid");
+            return;
+        }
         const userData = { username, email, password };
     
         fetch('http://localhost:8964/create-user', {
@@ -78,7 +95,7 @@ class CreateAccount extends React.Component {
         })
           .then((response) => {
             if (response.status == 409) {
-                alert("Username already used");
+                alert("Username has been used");
             } else if (response.status == 200) {
                 alert("User created successfully");
                 window.location.href = "/signin";
@@ -103,6 +120,22 @@ class CreateAccount extends React.Component {
     return emailRegex.test(email);
     };
 
+    validatePassword = (password) => {
+        // Password constraints
+        const lengthRegex = /.{8,}/; // At least 8 characters
+        const uppercaseRegex = /[A-Z]/; // At least one uppercase letter
+        const lowercaseRegex = /[a-z]/; // At least one lowercase letter
+        const numericRegex = /\d/; // At least one numeric character
+        const specialCharRegex = /[^A-Za-z0-9]/; // At least one special character
+    
+        return (
+          lengthRegex.test(password) &&
+          uppercaseRegex.test(password) &&
+          lowercaseRegex.test(password) &&
+          numericRegex.test(password) &&
+          specialCharRegex.test(password)
+        );
+      };
       
     render() {
         return (
@@ -137,6 +170,7 @@ class CreateAccount extends React.Component {
                     handleChange={this.handleChange}
                     type = "password"
                 />
+                <p style={{ color: 'red' }}>{this.state.message}</p>
                 <div class="flex-row">
                     <Link to="/signin" class="span">
                         Sign In
@@ -202,6 +236,7 @@ class SignIn extends React.Component {
             console.error('Error login in:', error);
             // Handle the error
           });
+
 
           
       };
@@ -389,6 +424,8 @@ class UserHome extends React.Component {
             userEmail: null,
             favVenue: null,
             favEvent: null,
+            favVeneuID: null,
+            favEventID: null,
         };
     }
     componentDidMount() {
@@ -411,17 +448,17 @@ class UserHome extends React.Component {
           const data = await response.json();
           console.log(data);
       
-          if (response.ok) {
+          if (response) {
             const { user } = data;
       
             if (user) {
               this.setState({
                 userEmail: user.email,
-                favVenue: user.favVenue,
-                favEvent: user.favEvent,
+                favVenue: user.favVenueName,
+                favEvent: user.favEventName,
               });
       
-              this.fetchTitles();
+             
             } else {
               console.error('Error fetching user data:', data.error);
             }
@@ -432,41 +469,6 @@ class UserHome extends React.Component {
           console.error('Error fetching user data:', error);
         }
       };
-      
-      fetchTitles = async () => {
-        try {
-          const { favVenue, favEvent } = this.state;
-      
-          const eventResponse = await fetch('http://localhost:8964/all-events');
-          const eventData = await eventResponse.json();
-          const venueResponse = await fetch('http://localhost:8964/all-venues');
-          const venueData = await venueResponse.json();  
-          if (eventResponse) {
-           // const filteredEvents = eventData.filter((event) =>
-        //favEvent.includes(event._id)
-     // );
-            //const eventTitles = filteredEvents.map((event) => event.name);
-            const eventTitles = eventData.map((event) => event.name);
-            this.setState({
-              favEvent: eventTitles,
-            });
-          } else {
-            console.error('Error fetching event data:', eventData.error);
-          }
-          if (venueResponse) {
-        
-            const venueTitles = venueData.map((venue) => venue.name);
-            this.setState({
-              favVenue: venueTitles,
-            });
-          } else {
-            console.error('Error fetching venue data:', venueData.error);
-        } }catch (error) {
-          console.error('Error fetching event data:', error);
-      };}
-      componentDidMount() {
-        this.fetchUserData(); 
-      }
 
     toggleLocation = () => {
         this.setState((prevState) => ({
@@ -481,7 +483,7 @@ class UserHome extends React.Component {
     };
 
     handleHomeClick = () => {
-        window.location.href = "/";
+        window.location.href = "/eventmain";
     };
     handleLogout = () => {
         window.location.href = "/signin";
@@ -508,18 +510,20 @@ class UserHome extends React.Component {
                             src="/src/assets/home-icon.svg"
                             alt="Home Icon"
                             id="homeicon"
+                            onClick={this.handleHomeClick}
                         />
                     </button>
                 </div>
                 <div class="top-bar">
-                    <div class="user-details">
-                        <span id="username">{localStorage.getItem('user')}</span>
-                        <img
-                            src="/src/assets/user-icon.svg"
-                            alt="User Icon"
-                            id="usericon"
-                        />
-                    </div>
+                <div className="go-to-userhome">
+      <Link to="/userhome" style={{ display: "flex", alignItems: "left" }}>
+        <div style={{ fontSize: "1.5rem", marginRight: "0.5rem" ,alignItems: "center"}}>
+          <FaRegUserCircle />
+        </div>
+        <span>{localStorage.getItem("user")}</span>
+      </Link>
+    </div>
+                    
                 </div>
                 <div class="backgruond">
                     <div class="content">
@@ -654,13 +658,24 @@ class ChangePassword extends React.Component {
           password: '',
           newPassword: '',
           confirmPassword: '',
+          message:'',
         };
       }
     
 
-    handleChange = (event) => {
-    this.setState({ [event.target.name]: event.target.value });
-    };
+      handleChange = (event) => {
+        const { name, value } = event.target;
+        this.setState({ [name]: value }, () => {
+          if (!this.validatePassword(this.state.newPassword)) {
+            this.setState({
+              message:
+                "Password must have a minimum length of 8 characters, contain at least one uppercase letter, one lowercase letter, one numeric character, and one special character.",
+            });
+          } else {
+            this.setState({ message: "" });
+          }
+        });
+      };
     
     handleSubmit = (event) => {
         event.preventDefault();
@@ -673,6 +688,11 @@ class ChangePassword extends React.Component {
             alert("Passwords do not match");
             return;
           }
+        
+        if(!this.validatePassword(this.state.newPassword)) {
+            alert("Password format invalid");
+            return;
+        }
 
         fetch('http://localhost:8964/change-password', {
           method: 'PUT',
@@ -704,6 +724,24 @@ class ChangePassword extends React.Component {
 
           
       };
+
+      validatePassword = (password) => {
+        // Password constraints
+        const lengthRegex = /.{8,}/; // At least 8 characters
+        const uppercaseRegex = /[A-Z]/; // At least one uppercase letter
+        const lowercaseRegex = /[a-z]/; // At least one lowercase letter
+        const numericRegex = /\d/; // At least one numeric character
+        const specialCharRegex = /[^A-Za-z0-9]/; // At least one special character
+    
+        return (
+          lengthRegex.test(password) &&
+          uppercaseRegex.test(password) &&
+          lowercaseRegex.test(password) &&
+          numericRegex.test(password) &&
+          specialCharRegex.test(password)
+        );
+      };
+
     render() {
         return (
             <>
@@ -730,9 +768,10 @@ class ChangePassword extends React.Component {
                     name = "confirmPassword"
                     type = "password"
                 />
+                <p style={{ color: 'red' }}>{this.state.message}</p>
                 <div class="flex-row">
                     <Link to="/userhome" class="span">
-                        back
+                        Back
                     </Link>
                     <button class="button-submit" type="submit">Confirm</button>
                 </div>

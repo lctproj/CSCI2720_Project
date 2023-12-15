@@ -72,12 +72,10 @@ function Home() {
                 method: "GET",
             });
             const data = await response.json();
-            console.log(data);
             setEvents(data);
             setFilteredEvents(data);
 
            setFetched(true);
-          // setDisplay(events);
             // Calculate min and max prices from the events data
             let prices = [];
             data.map((event) => {
@@ -96,7 +94,7 @@ function Home() {
 
      
     useEffect(() => {
-        if (!fetched) {
+        if (!fetched && isEvent) {
           initEventData();
         }
       }, [fetched]); 
@@ -142,7 +140,6 @@ function Home() {
 
     useEffect(() => {
         if (fetched) {
-           // setDisplay(filteredEvents);
           const sortedEvents = [...filteredEvents].sort((a, b) => {
             let aValue, bValue;
     
@@ -429,11 +426,13 @@ function Home() {
             <table className="w-full border-collapse">
                 <thead>
                     <tr>
-                        <th className="text-black bg-gray-200 px-4 py-2">
-                            Venue Name
+                        <th className="text-black bg-gray-200 px-4 py-2" onClick={()=>handleCategory('name')}>
+                            <p>Venue Name</p>
+                            <ArrowSign value="name" category={category} ascending={ascending} />
                         </th>
-                        <th className="text-black bg-gray-200 px-4 py-2">
-                            Number of Events
+                        <th className="text-black bg-gray-200 px-4 py-2"  onClick={()=>handleCategory('number')}>
+                            <p>Number of Events</p>
+                            <ArrowSign value="number" category={category} ascending={ascending} />
                         </th>
                     </tr>
                 </thead>

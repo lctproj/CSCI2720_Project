@@ -3,7 +3,6 @@ import Cookies from "js-cookie";
 
 const Comments = ({ Id, isEvent }) => {
     const [comments, setComments] = useState([]);
-    const [username, setUsername] = useState("");
     const [comment, setComment] = useState("");
 
     useEffect(() => {
@@ -12,22 +11,22 @@ const Comments = ({ Id, isEvent }) => {
 
     const fetchComments = async () => {
         try {
-            const token = Cookies.get("token"); // Retrieve the JWT token
+            const token = Cookies.get("token");
             console.log(token);
 
             const url = isEvent
-                ? `/get-event-comments/${Id}` // Call event comments API
-                : `/get-venue-comments/${Id}`; // Call venue comments API
+                ? `http://localhost:8964/get-event-comments/${Id}`
+                : `http://localhost:8964/get-venue-comments/${Id}`;
 
             const response = await fetch(url, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`, // Include the JWT token in the Authorization header
+                    Authorization: `Bearer ${token}`,
                 },
             });
 
-            if (response) {
+            if (response.ok) {
                 const data = await response.json();
                 console.log(data);
                 setComments(data);
@@ -44,19 +43,20 @@ const Comments = ({ Id, isEvent }) => {
 
         try {
             const url = isEvent
-                ? `http://localhost:8964/add-event-comment/${Id}` // Call add event comment API
-                : `http://localhost:8964/add-venue-comment/${Id}`; // Call add venue comment API
+                ? `http://localhost:8964/add-event-comment/${Id}`
+                : `http://localhost:8964/add-venue-comment/${Id}`;
 
-            const cookie = Cookies.get("payload");
-            const payload = JSON.parse(cookie);
-            const token = Cookies.get("token"); // Retrieve the JWT token
+            const token = Cookies.get("token");
             console.log(token);
-
+            const cookie = Cookies.get("payload");
+            console.log(cookie);
+            const payload = JSON.parse(cookie);
+            console.log(payload);
             const response = await fetch(url, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`, // Include the JWT token in the Authorization header
+                    Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({
                     username: payload.username,
@@ -64,16 +64,22 @@ const Comments = ({ Id, isEvent }) => {
                 }),
             });
 
-            if (response) {
+            if (response.ok) {
                 const data = await response.json();
                 setComments([...comments, data]);
-                setUsername("");
                 setComment("");
             } else {
                 console.error("Error submitting comment:", response.statusText);
             }
         } catch (error) {
             console.error("Error submitting comment:", error);
+        }
+    };
+
+    const handleKeyDown = (event) => {
+        if (event.key === "Enter" && !event.shiftKey) {
+            event.preventDefault();
+            handleSubmit(event);
         }
     };
 
@@ -85,6 +91,7 @@ const Comments = ({ Id, isEvent }) => {
                     placeholder="Leave a comment"
                     value={comment}
                     onChange={(event) => setComment(event.target.value)}
+                    onKeyDown={handleKeyDown} // Bind Enter key to handleSubmit
                 ></textarea>
                 <br />
                 <button type="submit">Submit</button>

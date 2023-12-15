@@ -6,6 +6,7 @@ import "react-date-range/dist/theme/default.css";
 import { Range } from "react-range";
 import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
+
 function Home() {
     const [events, setEvents] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
@@ -23,6 +24,7 @@ function Home() {
     });
     const [isEvent, setIsEvent] = useState(true);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [username, setUsername] = useState("")
 
     const handleDateRangeClick = () => {
         setDatePickerVisible(!datePickerVisible);
@@ -40,22 +42,6 @@ function Home() {
         setIsEvent(!isEvent);
     };
 
-    const listCookies = () => {
-        const cookies = document.cookie.split(";");
-      
-        if (cookies.length === 0) {
-          console.log("No cookies found.");
-          return;
-        }
-      
-        console.log("List of cookies:");
-        for (let i = 0; i < cookies.length; i++) {
-          const cookie = cookies[i].trim();
-          console.log(cookie);
-        }
-      };
-      
-
     const checkLoggedIn = () => {
         const cookie = Cookies.get("payload");
         console.log(cookie);
@@ -63,14 +49,13 @@ function Home() {
             const payload = JSON.parse(cookie);
             console.log(payload);
             setIsLoggedIn(true);
-            // Use the payload as needed
+            setUsername(payload.username);
         } else {
             console.log('The "payload" cookie does not exist');
         }
     };
 
     useEffect(() => {
-        listCookies();
         checkLoggedIn();
         initEventData();
         initVenueData();
@@ -239,11 +224,11 @@ function Home() {
                         </button>
                         {isLoggedIn ? (
                             <button className="px-4 py-2 text-white bg-blue-500 rounded-lg focus:outline-none hover:bg-blue-600">
-                                <Link to={`/info/`}>My Account</Link>
+                                <Link to={`/info/`}>My Account : {username}</Link>
                             </button>
                         ) : (
                             <button className="px-4 py-2 text-white bg-blue-500 rounded-lg focus:outline-none hover:bg-blue-600">
-                                <Link to={`/account`}>Login</Link>
+                                <Link to={`/signin`}>Login</Link>
                             </button>
                         )}
                     </div>
@@ -317,7 +302,7 @@ function Home() {
                         Find by Event
                     </button>
                     <button className="px-4 py-2 text-white bg-blue-500 rounded-lg focus:outline-none hover:bg-blue-600">
-                        <Link to={`/account`}>Login</Link>
+                        <Link to={`/signin`}>Login</Link>
                     </button>
                 </div>
             </div>

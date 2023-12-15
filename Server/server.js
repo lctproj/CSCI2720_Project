@@ -214,6 +214,7 @@ app.get('/all-events', async (req, res) => {
   try {
     const events = await Event.find();
     const allEvents = [];
+    console.log(events);
     for (let event of events) {
       const eventDates = await EventDate.findOne({ eventId: event.eventId });
 
@@ -656,14 +657,26 @@ app.post("/admin/create-event", authenticateToken, async (req, res) => {
       .sort({ eventId: -1 })
       .limit(1);
 
-    console.log(maxEvent);
-
     let nextEventId = 1;
     if (maxEvent) {
       nextEventId = parseInt(maxEvent.eventId) + 1;
     }
 
     newEvent.eventId = nextEventId.toString();
+
+    console.log(newEvent);
+
+    const eventDatesISO = newEvent.eventDates.map((date) => new Date(date).toISOString());
+
+    const eventDateData = {
+      eventId: newEvent.eventId,
+      eventDates: eventDatesISO,
+    };
+
+    const createdEventDate = new EventDate(eventDateData);
+    await createdEventDate.save();
+
+    console.log(createdEventDate);
 
     const createdEvent = new Event(newEvent);
     await createdEvent.save();
@@ -679,11 +692,7 @@ app.post("/admin/create-event", authenticateToken, async (req, res) => {
 
 app.post('/admin/change-event', async (req, res) => {
   try {
-    const { username, eventId, updatedEvent } = req.body;
-
-    if (username != 'admin') {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
+    const { eventId, updatedEvent } = req.body;
 
     const event = await Event.updateOne({ eventId: eventId }, updatedEvent, { new: true });
     if (!event) {

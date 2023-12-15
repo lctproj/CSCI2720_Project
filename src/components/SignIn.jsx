@@ -1,54 +1,42 @@
 import { useState, useEffect } from "react";
 
-const SignIn = ({ setToggle }) => {
+const SignIn = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [isAdmin, setIsAdmin] = useState(false);
 
-    useEffect(() => {
-        async function autoLogin() {
-          try {
-            const response = await fetch("http://localhost:8964/autoLogin", {
-              method: "GET",
-              credentials: "include",
-            });
-    
-            if (response.ok) {
-              window.location.href = "/";
-            }
-          } catch (error) {
-            console.error("Error during auto-login:", error);
-          }
-        }
-        autoLogin();
-      }, []);
-
-      const handleSignIn = async (e) => {
+    const handleSignIn = async (e) => {
         e.preventDefault();
-      
+
         try {
-          const response = await fetch("http://localhost:8964/login", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            credentials: "include", // Include credentials for sending cookies
-            body: JSON.stringify({ username, password }),
-          });
-      
-          if (response.status === 404 || response.status === 401) {
-            alert("Invalid username or password."); // Display an alert for failed login
-            window.location.href = "/signin";
-          } else if (response.ok) {
-              console.log("Login successful");
-              window.location.href = "/";
-          }
+            const response = await fetch("http://localhost:8964/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include", // Include credentials for sending cookies
+                body: JSON.stringify({ username, password }),
+            });
+
+            if (response.status === 404 || response.status === 401) {
+                alert("Invalid username or password."); // Display an alert for failed login
+                window.location.href = "/signin";
+            } else if (response.ok) {
+                console.log("Login successful");
+                if (isAdmin) {
+                    // Redirect to admin dashboard if admin sign-in
+                    window.location.href = "/admin/home";
+                } else {
+                    window.location.href = "/";
+                }
+            }
         } catch (error) {
-          console.error("Error during sign-in:", error);
+            console.error("Error during sign-in:", error);
         }
-      
+
         setUsername("");
         setPassword("");
-      };
+    };
 
     return (
         <div className="flex justify-center items-center h-screen">
@@ -73,6 +61,14 @@ const SignIn = ({ setToggle }) => {
                             className="border border-gray-300 rounded px-2 py-1 w-full"
                         />
                     </div>
+                    <div className="mb-4">
+                        <label className="block">Admin Sign-In:</label>
+                        <input
+                            type="checkbox"
+                            checked={isAdmin}
+                            onChange={(e) => setIsAdmin(e.target.checked)}
+                        />
+                    </div>
                     <button
                         type="submit"
                         className="bg-blue-500 text-white px-4 py-2 rounded"
@@ -80,7 +76,9 @@ const SignIn = ({ setToggle }) => {
                         Sign In
                     </button>
                     <button
-                        onClick={() => {window.location.href = "/createaccount";}}
+                        onClick={() => {
+                            window.location.href = "/createaccount";
+                        }}
                         className="text-blue-500 mt-2 underline"
                     >
                         Create Account

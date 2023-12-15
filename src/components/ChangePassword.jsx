@@ -1,6 +1,5 @@
 import { useState } from "react";
 import Cookies from "js-cookie";
-import '../../dist/output.css';
 
 const ChangePassword = () => {
     const [currentPassword, setCurrentPassword] = useState("");

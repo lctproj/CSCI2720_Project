@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import '../../dist/output.css';
 
 
 const SignIn = () => {

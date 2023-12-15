@@ -657,16 +657,20 @@ app.post("/admin/create-event", authenticateToken, async (req, res) => {
       .sort({ eventId: -1 })
       .limit(1);
 
+    // Fetch the latest maxEvent
+    const latestMaxEvent = await maxEvent.exec();
+
+    // Increment nextEventId if latestMaxEvent exists
     let nextEventId = 1;
-    if (maxEvent) {
-      nextEventId = parseInt(maxEvent.eventId) + 1;
+    if (latestMaxEvent) {
+      nextEventId = parseInt(latestMaxEvent.eventId) + 1;
     }
 
     newEvent.eventId = nextEventId.toString();
 
     console.log(newEvent);
 
-    const eventDatesISO = newEvent.eventDates.map((date) => new Date(date).toISOString());
+    const eventDatesISO = newEvent.eventDates.map((date) => { new Date(date.toLocaleString('en-US', { timeZone: 'Asia/Shanghai' })) });
 
     const eventDateData = {
       eventId: newEvent.eventId,
@@ -724,6 +728,72 @@ app.delete('/admin/delete-event', authenticateToken, async (req, res) => {
   } catch (error) {
     console.error('Error deleting event:', error);
     res.status(500).json({ error: 'An error occurred while deleting the event' });
+  }
+});
+
+app.get("/admin/all-users", authenticateToken, async (req, res) => {
+  try {
+    const users = await User.find({});
+    console.log(users);
+    res.json(users);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).json({ error: "Failed to fetch users" });
+  }
+});
+
+app.put("/admin/update-user", authenticateToken, async (req, res) => {
+  try {
+    const users = await User.find({});
+    console.log(users);
+    res.json(users);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).json({ error: "Failed to fetch users" });
+  }
+});
+
+app.delete("/admin/delete-user/:userId", authenticateToken, async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // Find the user by ID and delete it
+    const deletedUser = await User.findByIdAndDelete(userId);
+
+    if (!deletedUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json(deletedUser);
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    res.status(500).json({ error: "Failed to delete user" });
+  }
+});
+
+app.post("/admin/create-user", authenticateToken, async (req, res) => {
+  try {
+    const { username, email, password } = req.body;
+
+    // Check if the username or email already exists
+    const existingUser = await User.findOne({
+      $or: [{ username }, { email }],
+    });
+
+    if (existingUser) {
+      return res.status(400).json({ error: "Username or email already exists" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create a new user
+    const newUser = new User({ username:username, email:email, password:hashedPassword });
+    const createdUser = await newUser.save();
+
+    res.status(201).json(createdUser);
+  } catch (error) {
+    console.error("Error creating user:", error);
+    res.status(500).json({ error: "Failed to create user" });
   }
 });
 

@@ -4,7 +4,6 @@ import Comments from "./Comments";
 import Favorite from "@mui/icons-material/Favorite";
 import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
 import Cookies from "js-cookie";
-import '../../dist/output.css';
 import { Link } from "react-router-dom";
 
 const keyToNameMapping = {

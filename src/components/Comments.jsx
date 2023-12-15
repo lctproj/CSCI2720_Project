@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import Cookies from "js-cookie";
-import '../../dist/output.css';
 
 const Comments = ({ Id, isEvent }) => {
     const [comments, setComments] = useState([]);

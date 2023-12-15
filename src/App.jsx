@@ -6,8 +6,9 @@ import CreateAccount from './components/CreateAccount';
 import SignIn from './components/SignIn';
 import AccountInfo from './components/AccountInfo';
 import ChangePassword from './components/ChangePassword';
-import AdminHome from './components/AdminHome';
+import AdminHome from './components/UserList';
 import AdminEvent from './components/AdminEvent';
+import UserList from './components/UserList';
 import AdminUser from './components/AdminUser';
 import CreateEvent from './components/CreateEvent';
 
@@ -24,7 +25,8 @@ const App = () => {
         <Route path="/changepassword" element={<ChangePassword />} />
         <Route path="/admin/home" element={<AdminHome />} />
         <Route path="/admin/event/:eventId" element={<AdminEvent />} />
-        <Route path="/admin/user/:userId" element={<AdminUser />} />
+        <Route path="/admin/users/" element={<UserList />} />
+        <Route path="/admin/user/" element={<AdminUser />} />
         <Route path="/admin/createevent" element={<CreateEvent />} />
       </Routes>
     </>

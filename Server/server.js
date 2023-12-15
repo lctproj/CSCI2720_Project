@@ -2,12 +2,20 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://0.0.0.0:27017/CSCI2720Project');
 
 const app = express();
-app.use(cors());
 app.use(bodyParser.json());
+app.use(cookieParser());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'Connection error:'));
@@ -128,8 +136,8 @@ const EventSchema = new mongoose.Schema({
       default: '',
   },
   eventDates: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'EventDates',
+      type: [String],
+      default: [],
   },
   venueId: {
       type: String,
@@ -167,8 +175,8 @@ const User = mongoose.model("Users", UserSchema);
 
 const EventCommentSchema = new mongoose.Schema({
   eventId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Events',
+      type: String,
+      required: [true, "eventId is required"],
   },
   username: {
       type: String,
@@ -184,8 +192,8 @@ const EventComment = mongoose.model("EventComments", EventCommentSchema);
 
 const VenueCommentSchema = new mongoose.Schema({
   venueId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Venues',
+      type: String,
+      required: [true, "venueId is required"],
   },
   username: {
       type: String,
@@ -214,7 +222,7 @@ app.get('/all-events', async (req, res) => {
       const latestEventDate = eventDates.indate[eventDates.indate.length - 1].split('T')[0];
 
       const oneEvent = {
-        "id": event.eventId,
+        "eventId": event.eventId,
         "name": event.title,
         "earliestDate": earliestEventDate,
         "latestDate": latestEventDate,
@@ -230,6 +238,29 @@ app.get('/all-events', async (req, res) => {
   }
 });
 
+app.get('/event/:eventId', async (req, res) => {
+  const eventId = req.params.eventId;
+
+  try {
+    const event = await Event.findOne({ eventId: eventId });
+    console.log(event);
+    const eventDate = await EventDate.findOne({ eventId: event.eventId });
+    console.log(eventDate);
+    event.eventDates = eventDate;
+    const venue = await Venue.findOne({ venueId: event.venueId });
+    console.log(venue);
+    event.venueId = venue.venue;
+
+    if (event) {
+      res.json(event);
+    } else {
+      res.status(404).json({ error: 'Event not found' });
+    }
+  } catch (error) {
+    console.log('Error retrieving event:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 app.post('/navbar-events', async (req, res) => {
   const { name, priceRange, earliestDate, latestDate } = req.body;
   console.log(req.body);
@@ -319,6 +350,147 @@ app.get('/venue/:venueId', async (req, res) => {
   }
 });
 
+// Middleware function to authenticate JWT token
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader) {
+    return res.sendStatus(401);
+  }
+
+  const token = authHeader.split(" ")[1]; // Extract the token from the "Bearer <token>" format
+
+  if (!token) {
+    return res.sendStatus(401);
+  }
+
+  jwt.verify(token, 'SECRET', (err, user) => {
+    if (err) {
+      return res.sendStatus(403);
+    }
+
+    req.user = user;
+    next();
+  });
+};
+
+// Login endpoint
+app.post('/login', async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ error: 'Invalid username or password' });
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
+      return res.status(401).json({ error: 'Invalid username or password' });
+    }
+
+    const payload = { email: user.email, username: user.username, time: Date.now() };
+    console.log(payload);
+
+    const token = jwt.sign(payload, "SECRET", { expiresIn: '1h' });
+
+    res.cookie('token', token, {
+      path: '/',
+      maxAge: 1 * 60 * 60 * 1000,
+    });
+    res.cookie('payload', JSON.stringify(payload), {
+      path: '/',
+      maxAge: 1 * 60 * 60 * 1000,
+    });
+
+    res.status(200).json({ message: 'Login successful', username: username });
+  } catch (error) {
+    console.error('Error during login:', error);
+    res.status(500).json({ error: 'An error occurred during login' });
+  }
+});
+
+// Auto-login endpoint
+app.get('/autoLogin', authenticateToken, (req, res) => {
+  return res.sendStatus(200);
+});
+
+// Logout endpoint
+app.get('/logout', authenticateToken, (req, res) => {
+  res.clearCookie('token');
+  res.clearCookie('payload');
+  return res.sendStatus(200);
+});
+
+// Change password endpoint
+app.put('/change-password', authenticateToken, async (req, res) => {
+  try {
+    // Code for changing password goes here
+  } catch (error) {
+    console.error('Error changing password:', error);
+    res.status(500).json({ error: 'An error occurred while changing the password' });
+  }
+});
+
+// Create user endpoint
+app.post('/create-user', async (req, res) => {
+  try {
+    // Code for creating a new user goes here
+  } catch (error) {
+    console.error('Error creating user:', error);
+    res.status(500).json({ error: 'An error occurred while creating the user' });
+  }
+});
+
+// User data endpoint
+app.post('/user-data', authenticateToken, async (req, res) => {
+  try {
+    const { username } = req.body;
+
+    const user = await User.findOne({ username: username });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json({ user });
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    res.status(500).json({ error: 'An error occurred while fetching user data' });
+  }
+});
+
+app.get('/get-event-comments/:eventId', async (req, res) => {
+  const eventId = req.params.eventId;
+  try {
+    const comment = await EventComment.find({ eventId: eventId });
+    console.log(comment);
+    if (comment) {
+      res.json(comment);
+    } else {
+      res.status(404).json({ error: 'comment not found' });
+    }
+  } catch (error) {
+    console.log('Error retrieving comment:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.get('/get-venue-comments/:venueId', async (req, res) => {
+  const venueId = req.params.venueId;
+  try {
+    const comment = await VenueComment.find({ venueId: venueId });
+    console.log(comment);
+    if (comment) {
+      res.json(comment);
+    } else {
+      res.status(404).json({ error: 'comment not found' });
+    }
+  } catch (error) {
+    console.log('Error retrieving comment:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 const port = 8964;
 app.listen(port, () => {

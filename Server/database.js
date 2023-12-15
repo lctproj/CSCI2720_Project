@@ -122,8 +122,8 @@ const EventSchema = new mongoose.Schema({
         default: '',
     },
     eventDates: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'EventDates',
+        type: [String],
+        default: [],
     },
     venueId: {
         type: String,
@@ -161,8 +161,8 @@ const User = mongoose.model("Users", UserSchema);
 
 const EventCommentSchema = new mongoose.Schema({
     eventId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Events',
+        type: String,
+        required: [true, "eventId is required"],
     },
     username: {
         type: String,
@@ -178,8 +178,8 @@ const EventComment = mongoose.model("EventComments", EventCommentSchema);
 
 const VenueCommentSchema = new mongoose.Schema({
     venueId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Venues',
+        type: String,
+        required: [true, "venueId is required"],
     },
     username: {
         type: String,
@@ -262,7 +262,7 @@ const saveEventData = async (Event, Venue, eventsData) => {
             let venuetype = await Venue.findOne({ venueId: element.venueid })
             let eventDate = await EventDate.findOne({ eventId: element.eventId })
             element.venueId = venuetype.venueId;
-            element.eventDates = eventDate._id;
+            element.eventDates = eventDate.indate;
             const event = new Event(element);
             event.save();
         }

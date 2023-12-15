@@ -5,6 +5,7 @@ import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import { Range } from "react-range";
 import { Link } from "react-router-dom";
+import Cookies from "js-cookie";
 function Home() {
     const [events, setEvents] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
@@ -21,6 +22,7 @@ function Home() {
         key: "selection",
     });
     const [isEvent, setIsEvent] = useState(true);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     const handleDateRangeClick = () => {
         setDatePickerVisible(!datePickerVisible);
@@ -38,9 +40,40 @@ function Home() {
         setIsEvent(!isEvent);
     };
 
+    const listCookies = () => {
+        const cookies = document.cookie.split(";");
+      
+        if (cookies.length === 0) {
+          console.log("No cookies found.");
+          return;
+        }
+      
+        console.log("List of cookies:");
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          console.log(cookie);
+        }
+      };
+      
+
+    const checkLoggedIn = () => {
+        const cookie = Cookies.get("payload");
+        console.log(cookie);
+        if (cookie) {
+            const payload = JSON.parse(cookie);
+            console.log(payload);
+            setIsLoggedIn(true);
+            // Use the payload as needed
+        } else {
+            console.log('The "payload" cookie does not exist');
+        }
+    };
+
     useEffect(() => {
+        listCookies();
+        checkLoggedIn();
         initEventData();
-        initVenuetData();
+        initVenueData();
     }, []);
 
     const initEventData = async () => {
@@ -69,7 +102,7 @@ function Home() {
         }
     };
 
-    const initVenuetData = async () => {
+    const initVenueData = async () => {
         try {
             const response = await fetch("http://localhost:8964/all-venues", {
                 method: "GET",
@@ -204,9 +237,15 @@ function Home() {
                         >
                             Find by Venue
                         </button>
-                        <button className="px-4 py-2 text-white bg-blue-500 rounded-lg focus:outline-none hover:bg-blue-600">
-                            Login
-                        </button>
+                        {isLoggedIn ? (
+                            <button className="px-4 py-2 text-white bg-blue-500 rounded-lg focus:outline-none hover:bg-blue-600">
+                                <Link to={`/info/`}>My Account</Link>
+                            </button>
+                        ) : (
+                            <button className="px-4 py-2 text-white bg-blue-500 rounded-lg focus:outline-none hover:bg-blue-600">
+                                <Link to={`/account`}>Login</Link>
+                            </button>
+                        )}
                     </div>
                 </div>
                 <table className="w-full border-collapse">
@@ -278,7 +317,7 @@ function Home() {
                         Find by Event
                     </button>
                     <button className="px-4 py-2 text-white bg-blue-500 rounded-lg focus:outline-none hover:bg-blue-600">
-                        Login
+                        <Link to={`/account`}>Login</Link>
                     </button>
                 </div>
             </div>

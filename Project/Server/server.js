@@ -305,7 +305,7 @@ app.get('/all-venues', async (req, res) => {
     const venues = await Venue.find();
     const allVenues = [];
     for (let venue of venues) {
-      const events = await Event.find({ venueId: venue._id });
+      const events = await Event.find({ venueId: venue.venueId }).;
 
       const oneVenue = {
         "venueId": venue.venueId,
@@ -315,6 +315,7 @@ app.get('/all-venues', async (req, res) => {
 
       allVenues.push(oneVenue);
     }
+    console.log(allVenues)
     res.json(allVenues);
   } catch (error) {
     console.log('Error retrieving venues:', error);

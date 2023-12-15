@@ -134,8 +134,8 @@ export default function EventMain (){
                 bValue = new Date(b.latestDate);
                 break;
               case 'price':
-                aValue = Math.max(...a.price); 
-                bValue = Math.max(...b.price); 
+                aValue = parseInt(Math.max(...a.price).eventnum, 10);
+                bValue =  parseInt(Math.max(...b.price).eventnum, 10);
                 break;
               case 'eventname':
               default:

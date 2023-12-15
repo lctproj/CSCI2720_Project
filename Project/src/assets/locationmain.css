@@ -10,6 +10,9 @@
     flex-direction:column;
 }
 
+.location-element{
+    text-align: center;
+}
 .location-name-filter{
     background-color: white;
     border-radius:2px;

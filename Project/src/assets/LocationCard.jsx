@@ -60,10 +60,10 @@ export default function LocationCard({id, locationname, number ,username}) {
 
     return (
         <div className="event-card">
-            <div className="location-element">
+            <div className="location-element" style={{width:'30%'}}>
             <Link to = {`/venue/${Id}`}><p>{locationname}</p></Link>
             </div>
-            <div className="location-element"><p>{number}</p></div>
+            <div className="location-element"style={{width:'30%'}}><p>{number}</p></div>
             <div className="add-button" onClick={handleAddClick}><p>Add to favorites</p></div>
             <div className="delete-button" onClick={handleDeleteClick}><p>Remove from favorites</p> </div>
         </div>

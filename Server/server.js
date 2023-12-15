@@ -22,19 +22,19 @@ db.on('error', console.error.bind(console, 'Connection error:'));
 
 const VenueSchema = new mongoose.Schema({
   latitude: {
-      type: String,
+    type: String,
   },
   longitude: {
-      type: String,
+    type: String,
   },
   venueId: {
-      type: String,
-      required: [true, "Venue ID is required"],
-      unique: true,
+    type: String,
+    required: [true, "Venue ID is required"],
+    unique: true,
   },
   venue: {
-      type: String,
-      required: [true, "Venue name is required"],
+    type: String,
+    required: [true, "Venue name is required"],
   },
 });
 
@@ -42,12 +42,12 @@ const Venue = mongoose.model("Venues", VenueSchema);
 
 const DateSchema = new mongoose.Schema({
   indate: {
-      type: [String],
+    type: [String],
   },
   eventId: {
-      type: String,
-      required: [true, "eventId is required"],
-      unique: true
+    type: String,
+    required: [true, "eventId is required"],
+    unique: true
   },
 });
 
@@ -55,93 +55,93 @@ const EventDate = mongoose.model('EventDates', DateSchema);
 
 const EventSchema = new mongoose.Schema({
   cat1: {
-      type: String,
-      default: '',
+    type: String,
+    default: '',
   },
   cat2: {
-      type: String,
-      default: '',
+    type: String,
+    default: '',
   },
   enquiry: {
-      type: String,
-      default: '',
+    type: String,
+    default: '',
   },
   fax: {
-      type: String,
-      default: '',
+    type: String,
+    default: '',
   },
   email: {
-      type: String,
-      default: '',
+    type: String,
+    default: '',
   },
   saledate: {
-      type: String,
-      default: '',
+    type: String,
+    default: '',
   },
   interbook: {
-      type: String,
-      default: '',
+    type: String,
+    default: '',
   },
   eventId: {
-      type: String,
-      required: [true, "eventId is required"],
-      unique: true
+    type: String,
+    required: [true, "eventId is required"],
+    unique: true
   },
   prices: {
-      type: [Number],
-      default: '',
+    type: [Number],
+    default: '',
   },
   title: {
-      type: String,
-      default: '',
+    type: String,
+    default: '',
   },
   predate: {
-      type: String,
-      default: '',
+    type: String,
+    default: '',
   },
   progtime: {
-      type: String,
-      default: '',
+    type: String,
+    default: '',
   },
   progtime: {
-      type: String,
-      default: '',
+    type: String,
+    default: '',
   },
   agelimit: {
-      type: String,
-      default: '',
+    type: String,
+    default: '',
   },
   price: {
-      type: String,
-      default: '',
+    type: String,
+    default: '',
   },
   desc: {
-      type: String,
-      default: '',
+    type: String,
+    default: '',
   },
   url: {
-      type: String,
-      default: '',
+    type: String,
+    default: '',
   },
   tagenturl: {
-      type: String,
-      default: '',
+    type: String,
+    default: '',
   },
   remark: {
-      type: String,
-      default: '',
+    type: String,
+    default: '',
   },
   presenterorg: {
-      type: String,
-      default: '',
+    type: String,
+    default: '',
   },
   eventDates: {
-      type: [String],
-      default: [],
+    type: [String],
+    default: [],
   },
   venueId: {
-      type: String,
-      required: [true, "venueId is required"]
+    type: String,
+    required: [true, "venueId is required"]
   },
 });
 
@@ -149,25 +149,25 @@ const Event = mongoose.model("Events", EventSchema);
 
 const UserSchema = new mongoose.Schema({
   username: {
-      type: String,
-      required: [true, "Username is required"],
-      unique: true,
+    type: String,
+    required: [true, "Username is required"],
+    unique: true,
   },
   password: {
-      type: String,
-      required: [true, "Password is required"],
+    type: String,
+    required: [true, "Password is required"],
   },
   email: {
-      type: String,
-      required: [true, "Email is required"],
+    type: String,
+    required: [true, "Email is required"],
   },
   favVenue: {
-      type: [String],
-      required: true
+    type: [String],
+    required: true
   },
   favEvent: {
-      type: [String],
-      required: true
+    type: [String],
+    required: true
   }
 });
 
@@ -175,16 +175,16 @@ const User = mongoose.model("Users", UserSchema);
 
 const EventCommentSchema = new mongoose.Schema({
   eventId: {
-      type: String,
-      required: [true, "eventId is required"],
+    type: String,
+    required: [true, "eventId is required"],
   },
   username: {
-      type: String,
-      required: [true, "Username is required"],
+    type: String,
+    required: [true, "Username is required"],
   },
   comment: {
-      type: String,
-      required: [true, "Comment is required"],
+    type: String,
+    required: [true, "Comment is required"],
   },
 });
 
@@ -192,16 +192,16 @@ const EventComment = mongoose.model("EventComments", EventCommentSchema);
 
 const VenueCommentSchema = new mongoose.Schema({
   venueId: {
-      type: String,
-      required: [true, "venueId is required"],
+    type: String,
+    required: [true, "venueId is required"],
   },
   username: {
-      type: String,
-      required: [true, "Username is required"],
+    type: String,
+    required: [true, "Username is required"],
   },
   comment: {
-      type: String,
-      required: [true, "Comment is required"],
+    type: String,
+    required: [true, "Comment is required"],
   },
 });
 
@@ -214,6 +214,7 @@ app.get('/all-events', async (req, res) => {
   try {
     const events = await Event.find();
     const allEvents = [];
+    console.log(events);
     for (let event of events) {
       const eventDates = await EventDate.findOne({ eventId: event.eventId });
 
@@ -250,6 +251,7 @@ app.get('/event/:eventId', async (req, res) => {
     const venue = await Venue.findOne({ venueId: event.venueId });
     console.log(venue);
     event.venueId = venue.venue;
+    event.venue = venue.venueId;
 
     if (event) {
       res.json(event);
@@ -644,6 +646,84 @@ app.post('/favourite-event', async (req, res) => {
   } catch (error) {
     console.error('Error updating favorite event:', error);
     res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.post("/admin/create-event", authenticateToken, async (req, res) => {
+  try {
+    const { newEvent } = req.body;
+
+    const maxEvent = await Event.findOne({}, { eventId: 1 })
+      .sort({ eventId: -1 })
+      .limit(1);
+
+    let nextEventId = 1;
+    if (maxEvent) {
+      nextEventId = parseInt(maxEvent.eventId) + 1;
+    }
+
+    newEvent.eventId = nextEventId.toString();
+
+    console.log(newEvent);
+
+    const eventDatesISO = newEvent.eventDates.map((date) => new Date(date).toISOString());
+
+    const eventDateData = {
+      eventId: newEvent.eventId,
+      eventDates: eventDatesISO,
+    };
+
+    const createdEventDate = new EventDate(eventDateData);
+    await createdEventDate.save();
+
+    console.log(createdEventDate);
+
+    const createdEvent = new Event(newEvent);
+    await createdEvent.save();
+
+    res.status(200).json({ message: "Event created successfully" });
+  } catch (error) {
+    console.error("Error creating event:", error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while creating the event" });
+  }
+});
+
+app.post('/admin/change-event', async (req, res) => {
+  try {
+    const { eventId, updatedEvent } = req.body;
+
+    const event = await Event.updateOne({ eventId: eventId }, updatedEvent, { new: true });
+    if (!event) {
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    res.status(200).json({ message: 'Event updated successfully', event });
+  } catch (error) {
+    console.error('Error changing event:', error);
+    res.status(500).json({ error: 'An error occurred while changing the event' });
+  }
+});
+app.delete('/admin/delete-event', authenticateToken, async (req, res) => {
+  try {
+    const { username, eventId } = req.body;
+    console.log({ username, eventId });
+
+    if (username != 'admin') {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    console.log("Deleting event ID: ", eventId);
+    // Find and delete the event by ID
+    const deletedEvent = await Event.findOneAndDelete({ eventId: eventId });
+    if (!deletedEvent) {
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    res.status(200).json({ message: 'Event deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting event:', error);
+    res.status(500).json({ error: 'An error occurred while deleting the event' });
   }
 });
 

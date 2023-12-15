@@ -112,9 +112,8 @@ function VenueDetails() {
             </button>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            
             <div className="lg:grid-cols-2">
-            <h2 className="text-2xl font-bold mb-4">Venue Details</h2>
+                <h2 className="text-2xl font-bold mb-4">Venue Details</h2>
                 <div>
                     <p className="text-black">Venue Name: {venue.venue}</p>
                 </div>

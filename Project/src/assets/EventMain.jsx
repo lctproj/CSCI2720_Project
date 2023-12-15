@@ -81,10 +81,7 @@ export default function EventMain (){
         "latestDate" : latestDate
     }
 
-    //change search results
-    const handleResults = (results) => {
-        setDisplay(results);
-      };
+    
 
     //changes the sorting category
     const handleCategory = (value) => {
@@ -117,7 +114,11 @@ export default function EventMain (){
       }
     }, [fetched]); 
  
-        
+    //change search results
+    const handleResults = (results) => {
+        setDisplay(results);
+      };    
+      
     useEffect(() => {
         if (fetched) {
           const sortedResults = [...display].sort((a, b) => {

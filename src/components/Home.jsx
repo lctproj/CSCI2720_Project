@@ -26,7 +26,7 @@ function Home() {
     });
     const [category,setCategory] = useState("");
     const [ascending,setAscending] = useState(true);
-    const [isEvent, setIsEvent] = useState(true);
+    const [isEvent, setIsEvent] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [username, setUsername] = useState("");
     const [fetched, setFetched] = useState(false);
@@ -67,6 +67,7 @@ function Home() {
         initVenueData();
     }, []);
 
+    //initialize event page
     const initEventData = async () => {
         try {
             const response = await fetch("http://localhost:8964/all-events", {
@@ -100,6 +101,78 @@ function Home() {
         }
       }, [fetched,isEvent]); 
    
+    //after filtering event page
+    const fetchEventData = async () => {
+        try {
+            const response = await fetch(
+                "http://localhost:8964/navbar-events",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        name: searchQuery,
+                        priceRange: priceRange,
+                        earliestDate: dateRange.startDate,
+                        latestDate: dateRange.endDate,
+                    }),
+                }
+            );
+            const data = await response.json();
+            setEvents(data);
+            setFilteredEvents(data);
+        } catch (error) {
+            console.error("Error fetching event data:", error);
+        }
+    };
+
+    
+    //sorting event page
+    useEffect(() => {
+        if (fetched && isEvent) {
+          const sortedEvents = [...filteredEvents].sort((a, b) => {
+            let aValue, bValue;
+    
+            switch (category) {
+              case 'earliestDate':
+                aValue = new Date(a.earliestDate);
+                bValue = new Date(b.earliestDate);
+                break;
+              case 'latestDate':
+                aValue = new Date(a.latestDate);
+                bValue = new Date(b.latestDate);
+                break;
+              case 'price':
+                aValue = parseInt(Math.max(...a.price).eventnum, 10);
+                bValue =  parseInt(Math.max(...b.price).eventnum, 10);
+                break;
+              case 'name':
+              default:
+                aValue = a.name.replace(/^\W+/, '');
+                bValue = b.name.replace(/^\W+/, '');
+                break;
+            }
+    
+            if (ascending) {
+              if (Number(aValue) && Number(bValue)) {
+                return Number(aValue) - Number(bValue);
+              } else {
+                return a.name.localeCompare(b.name);
+              }
+            } else {
+              if (Number(aValue) && Number(bValue)) {
+                return Number(bValue) - Number(aValue);
+              } else {
+                return b.name.localeCompare(a.name);
+              }
+            }
+          });
+    
+          setFilteredEvents(sortedEvents);
+        }
+      }, [category, ascending]);
+
     //initialize venue page
     const initVenueData = async () => {
         try {
@@ -158,76 +231,7 @@ function Home() {
       }
     }, [category, ascending]);
    
-    //initialize event page
-    const fetchEventData = async () => {
-        try {
-            const response = await fetch(
-                "http://localhost:8964/navbar-events",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        name: searchQuery,
-                        priceRange: priceRange,
-                        earliestDate: dateRange.startDate,
-                        latestDate: dateRange.endDate,
-                    }),
-                }
-            );
-            const data = await response.json();
-            setEvents(data);
-            setFilteredEvents(data);
-        } catch (error) {
-            console.error("Error fetching event data:", error);
-        }
-    };
-
-    //sorting event page
-    useEffect(() => {
-        if (fetched && isEvent) {
-          const sortedEvents = [...filteredEvents].sort((a, b) => {
-            let aValue, bValue;
-    
-            switch (category) {
-              case 'earliestDate':
-                aValue = new Date(a.earliestDate);
-                bValue = new Date(b.earliestDate);
-                break;
-              case 'latestDate':
-                aValue = new Date(a.latestDate);
-                bValue = new Date(b.latestDate);
-                break;
-              case 'price':
-                aValue = parseInt(Math.max(...a.price).eventnum, 10);
-                bValue =  parseInt(Math.max(...b.price).eventnum, 10);
-                break;
-              case 'name':
-              default:
-                aValue = a.name.replace(/^\W+/, '');
-                bValue = b.name.replace(/^\W+/, '');
-                break;
-            }
-    
-            if (ascending) {
-              if (Number(aValue) && Number(bValue)) {
-                return Number(aValue) - Number(bValue);
-              } else {
-                return a.name.localeCompare(b.name);
-              }
-            } else {
-              if (Number(aValue) && Number(bValue)) {
-                return Number(bValue) - Number(aValue);
-              } else {
-                return b.name.localeCompare(a.name);
-              }
-            }
-          });
-    
-          setFilteredEvents(sortedEvents);
-        }
-      }, [category, ascending]);
+ 
 
 
     const handleSearch = async () => {

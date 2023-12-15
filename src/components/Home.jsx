@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
 import { HiArrowsUpDown, HiOutlineArrowSmallUp , HiOutlineArrowSmallDown  } from "react-icons/hi2";
 
+
 function Home() {
     const [events, setEvents] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");

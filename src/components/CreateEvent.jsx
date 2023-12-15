@@ -53,7 +53,10 @@ function CreateEvent() {
             const token = Cookies.get("token");
 
             console.log(eventData);
-            eventData.eventId = 10;
+            eventData.eventId = 0;
+            eventData.eventDates.forEach(day => {
+                day += "T00:00:00.000Z"
+            })
 
             const response = await fetch(
                 "http://localhost:8964/admin/create-event",

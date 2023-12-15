@@ -4,6 +4,7 @@ import Comments from "./Comments";
 import Favorite from "@mui/icons-material/Favorite";
 import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
 import Cookies from "js-cookie";
+import { Link } from "react-router-dom";
 
 const keyToNameMapping = {
     cat1: "Category 1",
@@ -146,7 +147,16 @@ function EventDetails() {
     };
 
     return (
+        <div className="">
+        <div className="flex items-center bg-blue-500 justify-between w-full gap-4 p-4 space-x-4">
+            <button className="px-4 py-2 text-white bg-blue-500 rounded-lg focus:outline-none hover:bg-blue-600">
+            <Link to={`/`}>Home</Link>
+            </button>
+        </div>
+            
+            
         <div className="p-4">
+        
             <h2 className="text-2xl font-bold mb-4">Event Details</h2>
             {Object.entries(filteredEvent).map(([key, value]) => (
                 <p key={key} className="mb-2 text-black">
@@ -181,6 +191,7 @@ function EventDetails() {
                 </button>
             )}
             <Comments Id={eventId} isEvent={true} />
+        </div>
         </div>
     );
 }

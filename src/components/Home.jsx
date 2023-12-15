@@ -29,7 +29,7 @@ function Home() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [username, setUsername] = useState("");
     const [fetched, setFetched] = useState(false);
-    const [display, setDisplay] = useState([]);
+  //  const [display, setDisplay] = useState([]);
 
     const handleDateRangeClick = () => {
         setDatePickerVisible(!datePickerVisible);
@@ -76,8 +76,8 @@ function Home() {
             setEvents(data);
             setFilteredEvents(data);
 
-            setFetched(true);
-            setDisplay(events);
+           setFetched(true);
+          // setDisplay(events);
             // Calculate min and max prices from the events data
             let prices = [];
             data.map((event) => {
@@ -142,8 +142,8 @@ function Home() {
 
     useEffect(() => {
         if (fetched) {
-            setDisplay(filteredEvents);
-          const sortedEvents = [...display].sort((a, b) => {
+           // setDisplay(filteredEvents);
+          const sortedEvents = [...filteredEvents].sort((a, b) => {
             let aValue, bValue;
     
             switch (category) {

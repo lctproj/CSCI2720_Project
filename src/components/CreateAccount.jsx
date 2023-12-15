@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import '../../dist/output.css';
 
 const CreateAccount = () => {
     const [username, setUsername] = useState("");

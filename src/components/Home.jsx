@@ -7,6 +7,7 @@ import { Range } from "react-range";
 import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
 
+
 function Home() {
     const [events, setEvents] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");

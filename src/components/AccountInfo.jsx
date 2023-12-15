@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
+import '../../dist/output.css';
 
 function AccountInfo() {
     const [user, setUser] = useState({});

@@ -6,6 +6,7 @@ import "react-date-range/dist/theme/default.css";
 import { Range } from "react-range";
 import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
+import { HiArrowsUpDown, HiOutlineArrowSmallUp , HiOutlineArrowSmallDown  } from "react-icons/hi2";
 
 function Home() {
     const [events, setEvents] = useState([]);
@@ -22,9 +23,13 @@ function Home() {
         endDate: new Date(),
         key: "selection",
     });
+    const [category,setCategory] = useState("");
+    const [ascending,setAscending] = useState(true);
     const [isEvent, setIsEvent] = useState(true);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [username, setUsername] = useState("");
+    const [fetched, setFetched] = useState(false);
+    const [display, setDisplay] = useState([]);
 
     const handleDateRangeClick = () => {
         setDatePickerVisible(!datePickerVisible);
@@ -71,6 +76,8 @@ function Home() {
             setEvents(data);
             setFilteredEvents(data);
 
+            setFetched(true);
+            setDisplay(events);
             // Calculate min and max prices from the events data
             let prices = [];
             data.map((event) => {
@@ -86,6 +93,14 @@ function Home() {
             console.error("Error fetching event data:", error);
         }
     };
+
+     
+    useEffect(() => {
+        if (!fetched) {
+          initEventData();
+        }
+      }, [fetched]); 
+   
 
     const initVenueData = async () => {
         try {
@@ -118,12 +133,58 @@ function Home() {
                 }
             );
             const data = await response.json();
-            setVenues(data);
+            setEvents(data);
             setFilteredEvents(data);
         } catch (error) {
             console.error("Error fetching event data:", error);
         }
     };
+
+    useEffect(() => {
+        if (fetched) {
+            setDisplay(filteredEvents);
+          const sortedEvents = [...display].sort((a, b) => {
+            let aValue, bValue;
+    
+            switch (category) {
+              case 'earliestDate':
+                aValue = new Date(a.earliestDate);
+                bValue = new Date(b.earliestDate);
+                break;
+              case 'latestDate':
+                aValue = new Date(a.latestDate);
+                bValue = new Date(b.latestDate);
+                break;
+              case 'price':
+                aValue = parseInt(Math.max(...a.price).eventnum, 10);
+                bValue =  parseInt(Math.max(...b.price).eventnum, 10);
+                break;
+              case 'name':
+              default:
+                aValue = a.name.replace(/^\W+/, '');
+                bValue = b.name.replace(/^\W+/, '');
+                break;
+            }
+    
+            if (ascending) {
+              if (Number(aValue) && Number(bValue)) {
+                return Number(aValue) - Number(bValue);
+              } else {
+                return a.name.localeCompare(b.name);
+              }
+            } else {
+              if (Number(aValue) && Number(bValue)) {
+                return Number(bValue) - Number(aValue);
+              } else {
+                return b.name.localeCompare(a.name);
+              }
+            }
+          });
+    
+          setFilteredEvents(sortedEvents);
+        }
+      }, [category, ascending]);
+
 
     const handleSearch = async () => {
         const filtered = events.filter(
@@ -135,7 +196,7 @@ function Home() {
                 event.date <= dateRange.endDate
         );
         setFilteredEvents(filtered);
-
+//--
         // Call fetchEventData to fetch data with the updated search criteria
         await fetchEventData();
     };
@@ -145,6 +206,25 @@ function Home() {
             venue.name.toLowerCase().includes(searchVenueQuery.toLowerCase())
         );
         setFilteredVenues(filtered);
+    };
+
+    const handleCategory = (value) => {
+        if (value === category) {
+            setAscending(!ascending);
+            console.log(ascending);
+        } else {
+            setCategory(value);
+            setAscending(true);
+            console.log(ascending);
+            console.log(category);
+        }
+    }
+
+    const ArrowSign = ({ category, value, ascending }) => {
+        if (category === value) { //if the category matches
+            return ascending ? <HiOutlineArrowSmallUp /> : <HiOutlineArrowSmallDown />;
+        } //and 'ascending' is true, sort in ascending order, else descending
+        return <HiArrowsUpDown />; //if the category does not match the current one, revert to an 'up-down' arrow
     };
 
     // Event
@@ -250,17 +330,21 @@ function Home() {
                 <table className="w-full border-collapse table-auto">
                     <thead>
                         <tr>
-                            <th className="text-black bg-gray-200 px-4 py-2">
-                                Event Name
+                            <th className="text-black bg-gray-200 px-4 py-2  items-center hover:cursor-pointer hover:border-black" onClick={()=>handleCategory('name')}>
+                                <p>Event Name</p>
+                                <ArrowSign value="name" category={category} ascending={ascending} />
                             </th>
-                            <th className="text-black bg-gray-200 px-4 py-2">
-                                Price
+                            <th className="text-black bg-gray-200 px-4 py-2  items-center hover:cursor-pointer hover:border-black "onClick={()=>handleCategory('price')}>
+                                <p>Price</p>
+                                <ArrowSign value="price" category={category} ascending={ascending} />
                             </th>
-                            <th className="text-black bg-gray-200 px-4 py-2">
-                                Earliest Date
+                            <th className="text-black bg-gray-200 px-4 py-2  items-center hover:cursor-pointer hover:border-black " onClick={()=>handleCategory('earliestDate')}>
+                                <p>Earliest Date</p>
+                                <ArrowSign value="earliestDate" category={category} ascending={ascending} />
                             </th>
-                            <th className="text-black bg-gray-200 px-4 py-2">
-                                Latest Date
+                            <th className="text-black bg-gray-200 px-4 py-2   items-center hover:cursor-pointer hover:border-black "onClick={()=>handleCategory('latestDate')}>
+                                <p>Latest Date</p>
+                                <ArrowSign value="earliestDate" category={category} ascending={ascending} />
                             </th>
                         </tr>
                     </thead>

@@ -244,7 +244,7 @@ app.get('/event/:eventId', async (req, res) => {
   try {
     const event = await Event.findOne({ eventId: eventId });
     console.log(event);
-    const eventDate = await EventDate.findOne({ eventId: event.eventId });
+    const eventDate = await EventDate.findOne({ _id: event.eventDates });
     console.log(eventDate);
     event.eventDates = eventDate;
     const venue = await Venue.findOne({ venueId: event.venueId });
@@ -460,15 +460,13 @@ app.post('/user-data', authenticateToken, async (req, res) => {
   }
 });
 
-app.get('/get-event-comments/:eventId', async (req, res) => {
+app.get('/get-event-comments/:eventId', authenticateToken, async (req, res) => {
   const eventId = req.params.eventId;
   try {
     const comment = await EventComment.find({ eventId: eventId });
     console.log(comment);
     if (comment) {
       res.json(comment);
-    } else {
-      res.status(404).json({ error: 'comment not found' });
     }
   } catch (error) {
     console.log('Error retrieving comment:', error);
@@ -476,18 +474,58 @@ app.get('/get-event-comments/:eventId', async (req, res) => {
   }
 });
 
-app.get('/get-venue-comments/:venueId', async (req, res) => {
+app.get('/get-venue-comments/:venueId', authenticateToken, async (req, res) => {
   const venueId = req.params.venueId;
   try {
     const comment = await VenueComment.find({ venueId: venueId });
     console.log(comment);
     if (comment) {
       res.json(comment);
-    } else {
-      res.status(404).json({ error: 'comment not found' });
     }
   } catch (error) {
     console.log('Error retrieving comment:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.post('/add-event-comment/:eventId', authenticateToken, async (req, res) => {
+  const eventId = req.params.eventId;
+  const { username, commentText } = req.body;
+
+  try {
+    // Create a new comment with the provided data and user information
+    const comment = new EventComment({
+      eventId: eventId,
+      username: username, // Assuming the username is present in the user object
+      comment: commentText,
+    });
+
+    // Save the comment to the database
+    const savedComment = await comment.save();
+    res.json(savedComment);
+  } catch (error) {
+    console.log('Error adding comment:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.post('/add-venue-comment/:venueId', authenticateToken, async (req, res) => {
+  const venueId = req.params.venueId;
+  const { username, commentText } = req.body;
+
+  try {
+    // Create a new comment with the provided data and user information
+    const comment = new VenueComment({
+      venueId: venueId,
+      username: username, // Assuming the username is present in the user object
+      comment: commentText,
+    });
+
+    // Save the comment to the database
+    const savedComment = await comment.save();
+    res.json(savedComment);
+  } catch (error) {
+    console.log('Error adding venue comment:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });

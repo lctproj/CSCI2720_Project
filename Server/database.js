@@ -318,8 +318,23 @@ const selectTop10Location = async () => {
     const eventResults = await Event.find({});
     const selectedEvent = eventResults.map((event) => event.eventId);
     await EventDate.deleteMany({ eventId: { $nin: selectedEvent } });
+
+
 };
 
+const replaceVenuesCollection = async () => {
+    try {
+      const newVenueData = JSON.parse(fs.readFileSync('./Database/venues.json', 'utf8'));
+      newVenueData.forEach(element => {
+        element._id = element._id.$old;
+      });
+      await Venue.deleteMany({});
+      await Venue.insertMany(newVenueData);
+      console.log('Venues collection replaced successfully.');
+    } catch (error) {
+      console.log('Failed to replace venues collection:', error);
+    }
+};
 
 const preprocessing = async () => {
     await saveVenueData(Venue, VenueData);
@@ -327,6 +342,7 @@ const preprocessing = async () => {
     await saveEventData(Event, Venue, eventsData);
     await saveUserData(User, userData);
     await selectTop10Location();
+    await replaceVenuesCollection();
 };
 
 preprocessing();

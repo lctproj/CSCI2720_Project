@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useCookies } from "react-cookie";
+import Cookies from "js-cookie";
 
-const Comments = ({ eventId }) => {
+const Comments = ({ Id, isEvent }) => {
     const [comments, setComments] = useState([]);
     const [username, setUsername] = useState("");
     const [comment, setComment] = useState("");
-    const [cookies] = useCookies(["data"]);
 
     useEffect(() => {
         fetchComments();
@@ -13,8 +12,28 @@ const Comments = ({ eventId }) => {
 
     const fetchComments = async () => {
         try {
-            const response = await axios.get(`/api/comments/${eventId}`);
-            setComments(response.data);
+            const token = Cookies.get("token"); // Retrieve the JWT token
+            console.log(token);
+
+            const url = isEvent
+                ? `/get-event-comments/${Id}` // Call event comments API
+                : `/get-venue-comments/${Id}`; // Call venue comments API
+
+            const response = await fetch(url, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`, // Include the JWT token in the Authorization header
+                },
+            });
+
+            if (response) {
+                const data = await response.json();
+                console.log(data);
+                setComments(data);
+            } else {
+                console.error("Error fetching comments:", response.statusText);
+            }
         } catch (error) {
             console.error("Error fetching comments:", error);
         }
@@ -24,13 +43,35 @@ const Comments = ({ eventId }) => {
         event.preventDefault();
 
         try {
-            const response = await axios.post(`/api/comments/${eventId}`, {
-                username,
-                comment,
+            const url = isEvent
+                ? `http://localhost:8964/add-event-comment/${Id}` // Call add event comment API
+                : `http://localhost:8964/add-venue-comment/${Id}`; // Call add venue comment API
+
+            const cookie = Cookies.get("payload");
+            const payload = JSON.parse(cookie);
+            const token = Cookies.get("token"); // Retrieve the JWT token
+            console.log(token);
+
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`, // Include the JWT token in the Authorization header
+                },
+                body: JSON.stringify({
+                    username: payload.username,
+                    commentText: comment,
+                }),
             });
-            setComments([...comments, response.data]);
-            setUsername("");
-            setComment("");
+
+            if (response) {
+                const data = await response.json();
+                setComments([...comments, data]);
+                setUsername("");
+                setComment("");
+            } else {
+                console.error("Error submitting comment:", response.statusText);
+            }
         } catch (error) {
             console.error("Error submitting comment:", error);
         }
@@ -39,21 +80,7 @@ const Comments = ({ eventId }) => {
     return (
         <div>
             <h2>Comments</h2>
-            {comments.map((comment) => (
-                <div key={comment._id}>
-                    <p>
-                        {comment.username}: {comment.comment}
-                    </p>
-                </div>
-            ))}
             <form onSubmit={handleSubmit}>
-                <input
-                    type="text"
-                    placeholder="Your username"
-                    value={username}
-                    onChange={(event) => setUsername(event.target.value)}
-                />
-                <br />
                 <textarea
                     placeholder="Leave a comment"
                     value={comment}
@@ -62,7 +89,13 @@ const Comments = ({ eventId }) => {
                 <br />
                 <button type="submit">Submit</button>
             </form>
-            {cookies.data && <p>Cookie Data: {cookies.data}</p>}
+            {comments.map((comment) => (
+                <div key={comment._id}>
+                    <p>
+                        {comment.username}: {comment.comment}
+                    </p>
+                </div>
+            ))}
         </div>
     );
 };

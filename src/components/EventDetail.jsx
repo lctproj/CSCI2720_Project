@@ -12,8 +12,9 @@ const keyToNameMapping = {
     interbook: "Interbook",
     eventId: "Event ID",
     title: "Event Name",
-    predate: "Pre Date",
+    predate: "Date",
     progtime: "Program Time",
+    eventDates: "Event Dates",
     agelimit: "Age Limit",
     price: "Price",
     desc: "Description",
@@ -41,6 +42,7 @@ function EventDetails() {
                 }
             );
             const data = await response.json();
+            delete data.eventDates
             console.log(data);
             setEvent(data);
         } catch (error) {
@@ -66,7 +68,7 @@ function EventDetails() {
                     {keyToNameMapping[key]}: {value}
                 </p>
             ))}
-            <Comments />
+            <Comments Id={eventId} isEvent={true} />
         </div>
     );
 }

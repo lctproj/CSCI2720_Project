@@ -306,6 +306,7 @@ app.post('/navbar-events', async (req, res) => {
     }
 
     res.json(filteredEvents);
+    console.log(filteredEvents);
     return;
   } catch (err) {
     console.error("Error fetching relevant events", err);

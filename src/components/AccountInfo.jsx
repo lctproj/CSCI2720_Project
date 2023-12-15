@@ -77,55 +77,119 @@ function AccountInfo() {
         }
     };
     return (
-        <div>
-            <h2>User Details</h2>
-            <p>Username: {user.username}</p>
-            <p>Email: {user.email}</p>
-            {isLoggedIn && (
-                <div>
-                    <button onClick={handleLogout}>Logout</button>
-                    <button onClick={() => {window.location.href = "/changepassword";}}>Change Password</button>
+        <div className="p-8 bg-gray-300">
+            <div className="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
+                <h2 className="text-3xl font-bold mb-6">User Details</h2>
+                <p className="mb-4">
+                    <span className="font-bold">Username:</span> {user.username}
+                </p>
+                <p className="mb-6">
+                    <span className="font-bold">Email:</span> {user.email}
+                </p>
+                {isLoggedIn && (
+                    <div className="flex justify-between items-center mb-6">
+                        <button
+                            onClick={handleLogout}
+                            className="bg-darkBlue-500 hover:bg-darkBlue-500 text-white rounded-md px-6 py-3 transition duration-200"
+                        >
+                            Logout
+                        </button>
+                        <button
+                            onClick={() => {
+                                window.location.href = "/changepassword";
+                            }}
+                            className="bg-blue-500 hover:bg-blue-500 text-white rounded-md px-6 py-3 transition duration-200"
+                        >
+                            Change Password
+                        </button>
+                    </div>
+                )}
+                <div className="mb-8">
+                    <button
+                        onClick={() =>
+                            setShowFavoriteEvents(!showFavoriteEvents)
+                        }
+                        className="bg-blue-500 hover:bg-blue-500 text-white rounded-md px-6 py-3 transition duration-200 flex items-center justify-between"
+                    >
+                        <h3 className="text-lg font-bold mr-2">
+                            Favorite Events
+                        </h3>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className={`h-6 w-6 transform ${
+                                showFavoriteEvents ? "rotate-90" : "rotate-0"
+                            }`}
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M19 9l-7 7-7-7"
+                            />
+                        </svg>
+                    </button>
+                    {user.favEvent !== undefined && user.favEvent.length > 0 ? (
+                        <>
+                            {showFavoriteEvents && (
+                                <ul className="mt-4">
+                                    {user.favEvent.map((event) => (
+                                        <li key={event} className="mb-2">
+                                            {event}
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                        </>
+                    ) : (
+                        <p className="mt-4">No favorite events found.</p>
+                    )}
                 </div>
-            )}
-            <div>
-                <button
-                    onClick={() => setShowFavoriteEvents(!showFavoriteEvents)}
-                >
-                    <h3>Favorite Events</h3>
-                </button>
-                {user.favEvent !== undefined && user.favEvent.length > 0 ? (
-                    <>
-                        {showFavoriteEvents && (
-                            <ul>
-                                {user.favEvent.map((event) => (
-                                    <li key={event}>{event}</li>
-                                ))}
-                            </ul>
-                        )}
-                    </>
-                ) : (
-                    <p>No favorite events found.</p>
-                )}
-            </div>
-            <div>
-                <button
-                    onClick={() => setShowFavoriteVenues(!showFavoriteVenues)}
-                >
-                    <h3>Favorite Venues</h3>
-                </button>
-                {user.favVenue !== undefined && user.favVenue.length > 0 ? (
-                    <>
-                        {showFavoriteVenues && (
-                            <ul>
-                                {user.favVenue.map((venue) => (
-                                    <li key={venue}>{venue}</li>
-                                ))}
-                            </ul>
-                        )}
-                    </>
-                ) : (
-                    <p>No favorite venues found.</p>
-                )}
+                <div>
+                    <button
+                        onClick={() =>
+                            setShowFavoriteVenues(!showFavoriteVenues)
+                        }
+                        className="bg-blue-500 hover:bg-blue-500 text-white rounded-md px-6 py-3 transition duration-200 flex items-center justify-between"
+                    >
+                        <h3 className="text-lg font-bold mr-2">
+                            Favorite Venues
+                        </h3>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className={`h-6 w-6 transform ${
+                                showFavoriteVenues ? "rotate-90" : "rotate-0"
+                            }`}
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M19 9l-7 7-7-7"
+                            />
+                        </svg>
+                    </button>
+                    {user.favVenue !== undefined && user.favVenue.length > 0 ? (
+                        <>
+                            {showFavoriteVenues && (
+                                <ul className="mt-4">
+                                    {user.favVenue.map((venue) => (
+                                        <li key={venue} className="mb-2">
+                                            {venue}
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                        </>
+                    ) : (
+                        <p className="mt-4">No favorite venues found.</p>
+                    )}
+                </div>
             </div>
         </div>
     );

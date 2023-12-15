@@ -244,7 +244,7 @@ app.get('/event/:eventId', async (req, res) => {
   try {
     const event = await Event.findOne({ eventId: eventId });
     console.log(event);
-    const eventDate = await EventDate.findOne({ eventId: event.eventId });
+    const eventDate = await EventDate.findOne({ _id: event.eventDates });
     console.log(eventDate);
     event.eventDates = eventDate;
     const venue = await Venue.findOne({ venueId: event.venueId });
@@ -304,7 +304,6 @@ app.post('/navbar-events', async (req, res) => {
     }
 
     res.json(filteredEvents);
-    console.log(filteredEvents);
     return;
   } catch (err) {
     console.error("Error fetching relevant events", err);
@@ -378,18 +377,21 @@ const authenticateToken = (req, res, next) => {
 app.post('/login', async (req, res) => {
   try {
     const { username, password } = req.body;
+    console.log("user login: ", username);
 
     const user = await User.findOne({ username });
+    console.log(user);
     if (!user) {
       return res.status(404).json({ error: 'Invalid username or password' });
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
+      console.log('Invalid username or password');
       return res.status(401).json({ error: 'Invalid username or password' });
     }
 
-    const payload = { email: user.email, username: user.username, time: Date.now() };
+    const payload = { username: user.username, time: Date.now() };
     console.log(payload);
 
     const token = jwt.sign(payload, "SECRET", { expiresIn: '1h' });
@@ -404,6 +406,7 @@ app.post('/login', async (req, res) => {
     });
 
     res.status(200).json({ message: 'Login successful', username: username });
+    console.log(res.cookie);
   } catch (error) {
     console.error('Error during login:', error);
     res.status(500).json({ error: 'An error occurred during login' });
@@ -425,7 +428,20 @@ app.get('/logout', authenticateToken, (req, res) => {
 // Change password endpoint
 app.put('/change-password', authenticateToken, async (req, res) => {
   try {
-    // Code for changing password goes here
+    const { username, password, newPassword } = req.body;
+    console.log(req.body);
+    const existingUser = await User.findOne({ username: username });
+    const passwordMatch = await bcrypt.compare(password, existingUser.password);
+    if (!passwordMatch) {
+      return res.status(401).json({ error: 'Invalid current password' });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    existingUser.password = hashedPassword;
+    await existingUser.save();
+
+    res.json({ message: 'Password changed successfully' });
   } catch (error) {
     console.error('Error changing password:', error);
     res.status(500).json({ error: 'An error occurred while changing the password' });
@@ -435,7 +451,18 @@ app.put('/change-password', authenticateToken, async (req, res) => {
 // Create user endpoint
 app.post('/create-user', async (req, res) => {
   try {
-    // Code for creating a new user goes here
+    const { username, password, email } = req.body;
+
+    const existingUser = await User.findOne({ username });
+    if (existingUser) {
+      return res.status(409).json({ error: 'Username already exists' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = new User({ username, password: hashedPassword, email });
+    await newUser.save();
+    res.json({ message: 'User created successfully' });
   } catch (error) {
     console.error('Error creating user:', error);
     res.status(500).json({ error: 'An error occurred while creating the user' });
@@ -446,29 +473,45 @@ app.post('/create-user', async (req, res) => {
 app.post('/user-data', authenticateToken, async (req, res) => {
   try {
     const { username } = req.body;
+    console.log("username: ", username);
 
     const user = await User.findOne({ username: username });
+
+    console.log("user: ", user);
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    res.json({ user });
+    const eventIds = user.favEvent;
+    const venueIds = user.favVenue;
+
+    const venues = await Venue.find({ venueId: { $in: venueIds } });
+    console.log("venues: ", venues);
+    const events = await Event.find({ eventId: { $in: eventIds } });
+    console.log("events: ", events)
+
+    user.favVenue = venues.length > 0 ? venues.map(venue => venue.venue) : [];
+    const favVenueId = venues.length > 0 ? venues.map(venue => venue.venueId) : [];
+    user.favEvent = events.length > 0 ? events.map(event => event.title) : [];
+    const favEventId = events.length > 0 ? events.map(event => event.eventId) : [];
+
+    console.log("user: ", user);
+
+    res.json({ user: user, favVenueId: favVenueId, favEventId: favEventId });
   } catch (error) {
     console.error('Error fetching user data:', error);
     res.status(500).json({ error: 'An error occurred while fetching user data' });
   }
 });
 
-app.get('/get-event-comments/:eventId', async (req, res) => {
+app.get('/get-event-comments/:eventId', authenticateToken, async (req, res) => {
   const eventId = req.params.eventId;
   try {
     const comment = await EventComment.find({ eventId: eventId });
     console.log(comment);
     if (comment) {
       res.json(comment);
-    } else {
-      res.status(404).json({ error: 'comment not found' });
     }
   } catch (error) {
     console.log('Error retrieving comment:', error);
@@ -476,18 +519,130 @@ app.get('/get-event-comments/:eventId', async (req, res) => {
   }
 });
 
-app.get('/get-venue-comments/:venueId', async (req, res) => {
+app.get('/get-venue-comments/:venueId', authenticateToken, async (req, res) => {
   const venueId = req.params.venueId;
   try {
     const comment = await VenueComment.find({ venueId: venueId });
     console.log(comment);
     if (comment) {
       res.json(comment);
-    } else {
-      res.status(404).json({ error: 'comment not found' });
     }
   } catch (error) {
     console.log('Error retrieving comment:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.post('/add-event-comment/:eventId', authenticateToken, async (req, res) => {
+  const eventId = req.params.eventId;
+  const { username, commentText } = req.body;
+
+  try {
+    // Create a new comment with the provided data and user information
+    const comment = new EventComment({
+      eventId: eventId,
+      username: username, // Assuming the username is present in the user object
+      comment: commentText,
+    });
+
+    // Save the comment to the database
+    const savedComment = await comment.save();
+    res.json(savedComment);
+  } catch (error) {
+    console.log('Error adding comment:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.post('/add-venue-comment/:venueId', authenticateToken, async (req, res) => {
+  const venueId = req.params.venueId;
+  const { username, commentText } = req.body;
+
+  try {
+    // Create a new comment with the provided data and user information
+    const comment = new VenueComment({
+      venueId: venueId,
+      username: username, // Assuming the username is present in the user object
+      comment: commentText,
+    });
+
+    // Save the comment to the database
+    const savedComment = await comment.save();
+    res.json(savedComment);
+  } catch (error) {
+    console.log('Error adding venue comment:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.post('/favourite-venue', async (req, res) => {
+  try {
+    const { username, venueId, IsAdd } = req.body;
+    console.log(req.body);
+
+    const user = await User.findOne({ username: username });
+    console.log(user);
+
+    const venue = await Venue.findOne({ venueId: venueId });
+    console.log(venue);
+
+    if (!venue) {
+      return res.status(404).json({ error: 'Venue not found' });
+    }
+
+    if (IsAdd) {
+      const isFavorite = user.favVenue.includes(venue.venueId);
+      console.log(isFavorite);
+
+      if (isFavorite) {
+        return res.status(400).json({ error: 'Venue already in favorites' });
+      }
+
+      user.favVenue.push(venue.venueId);
+    } else {
+      // Remove the venue from the user's favorites
+      user.favVenue.pull(venue.venueId);
+    }
+
+    // Save the updated user
+    await user.save();
+
+    res.status(200).json({ message: 'Favorite venue updated successfully' });
+  } catch (error) {
+    console.error('Error updating favorite venue:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.post('/favourite-event', async (req, res) => {
+  try {
+    const { username, eventId, IsAdd } = req.body;
+
+    const user = await User.findOne({ username: username });
+
+    const event = await Event.findOne({ eventId: eventId });
+
+    if (!event) {
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    if (IsAdd) {
+      const isFavorite = user.favEvent.includes(event.eventId);
+
+      if (isFavorite) {
+        return res.status(400).json({ error: 'event already in favorites' });
+      }
+
+      user.favEvent.push(event.eventId);
+    } else {
+      user.favEvent.pull(event.eventId);
+    }
+
+    await user.save();
+
+    res.status(200).json({ message: 'Favorite event updated successfully' });
+  } catch (error) {
+    console.error('Error updating favorite event:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });

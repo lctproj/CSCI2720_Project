@@ -1,14 +1,19 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import Map from './Map'
-
+import Comments from "./Comments";
+import Map from "./Map";
+import Favorite from "@mui/icons-material/Favorite";
+import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
+import Cookies from "js-cookie";
 
 function VenueDetails() {
     const { venueId } = useParams();
     const [venue, setVenue] = useState({});
+    const [isFavorite, setIsFavorite] = useState(false);
 
     useEffect(() => {
         fetchVenueDetails();
+        checkFavoriteStatus();
     }, []);
 
     const fetchVenueDetails = async () => {
@@ -24,12 +29,110 @@ function VenueDetails() {
         }
     };
 
+    const addToFavorites = async (isAdd) => {
+        try {
+            console.log(Cookies.get("token"));
+            const token = Cookies.get("token");
+            const cookie = Cookies.get("payload");
+            const payload = JSON.parse(cookie);
+
+            const response = await fetch(
+                "http://localhost:8964/favourite-venue",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({
+                        username: payload.username,
+                        venueId: venueId,
+                        IsAdd: isAdd,
+                    }),
+                }
+            );
+
+            if (response.status === 200) {
+                setIsFavorite(isAdd);
+                console.log(
+                    `Venue ${isAdd ? "added to" : "removed from"} favorites`
+                );
+            } else {
+                console.log(
+                    `Error ${
+                        isAdd ? "adding venue to" : "removing venue from"
+                    } favorites:`,
+                    response.statusText
+                );
+            }
+        } catch (error) {
+            console.log("Error adding venue to favorites:", error);
+        }
+    };
+
+    const checkFavoriteStatus = async () => {
+        try {
+            const cookie = Cookies.get("payload");
+            const payload = JSON.parse(cookie);
+            const token = Cookies.get("token");
+            console.log(payload);
+
+            const response = await fetch("http://localhost:8964/user-data", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ username: payload.username }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                const favVenue = data.favVenueId;
+                console.log(favVenue);
+                setIsFavorite(favVenue.includes(venueId) || favVenue != []);
+                console.log(isFavorite);
+            } else if (response.status === 401) {
+                console.log("Unauthorized access");
+            } else {
+                console.log("Error retrieving user:", response.statusText);
+            }
+        } catch (error) {
+            console.log("Error checking favorite status:", error);
+        }
+    };
+
     return (
-        <div>
-            <h2>Venue Details</h2>
-            <p>Venue Name: {venue.venue}</p>
-            <p>Venue ID: {venue.venueId}</p>
-            <Map jsonData={venue} />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            
+            <div className="lg:grid-cols-2">
+            <h2 className="text-2xl font-bold mb-4">Venue Details</h2>
+                <div>
+                    <p className="text-black">Venue Name: {venue.venue}</p>
+                </div>
+                <div>
+                    {isFavorite ? (
+                        <button
+                            onClick={() => addToFavorites(false)}
+                            className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
+                        >
+                            <Favorite className="text-white" />
+                        </button>
+                    ) : (
+                        <button
+                            onClick={() => addToFavorites(true)}
+                            className="border border-blue-500 text-blue-500 px-4 py-2 rounded mt-4"
+                        >
+                            <FavoriteBorder className="text-blue-500" />
+                        </button>
+                    )}
+                </div>
+
+                <Map jsonData={venue} />
+            </div>
+            <div>
+                <Comments Id={venue.venueId} isEvent={false} />
+            </div>
         </div>
     );
 }
